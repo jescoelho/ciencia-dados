@@ -133,8 +133,8 @@ jupyter notebook
 **José Coelho**
 Estudante de Ciência de Dados com foco em Riscos e Mercado de Capitais
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Conectar-0077B5?logo=linkedin)](https://www.linkedin.com/in/seu-perfil)
-[![GitHub](https://img.shields.io/badge/GitHub-Perfil-181717?logo=github)](https://github.com/seu-usuario)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Conectar-0077B5?logo=linkedin)](https://www.linkedin.com/in/jessicacoelhoalves)
+[![GitHub](https://img.shields.io/badge/GitHub-Perfil-181717?logo=github)](https://github.com/jescoelho)
 
 ---
 
