@@ -36,6 +36,7 @@ Os projetos cobrem desde fundamentos estatísticos até modelos mais avançados,
 ciencia-dados/
 │
 ├── notebooks/                  # Jupyter Notebooks por tema
+│   ├── fundamentos/            # Estatística e conceitos base
 │   ├── risco-de-mercado/
 │   ├── gestao-de-portfolio/
 │   ├── series-temporais/
@@ -95,7 +96,7 @@ jupyter · nbformat
 
 **1. Clone o repositório**
 ```bash
-git clone https://github.com/seu-usuario/ciencia-dados.git
+git clone https://github.com/jescoelho/ciencia-dados.git
 cd ciencia-dados
 ```
 
