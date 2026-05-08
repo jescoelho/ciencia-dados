@@ -17,57 +17,53 @@ Os projetos cobrem desde fundamentos estatísticos até modelos mais avançados,
 
 ---
 
-## Tópicos Abordados
-
-| Área | Descrição |
-|------|-----------|
-| **Risco de Mercado** | VaR, CVaR, stress testing, backtesting de modelos de risco |
-| **Gestão de Portfólio** | Fronteira eficiente, otimização de Markowitz, análise fatorial |
-| **Séries Temporais** | Modelagem ARIMA/GARCH, volatilidade estocástica |
-| **Derivativos** | Precificação de opções (Black-Scholes, Monte Carlo), gregas |
-| **Risco de Crédito** | Modelos de scoring, PD/LGD/EAD, matrizes de transição |
-| **Análise Estatística** | Testes de hipótese, distribuições de cauda pesada, copulas |
-
----
-
 ## Estrutura do Repositório
 
 ```
 ciencia-dados/
 │
-├── notebooks/                  # Jupyter Notebooks por tema
-│   ├── fundamentos/            # Estatística e conceitos base
-│   ├── risco-de-mercado/
-│   ├── gestao-de-portfolio/
-│   ├── series-temporais/
-│   ├── derivativos/
-│   └── risco-de-credito/
+├── notebooks/
+│   ├── fundamentos/          # Estatística descritiva, distribuições, inferência
+│   └── preparacao-dados/     # Pipeline de ML, feature engineering, leakage
 │
-├── src/                        # Módulos e funções reutilizáveis
-│   ├── risk/                   # Cálculo de métricas de risco
-│   ├── portfolio/              # Otimização e análise de portfólio
-│   └── utils/                  # Funções auxiliares e helpers
-│
-├── data/                       # Dados utilizados nos projetos
-│   ├── raw/                    # Dados brutos (não versionados)
-│   └── processed/              # Dados tratados
-│
-├── reports/                    # Relatórios e visualizações exportadas
-└── requirements.txt            # Dependências do projeto
+├── data/                     # Dados utilizados nos projetos (não versionados)
+├── requirements.txt          # Dependências do projeto
+└── README.md
 ```
 
 ---
 
-## Projetos em Destaque
+## Notebooks
 
-> *Os projetos serão adicionados progressivamente conforme o desenvolvimento dos estudos.*
+### Fundamentos
+Estatística descritiva, distribuições de probabilidade e inferência estatística aplicadas ao mercado de capitais.
 
-### Em breve
-- [ ] **VaR Histórico e Paramétrico** — Comparação de metodologias para estimação do Value at Risk
-- [ ] **Otimização de Portfólio com Markowitz** — Fronteira eficiente e alocação ótima de ativos brasileiros
-- [ ] **Modelagem de Volatilidade com GARCH** — Aplicação em ativos da B3
-- [ ] **Backtesting de Estratégias de Risco** — Validação de modelos com dados históricos
-- [ ] **Stress Testing e Cenários Extremos** — Análise de cauda e simulações de choque
+| # | Notebook | Tópicos |
+|---|---|---|
+| 01 | [Tipos de variáveis](notebooks/fundamentos/01_tipos_de_variaveis_fundos_cvm.ipynb) | Categóricas, numéricas, ordinais — dataset CVM de fundos |
+| 02 | [Medidas de posição e dispersão](notebooks/fundamentos/02_medidas_posicao.ipynb) | Média, mediana, moda, variância, desvio-padrão, quartis |
+| 03 | [Médias, distribuições e probabilidade](notebooks/fundamentos/03_medias_distribuicoes_probabilidade.ipynb) | Tipos de média, distribuições amostrais, conceitos de probabilidade |
+| 04 | [Probabilidade, distribuições, testes e modelos](notebooks/fundamentos/04_probabilidade_distribuicoes_testes_modelos.ipynb) | Distribuições discretas/contínuas, assimetria, curtose, testes estatísticos |
+| 05 | [Outliers, correlação, causalidade e hipóteses](notebooks/fundamentos/05_outliers_correlacao_causalidade_hipoteses.ipynb) | Detecção de outliers, tipos de correlação, causalidade, testes de hipótese |
+
+### Preparação de Dados
+Pipeline aplicado de pré-processamento e feature engineering para modelagem supervisionada.
+
+| # | Notebook | Tópicos |
+|---|---|---|
+| 01 | [Preparação de dados e feature engineering](notebooks/preparacao-dados/01_preparacao_dados_feature_engineering.ipynb) | CRISP-DM, divisão treino/val/teste, data leakage, encoding, escalonamento, transformações, FE, seleção de variáveis |
+
+---
+
+## Próximos Passos
+
+Áreas planejadas para o portfólio, conforme avanço dos estudos:
+
+- [ ] **Risco de Mercado** — VaR histórico e paramétrico, CVaR, stress testing, backtesting
+- [ ] **Gestão de Portfólio** — Fronteira eficiente, otimização de Markowitz, análise fatorial
+- [ ] **Séries Temporais** — Modelagem ARIMA/GARCH, volatilidade estocástica
+- [ ] **Derivativos** — Precificação de opções (Black-Scholes, Monte Carlo), gregas
+- [ ] **Risco de Crédito** — Modelos de scoring, PD/LGD/EAD, matrizes de transição
 
 ---
 
