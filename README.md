@@ -45,6 +45,7 @@ Estatística descritiva, distribuições de probabilidade e inferência estatís
 | 03 | [Médias, distribuições e probabilidade](notebooks/fundamentos/03_medias_distribuicoes_probabilidade.ipynb) | Tipos de média, distribuições amostrais, conceitos de probabilidade |
 | 04 | [Probabilidade, distribuições, testes e modelos](notebooks/fundamentos/04_probabilidade_distribuicoes_testes_modelos.ipynb) | Distribuições discretas/contínuas, assimetria, curtose, testes estatísticos |
 | 05 | [Outliers, correlação, causalidade e hipóteses](notebooks/fundamentos/05_outliers_correlacao_causalidade_hipoteses.ipynb) | Detecção de outliers, tipos de correlação, causalidade, testes de hipótese |
+| 06 | [Regressão Linear — Parte 1: Beta CAPM](notebooks/fundamentos/06_regressao_linear_parte1.ipynb) | OLS, Beta CAPM, Alfa de Jensen, R², análise de resíduos, heteroscedasticidade |
 
 ### Preparação de Dados
 Pipeline aplicado de pré-processamento e feature engineering para modelagem supervisionada.
