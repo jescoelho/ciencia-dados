@@ -18,3 +18,6 @@ env/
 .DS_Store
 .vscode/
 .idea/
+
+# Config local do Claude Code
+.claude/
