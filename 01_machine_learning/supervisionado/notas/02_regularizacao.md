@@ -1,4 +1,4 @@
-# Regularização
+﻿# Regularização
 
 **Módulo:** 01 — Machine Learning  
 **Data:** 2026-05-25  
@@ -78,7 +78,7 @@ O efeito central é **seleção de variáveis**: coeficientes pequenos são zera
 
 A geometria torna isso concreto:
 
-![Geometria L1 vs L2](assets/regularizacao_geometria.png)
+![Geometria L1 vs L2](assets/02_regularizacao_geometria.png)
 
 Os contornos elípticos são as curvas de nível do SSR no espaço dos coeficientes $(\beta_1, \beta_2)$ — cada elipse conecta pontos com o mesmo valor de SSR. A solução regularizada é o ponto onde o menor contorno de SSR toca a bola de restrição. Para Ridge (esquerda), a bola é um círculo: o ponto de contato pode ocorrer em qualquer posição da fronteira, e tipicamente nenhum coeficiente é exatamente zero. Para Lasso (direita), a bola é um losango com cantos nos eixos coordenados: a geometria das elipses faz com que, na maioria dos casos, o ponto de contato ocorra num canto — onde um coeficiente vale zero. Com mais preditores, o losango tem mais cantos, e a solução esparsa torna-se ainda mais provável.
 
@@ -108,13 +108,13 @@ O hiperparâmetro $\lambda$ não pode ser estimado pelos próprios dados de trei
 
 O método padrão é a **validação cruzada $k$-fold**: os dados são divididos em $k$ partes (tipicamente $k = 5$ ou $k = 10$). Para cada valor candidato de $\lambda$, o modelo é ajustado $k$ vezes — cada vez usando $k-1$ partes para treino e a parte restante para avaliação. O erro médio nessa parte retida estima o desempenho out-of-sample. O processo se repete para todos os $\lambda$ candidatos:
 
-![Curva de validação cruzada](assets/regularizacao_cv.png)
+![Curva de validação cruzada](assets/02_regularizacao_cv.png)
 
 O eixo horizontal é $\log(\lambda)$; o eixo vertical é o erro de validação cruzada médio, com barras de $\pm 1$ desvio-padrão entre os folds. O erro cai conforme $\lambda$ aumenta — a penalidade reduz o overfitting — atinge um mínimo e sobe novamente — regularização excessiva aumenta o viés. Duas referências são marcadas: $\lambda_{\min}$, o valor que minimiza o erro médio, e $\lambda_{\text{1se}}$, o maior $\lambda$ cujo erro fica dentro de um desvio-padrão do mínimo. A diferença de desempenho entre os dois é estatisticamente negligenciável, mas $\lambda_{\text{1se}}$ produz um modelo mais parcimonioso — com mais coeficientes zerados no caso do Lasso. Quando interpretabilidade importa, $\lambda_{\text{1se}}$ costuma ser preferível.
 
 Para entender o comportamento global dos coeficientes em função de $\lambda$, o *regularization path* torna isso explícito:
 
-![Regularization path — Ridge e Lasso](assets/regularizacao_shrinkage.png)
+![Regularization path — Ridge e Lasso](assets/02_regularizacao_shrinkage.png)
 
 Cada linha colorida representa um preditor; o eixo horizontal é $\lambda$ crescente (escala logarítmica); o eixo vertical é o valor do coeficiente estimado. À esquerda ($\lambda$ pequeno), os coeficientes se aproximam dos valores OLS. À direita ($\lambda$ grande), todos encolhem para zero. No Ridge (painel esquerdo), o encolhimento é suave e contínuo — nenhuma linha toca zero antes do limite extremo. No Lasso (painel direito), as linhas chegam a zero em pontos distintos conforme $\lambda$ cresce: cada "extinção" representa um preditor descartado. A ordem em que os coeficientes são zerados reflete sua relevância relativa.
 
