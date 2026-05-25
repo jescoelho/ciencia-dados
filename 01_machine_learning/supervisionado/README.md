@@ -18,10 +18,11 @@ Regressão e classificação: lineares/logística, árvores, random forest, SVM 
 | Arquivo | Descrição |
 |---------|-----------|
 | `notas/01_regressao_linear_logistica.md` | Regressão Linear e Logística |
-| `notas/02_arvores_random_forest.md` | Árvores de Decisão e Random Forest |
-| `notas/03_svm.md` | Support Vector Machines (SVM) |
-| `notas/04_gradient_boosting.md` | Gradient Boosting |
-| `notebooks/06_regressao_linear_parte1.ipynb` | Regressao linear parte1 |
+| `notas/02_regularizacao.md` | Regularização (Ridge, Lasso, Elastic Net) |
+| `notas/03_arvores_random_forest.md` | Árvores de Decisão e Random Forest |
+| `notas/04_svm.md` | Support Vector Machines (SVM) |
+| `notas/05_gradient_boosting.md` | Gradient Boosting |
+| `notebooks/06_regressao_linear_parte1.ipynb` | Regressão linear — Beta CAPM |
 
 ## 💡 Anotações Pessoais
 
