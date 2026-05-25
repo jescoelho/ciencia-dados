@@ -1,25 +1,41 @@
-# Análise de dados
-pandas>=2.0
+# === Núcleo: análise de dados e visualização ===
 numpy>=1.24
+pandas>=2.0
 scipy>=1.11
-
-# Visualização
 matplotlib>=3.7
 seaborn>=0.12
 plotly>=5.15
 
-# Modelagem estatística e financeira
-statsmodels>=0.14
-arch>=6.2
-scikit-learn>=1.3
-
-# Dados financeiros
-yfinance>=0.2
-pandas-datareader>=0.10
-
-# HTTP (download de dados abertos)
-requests>=2.31
-
-# Notebooks
+# === Notebooks ===
+jupyterlab>=4.0
 jupyter>=1.0
 nbformat>=5.9
+
+# === Módulos 00-01: estatística e machine learning ===
+scikit-learn>=1.3
+statsmodels>=0.14
+xgboost>=2.0
+# usados nos notebooks de fundamentos (CAPM, dados financeiros)
+arch>=6.2
+yfinance>=0.2
+pandas-datareader>=0.10
+requests>=2.31
+
+# === Módulos 02-04: deep learning, NLP, visão ===
+torch>=2.2
+torchvision>=0.17
+transformers>=4.40
+datasets>=2.19
+
+# === Módulo 06: IA generativa e agentes ===
+langchain>=0.2
+
+# === Módulo 07: grafos e GNNs ===
+networkx>=3.2
+# torch-geometric        # instalar conforme a versão do torch/CUDA
+
+# === Módulo 08: MLOps ===
+mlflow>=2.12
+
+# === Módulo 09: IA responsável ===
+shap>=0.45
