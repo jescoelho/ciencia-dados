@@ -9,6 +9,12 @@
 
 ---
 
+## 🧠 O que é Inteligência Artificial?
+
+Inteligência Artificial (IA) é o campo que estuda como fazer máquinas executarem tarefas que exigiriam inteligência humana, como reconhecer padrões, tomar decisões e usar linguagem. Seu principal subcampo é o **Machine Learning**, no qual modelos aprendem padrões a partir de dados em vez de seguir regras programadas manualmente; dentro dele, o **Deep Learning** usa redes neurais profundas para problemas complexos como visão e linguagem. A partir dessas bases surgem áreas aplicadas como **NLP e LLMs** (processamento de linguagem e grandes modelos de linguagem), **Visão Computacional**, **Aprendizado por Reforço** e a **IA Generativa e Agentes**. Sustentando tudo estão os **fundamentos matemáticos** (álgebra linear, cálculo, probabilidade) e disciplinas de engenharia e governança como **MLOps** e **IA Responsável**. Este repositório percorre justamente esse caminho — dos fundamentos aos tópicos avançados e projetos práticos.
+
+---
+
 ## 🗺️ Roadmap e Progresso
 
 | #  | Módulo                        | Status          |
@@ -67,7 +73,6 @@ pip install -r requirements.txt
 **Jéssica Coelho**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Conectar-0077B5?logo=linkedin)](https://www.linkedin.com/in/jessicacoelhoalves)
-[![GitHub](https://img.shields.io/badge/GitHub-Perfil-181717?logo=github)](https://github.com/jescoelho)
 
 ---
 
