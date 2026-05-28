@@ -26,8 +26,8 @@ Aprendizado supervisionado, não supervisionado e feature engineering com scikit
 | `supervisionado/notas/02_arvores_random_forest.md` | Árvores de Decisão e Random Forest |
 | `supervisionado/notas/03_svm.md` | Support Vector Machines (SVM) |
 | `supervisionado/notas/04_gradient_boosting.md` | Gradient Boosting |
-| `feature_engineering/notebooks/01_preparacao_dados_feature_engineering.ipynb` | Preparacao dados feature engineering |
-| `supervisionado/notebooks/06_regressao_linear_parte1.ipynb` | Regressao linear parte1 |
+| `feature_engineering/analises/01_preparacao_dados_feature_engineering.ipynb` | Preparacao dados feature engineering |
+| `supervisionado/analises/06_regressao_linear_parte1.ipynb` | Regressao linear parte1 |
 
 ## 💡 Anotações Pessoais
 

@@ -19,7 +19,7 @@ Seleção de variáveis, encodings, imputação e pipelines sem vazamento de dad
 |---------|-----------|
 | `notas/01_selecao_features.md` | Seleção de Features |
 | `notas/02_encodings_imputacao.md` | Encodings e Imputação |
-| `notebooks/01_preparacao_dados_feature_engineering.ipynb` | Preparacao dados feature engineering |
+| `analises/01_preparacao_dados_feature_engineering.ipynb` | Preparacao dados feature engineering |
 
 ## 💡 Anotações Pessoais
 

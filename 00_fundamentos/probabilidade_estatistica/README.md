@@ -20,11 +20,11 @@ Probabilidade, Bayes, distribuições e estimação (MLE/MAP). Inclui notebooks 
 | `notas/01_probabilidade_bayes.md` | Probabilidade e Teorema de Bayes |
 | `notas/02_distribuicoes.md` | Distribuições de Probabilidade |
 | `notas/03_mle_map.md` | Estimação MLE e MAP |
-| `notebooks/01_tipos_de_variaveis_fundos_cvm.ipynb` | Tipos de variaveis fundos cvm |
-| `notebooks/02_medidas_posicao.ipynb` | Medidas posicao |
-| `notebooks/03_medias_distribuicoes_probabilidade.ipynb` | Medias distribuicoes probabilidade |
-| `notebooks/04_probabilidade_distribuicoes_testes_modelos.ipynb` | Probabilidade distribuicoes testes modelos |
-| `notebooks/05_outliers_correlacao_causalidade_hipoteses.ipynb` | Outliers correlacao causalidade hipoteses |
+| `analises/01_tipos_de_variaveis_fundos_cvm.ipynb` | Tipos de variaveis fundos cvm |
+| `analises/02_medidas_posicao.ipynb` | Medidas posicao |
+| `analises/03_medias_distribuicoes_probabilidade.ipynb` | Medias distribuicoes probabilidade |
+| `analises/04_probabilidade_distribuicoes_testes_modelos.ipynb` | Probabilidade distribuicoes testes modelos |
+| `analises/05_outliers_correlacao_causalidade_hipoteses.ipynb` | Outliers correlacao causalidade hipoteses |
 
 ## 💡 Anotações Pessoais
 

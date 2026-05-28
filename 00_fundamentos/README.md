@@ -28,11 +28,11 @@ Construir a base matemática e computacional que sustenta todo o resto: álgebra
 | `probabilidade_estatistica/notas/03_mle_map.md` | Estimação MLE e MAP |
 | `python_para_dados/notas/01_numpy_essencial.md` | NumPy Essencial |
 | `python_para_dados/notas/02_pandas_essencial.md` | Pandas Essencial |
-| `probabilidade_estatistica/notebooks/01_tipos_de_variaveis_fundos_cvm.ipynb` | Tipos de variaveis fundos cvm |
-| `probabilidade_estatistica/notebooks/02_medidas_posicao.ipynb` | Medidas posicao |
-| `probabilidade_estatistica/notebooks/03_medias_distribuicoes_probabilidade.ipynb` | Medias distribuicoes probabilidade |
-| `probabilidade_estatistica/notebooks/04_probabilidade_distribuicoes_testes_modelos.ipynb` | Probabilidade distribuicoes testes modelos |
-| `probabilidade_estatistica/notebooks/05_outliers_correlacao_causalidade_hipoteses.ipynb` | Outliers correlacao causalidade hipoteses |
+| `probabilidade_estatistica/analises/01_tipos_de_variaveis_fundos_cvm.ipynb` | Tipos de variaveis fundos cvm |
+| `probabilidade_estatistica/analises/02_medidas_posicao.ipynb` | Medidas posicao |
+| `probabilidade_estatistica/analises/03_medias_distribuicoes_probabilidade.ipynb` | Medias distribuicoes probabilidade |
+| `probabilidade_estatistica/analises/04_probabilidade_distribuicoes_testes_modelos.ipynb` | Probabilidade distribuicoes testes modelos |
+| `probabilidade_estatistica/analises/05_outliers_correlacao_causalidade_hipoteses.ipynb` | Outliers correlacao causalidade hipoteses |
 
 ## 💡 Anotações Pessoais
 
