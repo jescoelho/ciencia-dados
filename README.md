@@ -47,22 +47,15 @@ Inteligência Artificial (IA) é o campo que estuda como fazer máquinas executa
 
 - Cada módulo tem seu próprio `README.md` com objetivos, referências e pré-requisitos.
 - `notas/` contém resumos conceituais em Markdown.
-- `notebooks/` contém implementações práticas em Jupyter.
-- `10_projetos/` contém aplicações end-to-end que integram vários módulos.
+- `analises/` contém análises práticas com outputs visíveis.
 
 ```
-estudos-ia/
+ciencia-dados/
 ├── 00_fundamentos/          # Álgebra linear, cálculo, probabilidade, Python
-├── 01_machine_learning/     # Supervisionado, não supervisionado, feature engineering
-├── 02_deep_learning/        # Redes neurais, CNN, Transformers, generativos
-├── 03_nlp/                  # Representação de texto, LLMs, tarefas clássicas
-├── 04_visao_computacional/  # Detecção, segmentação, visão-linguagem
-├── 05_aprendizado_por_reforco/
-├── 06_ia_generativa_agentes/ # RAG e agentes
-├── 07_grafos_e_gnns/
-├── 08_mlops/
-├── 09_ia_responsavel/
-└── 10_projetos/             # Projetos práticos end-to-end
+└── 01_machine_learning/
+    └── supervisionado/
+        ├── notas/           # Resumos conceituais
+        └── analises/        # Análises com CRISP-DM e diagnóstico estatístico
 ```
 
 ---

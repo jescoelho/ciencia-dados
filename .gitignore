@@ -21,6 +21,7 @@ env/
 
 # Config local do Claude Code
 .claude/
+CLAUDE.md
 
 # Módulos ainda não iniciados
 02_deep_learning/
