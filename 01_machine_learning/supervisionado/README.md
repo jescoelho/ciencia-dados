@@ -29,7 +29,7 @@ Regressão e classificação: lineares/logística, árvores, random forest, SVM 
 
 | Arquivo | Pergunta de negócio | Técnicas |
 |---------|---------------------|----------|
-| `notebooks/01_predicao_choque_itub4.ipynb` | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | CAPM via OLS, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
+| `analises/01_predicao_choque_itub4.md` | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | CAPM via OLS, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
 
 ## 💡 Anotações Pessoais
 

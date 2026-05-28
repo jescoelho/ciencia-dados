@@ -21,3 +21,14 @@ env/
 
 # Config local do Claude Code
 .claude/
+
+# Módulos ainda não iniciados
+02_deep_learning/
+03_nlp/
+04_visao_computacional/
+05_aprendizado_por_reforco/
+06_ia_generativa_agentes/
+07_grafos_e_gnns/
+08_mlops/
+09_ia_responsavel/
+10_projetos/

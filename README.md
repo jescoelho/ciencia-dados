@@ -39,7 +39,7 @@ Inteligência Artificial (IA) é o campo que estuda como fazer máquinas executa
 
 | Notebook | Tema | Técnicas |
 |---|---|---|
-| [Previsão de Choque — ITUB4](01_machine_learning/supervisionado/notebooks/01_predicao_choque_itub4.ipynb) | CAPM via OLS: dado queda de 3% no Ibovespa, quanto cai o ITUB4? | Regressão linear, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
+| [Previsão de Choque — ITUB4](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | CAPM via OLS: dado queda de 3% no Ibovespa, quanto cai o ITUB4? | Regressão linear, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
 
 ---
 
