@@ -33,6 +33,16 @@ Inteligência Artificial (IA) é o campo que estuda como fazer máquinas executa
 
 ---
 
+## 📒 Conteúdo disponível
+
+### Módulo 01 — Machine Learning · Supervisionado
+
+| Notebook | Tema | Técnicas |
+|---|---|---|
+| [Previsão de Choque — ITUB4](01_machine_learning/supervisionado/notebooks/01_predicao_choque_itub4.ipynb) | CAPM via OLS: dado queda de 3% no Ibovespa, quanto cai o ITUB4? | Regressão linear, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
+
+---
+
 ## 🔧 Como usar este repositório
 
 - Cada módulo tem seu próprio `README.md` com objetivos, referências e pré-requisitos.
