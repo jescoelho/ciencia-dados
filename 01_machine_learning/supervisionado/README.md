@@ -13,4 +13,4 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 
 ## Notas de estudo
 
-Regressão linear e logística · Regularização · Árvores de decisão · Random Forest · SVM · Gradient Boosting
+Regressão linear e logística · Regularização
