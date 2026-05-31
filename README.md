@@ -10,21 +10,21 @@ Organizado em três camadas: fundamentos matemáticos necessários, pilares de I
 
 ---
 
-## Análises disponíveis
-
-| # | Pergunta de negócio | Método |
-|---|---------------------|--------|
-| [01](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | OLS, diagnóstico de premissas |
-| [02](01_machine_learning/supervisionado/analises/02_regularizacao_multifator_itub4.md) | Quais fatores de risco explicam o retorno em excesso do ITUB4? | Lasso · Ridge · Elastic Net, Fama-French 5 fatores |
-
----
-
 ## Módulos
 
 | Camada | Módulo | Status |
 |--------|--------|--------|
 | Fundamentos | 00 · Probabilidade, estatística, álgebra linear, cálculo, Python | Em andamento |
 | Pilares | 01 · Machine Learning | Em andamento |
+
+---
+
+## Análises disponíveis
+
+| # | Pergunta de negócio | Método |
+|---|---------------------|--------|
+| [01](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | OLS, diagnóstico de premissas |
+| [02](01_machine_learning/supervisionado/analises/02_regularizacao_multifator_itub4.md) | Quais fatores de risco explicam o retorno em excesso do ITUB4? | Lasso · Ridge · Elastic Net, Fama-French 5 fatores |
 
 ---
 
