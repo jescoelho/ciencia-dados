@@ -1,36 +1,14 @@
-# 🎯 Módulo: Aprendizado Supervisionado
+# Aprendizado Supervisionado
 
-## 🎯 Objetivos
+Regressão e classificação aplicadas a problemas de risco e tesouraria bancários. Cada análise parte de uma pergunta de negócio concreta — ITUB4 como caso de estudo — e documenta premissas, limitações e próximos passos.
 
-Regressão e classificação: lineares/logística, árvores, random forest, SVM e gradient boosting. Inclui o notebook de Beta CAPM (regressão linear aplicada).
+## Análises
 
-## ✅ Pré-requisitos
+| # | Pergunta de negócio | Método |
+|---|---------------------|--------|
+| [01](analises/01_predicao_choque_itub4.md) | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | OLS, diagnóstico de premissas |
+| [02](analises/02_regularizacao_multifator_itub4.ipynb) | Quais fatores de risco explicam o retorno em excesso do ITUB4? | Lasso · Ridge · Elastic Net, Fama-French 5 fatores |
 
-- [ ] Módulo 00 — Fundamentos concluído
-- [ ] Python básico
+## Notas de estudo
 
-## 📖 Referências
-
-- [An Introduction to Statistical Learning](https://www.statlearning.com/)
-
-## 🗂️ Conteúdo
-
-### Notas
-
-| Arquivo | Descrição |
-|---------|-----------|
-| `notas/01_regressao_linear_logistica.md` | Regressão Linear e Logística |
-| `notas/02_regularizacao.md` | Regularização (Ridge, Lasso, Elastic Net) |
-| `notas/03_arvores_random_forest.md` | Árvores de Decisão e Random Forest |
-| `notas/04_svm.md` | Support Vector Machines (SVM) |
-| `notas/05_gradient_boosting.md` | Gradient Boosting |
-
-### Notebooks
-
-| Arquivo | Pergunta de negócio | Técnicas |
-|---------|---------------------|----------|
-| `analises/01_predicao_choque_itub4.md` | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | CAPM via OLS, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
-
-## 💡 Anotações Pessoais
-
-> Espaço livre para insights, dificuldades encontradas e conexões com outros módulos.
+Regressão linear e logística · Regularização · Árvores de decisão · Random Forest · SVM · Gradient Boosting

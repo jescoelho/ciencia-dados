@@ -1,84 +1,41 @@
-# 🤖 Estudos em Inteligência Artificial
+# ciencia-dados
 
-> Documentação pessoal da minha jornada de estudos em IA — dos fundamentos matemáticos aos modelos mais avançados e projetos práticos.
+Estudos e análises aplicadas a **risco e tesouraria bancários** — dos fundamentos matemáticos a modelos de machine learning.
+
+O fio condutor são os problemas do dia a dia de um banco: risco de mercado, sensibilidade a fatores, gestão de carteira. Quando um ativo concreto é necessário, ITUB4 serve de caso de estudo por sua liquidez e representatividade no setor.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange?logo=jupyter)](https://jupyter.org/)
 [![Status](https://img.shields.io/badge/Status-Em%20desenvolvimento-yellow)]()
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
 
-## 🧠 O que é Inteligência Artificial?
+## Análises disponíveis
 
-Inteligência Artificial (IA) é o campo que estuda como fazer máquinas executarem tarefas que exigiriam inteligência humana, como reconhecer padrões, tomar decisões e usar linguagem. Seu principal subcampo é o **Machine Learning**, no qual modelos aprendem padrões a partir de dados em vez de seguir regras programadas manualmente; dentro dele, o **Deep Learning** usa redes neurais profundas para problemas complexos como visão e linguagem. A partir dessas bases surgem áreas aplicadas como **NLP e LLMs** (processamento de linguagem e grandes modelos de linguagem), **Visão Computacional**, **Aprendizado por Reforço** e a **IA Generativa e Agentes**. Sustentando tudo estão os **fundamentos matemáticos** (álgebra linear, cálculo, probabilidade) e disciplinas de engenharia e governança como **MLOps** e **IA Responsável**. Este repositório percorre justamente esse caminho — dos fundamentos aos tópicos avançados e projetos práticos.
-
----
-
-## 🗺️ Roadmap e Progresso
-
-| #  | Módulo                        | Status          |
-|----|-------------------------------|-----------------|
-| 00 | Fundamentos Matemáticos       | 🔄 Em andamento |
-| 01 | Machine Learning              | 🔄 Em andamento |
-| 02 | Deep Learning                 | ⏳ Pendente     |
-| 03 | NLP e LLMs                    | ⏳ Pendente     |
-| 04 | Visão Computacional           | ⏳ Pendente     |
-| 05 | Aprendizado por Reforço       | ⏳ Pendente     |
-| 06 | IA Generativa e Agentes       | ⏳ Pendente     |
-| 07 | Grafos e GNNs                 | ⏳ Pendente     |
-| 08 | MLOps                         | ⏳ Pendente     |
-| 09 | IA Responsável                | ⏳ Pendente     |
-| 10 | Projetos Práticos             | 🔄 Contínuo     |
+| # | Pergunta de negócio | Método |
+|---|---------------------|--------|
+| [01](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | OLS, diagnóstico de premissas |
+| [02](01_machine_learning/supervisionado/analises/02_regularizacao_multifator_itub4.ipynb) | Quais fatores de risco explicam o retorno em excesso do ITUB4? | Lasso · Ridge · Elastic Net, Fama-French 5 fatores |
 
 ---
 
-## 📒 Conteúdo disponível
+## Módulos
 
-### Módulo 01 — Machine Learning · Supervisionado
-
-| Notebook | Tema | Técnicas |
-|---|---|---|
-| [Previsão de Choque — ITUB4](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | CAPM via OLS: dado queda de 3% no Ibovespa, quanto cai o ITUB4? | Regressão linear, erros HC3, RESET, Jarque-Bera, Breusch-Pagan, Durbin-Watson, Cook's Distance, beta rolling, IP bootstrap |
-
----
-
-## 🔧 Como usar este repositório
-
-- Cada módulo tem seu próprio `README.md` com objetivos, referências e pré-requisitos.
-- `notas/` contém resumos conceituais em Markdown.
-- `analises/` contém análises práticas com outputs visíveis.
-
-```
-ciencia-dados/
-├── 00_fundamentos/          # Álgebra linear, cálculo, probabilidade, Python
-└── 01_machine_learning/
-    └── supervisionado/
-        ├── notas/           # Resumos conceituais
-        └── analises/        # Análises com CRISP-DM e diagnóstico estatístico
-```
+| # | Módulo | Status |
+|---|--------|--------|
+| 00 | Fundamentos (probabilidade, estatística, álgebra linear, Python) | Em andamento |
+| 01 | Machine Learning supervisionado | Em andamento |
+| 02–10 | Deep Learning, NLP, Visão, RL, IA Generativa, MLOps... | Pendente |
 
 ---
 
-## 📦 Ambiente
+## Stack
 
-```bash
-python -m venv .venv
-source .venv/bin/activate     # Linux/macOS
-.venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-```
+Python · scikit-learn · statsmodels · yfinance · NEFIN/USP · pandas · matplotlib
 
 ---
 
-## ✍️ Autora
+## Autora
 
-**Jéssica Coelho**
-
+**Jéssica Coelho**  
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Conectar-0077B5?logo=linkedin)](https://www.linkedin.com/in/jessicacoelhoalves)
-
----
-
-## 📄 Licença
-
-Distribuído sob a licença MIT. Veja [`LICENSE`](LICENSE) para mais informações.

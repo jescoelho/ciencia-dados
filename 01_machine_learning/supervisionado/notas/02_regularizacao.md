@@ -24,7 +24,7 @@ O critério geral da regularização é:
 
 $$\hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \left[ \text{SSR}(\boldsymbol{\beta}) + \lambda \cdot \Omega(\boldsymbol{\beta}) \right]$$
 
-onde $\Omega(\boldsymbol{\beta})$ é a função de penalidade aplicada aos coeficientes, e $\lambda \geq 0$ é o **hiperparâmetro de regularização**, que controla o peso relativo da penalidade em relação ao erro de ajuste.
+onde $\Omega(\boldsymbol{\beta})$ é a função de penalidade aplicada aos coeficientes, e $\lambda \geq 0$ é o **hiperparâmetro de regularização**, que controla o peso relativo da penalidade em relação ao erro de ajuste. Diferentemente dos parâmetros $\boldsymbol{\beta}$ — que o modelo **estima a partir dos dados** — $\lambda$ é fixado antes do ajuste e governa como o aprendizado acontece. Parâmetros descrevem a relação entre preditores e resposta; hiperparâmetros controlam o processo de estimação.
 
 Quando $\lambda = 0$, a penalidade desaparece e o critério se reduz ao OLS puro. Quando $\lambda \to \infty$, todos os coeficientes são forçados a zero. Para valores intermediários, o modelo faz um trade-off: aceita algum aumento no SSR em troca de coeficientes menores.
 
@@ -33,8 +33,8 @@ A escolha de $\Omega(\boldsymbol{\beta})$ define o método:
 | Penalidade | Norma | Método |
 |---|---|---|
 | $\displaystyle\sum_{j=1}^{p} \beta_j^2$ | L2 | Ridge |
-| $\displaystyle\sum_{j=1}^{p} \|\beta_j\|$ | L1 | Lasso |
-| $\displaystyle\alpha \sum_j \|\beta_j\| + (1-\alpha)\sum_j \beta_j^2$ | L1 + L2 | Elastic Net |
+| $\displaystyle\sum_{j=1}^{p} |\beta_j|$ | L1 | Lasso |
+| $\displaystyle\alpha \sum_j |\beta_j| + (1-\alpha)\sum_j \beta_j^2$ | L1 + L2 | Elastic Net |
 
 Em todos os casos, o intercepto $\beta_0$ é excluído da penalidade — penalizá-lo distorceria a estimação da média da resposta sem nenhum ganho de regularização.
 
@@ -50,7 +50,7 @@ A penalidade Ridge é a soma dos quadrados dos coeficientes:
 
 $$\hat{\boldsymbol{\beta}}_{\text{ridge}} = \arg\min_{\boldsymbol{\beta}} \left[ \sum_{i=1}^{n}(y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^{p} \beta_j^2 \right]$$
 
-Como a penalidade é diferenciável em todo ponto, o problema tem solução fechada. Igualando o gradiente a zero:
+Como tanto o SSR quanto a penalidade L2 são quadráticos em $\boldsymbol{\beta}$, o gradiente da função objetivo é linear em $\boldsymbol{\beta}$ — igualar a zero produz um sistema linear com solução analítica direta:
 
 $$\hat{\boldsymbol{\beta}}_{\text{ridge}} = (X^\top X + \lambda I)^{-1} X^\top y$$
 
@@ -58,7 +58,7 @@ onde $I$ é a matriz identidade de dimensão $p \times p$. O termo $\lambda I$ a
 
 A primeira é **numérica**: mesmo quando $X^\top X$ é singular — o que ocorre exatamente sob multicolinearidade perfeita — a soma $X^\top X + \lambda I$ é sempre invertível para qualquer $\lambda > 0$. Ridge resolve o problema de multicolinearidade de forma direta, não como efeito colateral.
 
-A segunda é o **shrinkage**: comparado ao OLS, os coeficientes Ridge são encolhidos em direção a zero de forma proporcional à sua magnitude. Mas nenhum coeficiente chega a zero exatamente. Por quê? A derivada da penalidade L2 em relação a $\beta_j$ é $2\lambda\beta_j$ — vai a zero conforme $\beta_j \to 0$. O custo marginal de manter um coeficiente pequeno também é pequeno, e como removê-lo sempre eleva o SSR em alguma quantidade, o modelo prefere mantê-lo com valor pequeno mas não nulo. Ridge encolhe, mas não elimina.
+A segunda é o **shrinkage**: comparado ao OLS, cada coeficiente Ridge é reduzido por um fator menor que 1 — determinado por $\lambda$ e pela estrutura de correlação entre os preditores. Mas nenhum coeficiente chega a zero exatamente. Por quê? A derivada da penalidade L2 em relação a $\beta_j$ é $2\lambda\beta_j$ — vai a zero conforme $\beta_j \to 0$. O custo marginal de manter um coeficiente pequeno também é pequeno, e como removê-lo sempre eleva o SSR em alguma quantidade, o modelo prefere mantê-lo com valor pequeno mas não nulo. Ridge encolhe, mas não elimina.
 
 Do ponto de vista bayesiano, Ridge equivale a estimar os coeficientes por máxima a posteriori (MAP) com um prior gaussiano centrado em zero, $\beta_j \sim \mathcal{N}(0, \sigma^2/\lambda)$. Quanto maior $\lambda$, mais concentrado é o prior e mais forte o encolhimento.
 
@@ -94,11 +94,35 @@ $$\hat{\boldsymbol{\beta}}_{\text{enet}} = \arg\min_{\boldsymbol{\beta}} \left[ 
 
 onde $\alpha \in [0, 1]$ controla o mix entre as duas penalidades. Quando $\alpha = 1$, recuperamos o Lasso puro. Quando $\alpha = 0$, recuperamos o Ridge puro.
 
+![Regiões de restrição: Ridge, Elastic Net e Lasso](assets/02_regularizacao_elastic_net.png)
+
+As três curvas representam as regiões de restrição no espaço dos coeficientes $(\beta_1, \beta_2)$: o círculo (Ridge, azul), o losango com cantos arredondados (Elastic Net com $\alpha=0{,}5$, verde) e o losango com cantos agudos (Lasso, vermelho). Os contornos tracejados são curvas de nível do SSR, com o mínimo irrestrito (OLS) fora da região à direita. Os pontos marcam onde o menor contorno de SSR toca cada região — a solução regularizada de cada método. A forma da região é o que determina o comportamento: o círculo nunca força coeficientes a zero, o losango agudo concentra soluções nos cantos dos eixos, e o losango arredondado equilibra os dois.
+
 A vantagem é direta: a componente L1 mantém a capacidade de zerar coeficientes irrelevantes. A componente L2 estabiliza os coeficientes dentro de grupos de preditores correlacionados — em vez de selecionar arbitrariamente um, distribui o peso entre eles. O resultado é um modelo esparso mas estável.
 
 O preço é a adição de um segundo hiperparâmetro: agora é preciso calibrar tanto $\lambda$ quanto $\alpha$. Na prática, $\alpha$ costuma ser fixado por escolha do analista — com base em se esparsidade é prioritária — e apenas $\lambda$ é calibrado por validação cruzada. Quando ambos são desconhecidos, o grid de busca cresce bidimensionalmente.
 
-Com os três métodos caracterizados, a questão que resta é: como escolhemos $\lambda$ na prática?
+Com os três métodos da família penalizada caracterizados para o contexto linear, a pergunta natural é: a mesma estrutura de penalidade funciona quando o problema é de classificação — e o que muda na prática?
+
+---
+
+## Regularização na regressão logística
+
+Os três métodos foram apresentados usando o SSR como função de custo — o contexto da regressão linear. A mesma estrutura se aplica à regressão logística: basta substituir o SSR pela log-loss negativa:
+
+$$\hat{\boldsymbol{\beta}} = \arg\min_{\boldsymbol{\beta}} \left[ -\ell(\boldsymbol{\beta}) + \lambda \cdot \Omega(\boldsymbol{\beta}) \right]$$
+
+onde $-\ell(\boldsymbol{\beta})$ é a log-loss — o mesmo critério que o MLE minimiza, agora com uma penalidade adicionada. As mesmas três penalidades se aplicam com os mesmos efeitos: Ridge encolhe sem zerar, Lasso produz esparsidade, Elastic Net equilibra os dois.
+
+Há, porém, duas diferenças práticas importantes em relação ao caso linear.
+
+**Sem solução fechada, mesmo para Ridge.** Na regressão linear, Ridge tem solução analítica: $(X^\top X + \lambda I)^{-1} X^\top y$. Na logística, a log-loss não é quadrática nos parâmetros — a sigmoide dentro do logaritmo cria uma estrutura não-linear. Mesmo com penalidade L2, a solução exige otimização iterativa. A boa notícia é que log-loss + L2 continua sendo estritamente convexa, garantindo um único mínimo global e convergência rápida.
+
+**L2 resolve a separação perfeita.** Quando um preditor separa as duas classes sem nenhum erro, o MLE diverge — os coeficientes crescem indefinidamente porque a log-verossimilhança continua subindo conforme $|\hat{\beta}| \to \infty$, sem atingir máximo finito. A penalidade L2 adiciona um custo crescente a coeficientes grandes e impede essa divergência: com $\lambda > 0$, o modelo faz um trade-off entre ajustar os dados e manter os coeficientes finitos, e a otimização converge. É o mesmo mecanismo de shrinkage do Ridge linear, agora resolvendo um problema exclusivo da logística.
+
+Uma ressalva de interpretação: após regularização, os coeficientes são viesados em direção a zero por construção — odds ratios calculados a partir de um modelo regularizado são atenuados em relação aos valores verdadeiros. Modelos regularizados são preferidos para **predição**; para **inferência causal** sobre os coeficientes, a regularização requer ajuste adicional (como o *debiased Lasso*, mencionado nas dúvidas em aberto).
+
+Com os métodos de penalidade caracterizados para ambos os contextos, a questão que resta é: como escolhemos $\lambda$ na prática?
 
 ---
 
@@ -120,6 +144,10 @@ Cada linha colorida representa um preditor; o eixo horizontal é $\lambda$ cresc
 
 Na prática, o scikit-learn oferece `RidgeCV`, `LassoCV` e `ElasticNetCV`, que percorrem um grid de valores de $\lambda$ e retornam o melhor por validação cruzada interna. Para o Elastic Net, o analista ainda precisa definir $\alpha$.
 
+Na regressão logística, a mesma estrutura de validação cruzada se aplica — mas a métrica de avaliação precisa mudar. Usar MSE para avaliar probabilidades preditas seria incoerente: o modelo não prevê valores contínuos, prevê a probabilidade de pertencimento a uma classe. A métrica natural é a **log-loss** — a mesma função que o modelo minimiza no treino. Isso garante alinhamento entre calibração e otimização: um $\lambda$ que reduz a log-loss de validação está diretamente reduzindo o que importa para o modelo. Quando o objetivo for discriminação entre classes independentemente das probabilidades absolutas — por exemplo, rankear candidatos ao crédito — a **AUC** é a alternativa mais comum: ela mede a capacidade do modelo de ordenar corretamente os exemplos positivos acima dos negativos, sem depender de um limiar fixo. No scikit-learn, a métrica de CV é especificada pelo parâmetro `scoring` em `LogisticRegressionCV`.
+
+Saber calibrar $\lambda$ resolve a escolha do grau de regularização — mas há cenários em que a penalidade não é suficiente, independentemente do valor escolhido.
+
 ---
 
 ## Premissas e limitações
@@ -140,27 +168,5 @@ A regularização resolve um problema específico — coeficientes livres demais
 
 ## Conexão com outros tópicos
 
-- **Regressão linear e logística** (`01_regressao_linear_logistica.md`): o OLS é o caso especial $\lambda = 0$. O trade-off viés-variância e o problema de separação perfeita em logística foram a motivação para esta nota.
+- **Regressão linear e logística** (`01_regressao_linear_logistica.md`): o OLS é o caso especial $\lambda = 0$; a regularização estende os dois modelos para cenários onde coeficientes livres generalizam mal.
 - **Gradient Boosting e Random Forest**: lidam com overfitting via randomização e ensemble em vez de penalidade explícita — uma abordagem distinta para o mesmo problema central.
-- **Séries temporais**: recalibração de $\lambda$ sob não-estacionariedade requer validação temporal (expanding/sliding window), não $k$-fold padrão.
-
----
-
-## Dúvidas em aberto
-
-- [ ] Como o *debiased Lasso* reconstrói a inferência válida após seleção de variáveis — e em que condições isso é válido?
-- [ ] Existe um critério analítico (tipo AIC/BIC) para escolher $\lambda$ sem validação cruzada — útil quando o dataset é pequeno demais para dividir em folds?
-- [ ] Em séries financeiras com heterocedasticidade, a penalidade deveria ser ponderada pela variância local dos coeficientes?
-
----
-
-## Checklist de entendimento
-
-- [ ] Consigo explicar por que coeficientes OLS crescem arbitrariamente e como a penalidade impede isso
-- [ ] Sei escrever o critério geral $\text{SSR} + \lambda \cdot \Omega(\boldsymbol{\beta})$ e identificar o que cada termo controla
-- [ ] Entendo por que as variáveis preditoras devem ser padronizadas antes de regularizar
-- [ ] Sei reconhecer a solução fechada do Ridge: $\hat{\boldsymbol{\beta}} = (X^\top X + \lambda I)^{-1} X^\top y$
-- [ ] Consigo explicar geometricamente por que Ridge encolhe mas não zera, e Lasso zera
-- [ ] Entendo a diferença entre $\lambda_{\min}$ e $\lambda_{\text{1se}}$ e quando prefiro cada um
-- [ ] Sei identificar quando usar Ridge, Lasso ou Elastic Net dado o contexto do problema
-- [ ] Entendo por que p-valores OLS não valem diretamente após regularização

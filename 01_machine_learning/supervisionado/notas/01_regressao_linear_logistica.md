@@ -43,6 +43,8 @@ O modelo separa dois mundos: os **parâmetros verdadeiros** $(\beta_0, \beta_1)$
 
 > O modelo postula que existe uma relação verdadeira no mundo — uma reta "real" com parâmetros $\beta_0$ e $\beta_1$ fixos — mas nunca temos acesso direto a ela. Só observamos dados, que são realizações ruidosas dessa relação (por causa do $\varepsilon_i$). O que calculamos, $\hat{\beta}_0$ e $\hat{\beta}_1$, são estimativas baseadas na amostra disponível. Se coletássemos outra amostra, obteríamos estimativas ligeiramente diferentes — mas os parâmetros verdadeiros continuariam os mesmos. É a mesma lógica de medir a temperatura corporal: cada medição varia por ruído do termômetro, mas a temperatura verdadeira é uma só.
 
+A mesma separação vale para os erros. O **erro** $\varepsilon_i$ é inobservável — ele depende dos $\beta$ verdadeiros, que nunca conhecemos. O que calculamos após o ajuste é o **resíduo** $e_i = y_i - \hat{y}_i$ — a estimativa observável de $\varepsilon_i$, obtida substituindo os parâmetros verdadeiros pelos estimados. As premissas do modelo (independência, homocedasticidade, normalidade) são enunciadas sobre $\varepsilon_i$, mas verificadas empiricamente através de $e_i$.
+
 ---
 
 ### Estimação: encontrando os β
@@ -279,6 +281,12 @@ $$\bar{R}^2 = 1 - \frac{(1 - R^2)(n - 1)}{n - p - 1}$$
 
 onde $n$ é o número de observações e $p$ o número de preditores. O fator $\frac{n-1}{n-p-1}$ cresce com $p$ — quanto mais preditores, maior a penalidade. Se um novo preditor não contribuir o suficiente para reduzir os resíduos, o $\bar{R}^2$ cai. Ao contrário do $R^2$, o $\bar{R}^2$ pode diminuir quando adicionamos variáveis pouco informativas.
 
+Mesmo assim, o $\bar{R}^2$ tem seus próprios limites em três situações:
+
+- **Transformações de $y$**: se um modelo prevê $\log(y)$ e outro prevê $y$ diretamente, os dois $\bar{R}^2$ medem proporções de variância em escalas diferentes — comparar os valores é como comparar preços em reais e dólares sem converter. A comparação correta exige calcular o erro dos dois modelos na mesma escala, por exemplo o RMSE de $y$.
+- **Seleção entre muitos candidatos**: quando testamos dezenas de modelos e escolhemos o de maior $\bar{R}^2$, o valor selecionado tende a ser inflado por coincidência — estamos fazendo seleção, não estimação. Métricas baseadas em validação cruzada ou critérios de informação como AIC e BIC são mais honestas nesse cenário.
+- **Séries temporais com tendência comum**: se $y$ e os preditores crescem juntos ao longo do tempo por razões externas (inflação, crescimento econômico), o $\bar{R}^2$ pode ser alto mesmo sem relação causal. O modelo captura a tendência compartilhada, não o sinal.
+
 ---
 
 ### Trade-off viés-variância
@@ -329,7 +337,7 @@ O OLS é o ponto de partida, mas cada limitação que ele encontra deu origem a 
 - **Ridge e Lasso** — quando há muitos preditores ou multicolinearidade, adicionam uma penalidade aos coeficientes para controlar o overfitting. Aprofundado em `02_regularizacao.md`.
 - **GLS** — quando os resíduos têm variância não constante ou são correlacionados, pondera as observações para restaurar as premissas do OLS.
 - **Regressão Quantílica** — quando outliers distorcem a média ou o interesse é modelar outro ponto da distribuição de $y$, substitui o critério quadrático pelo valor absoluto dos resíduos.
-- **Gradiente Descendente** — quando $n$ ou $p$ são grandes demais para inverter $X^\top X$, encontra os mesmos $\hat{\beta}$ de forma iterativa, sem fórmula fechada.
+- **Gradiente Descendente** — quando $n$ ou $p$ são grandes demais, encontra os mesmos $\hat{\beta}$ de forma iterativa, sem fórmula fechada. A comparação prática com o OLS analítico envolve três eixos: **custo computacional** (calcular $X^\top X$ custa $O(np^2)$ operações e invertê-la $O(p^3)$ — com milhares de preditores isso fica proibitivo; o GD gasta $O(np)$ por iteração); **escalabilidade** (OLS precisa que $X^\top X$ caiba inteiramente na memória, o que é inviável para dados muito grandes; o GD pode processar subconjuntos dos dados, os chamados mini-batches); **estabilidade numérica** (inverter $X^\top X$ diretamente pode ser instável quando há multicolinearidade; o GD, especialmente com regularização, lida melhor com esse cenário). Em problemas com $p$ de centenas a poucos milhares e $n$ manejável, o OLS analítico é preferível — entrega a solução exata de uma vez. Com $p$ ou $n$ muito grandes, o GD é o único caminho viável.
 
 ---
 
@@ -401,9 +409,15 @@ onde $p_i = \sigma(\beta_0 + \beta_1 x_i)$. Maximizar $\ell$ é equivalente a mi
 
 Diferentemente do OLS, essa função não tem solução fechada: a sigmoide dentro do logaritmo cria uma equação transcendental sem forma analítica. Os parâmetros são encontrados por otimização iterativa — tipicamente **gradiente descendente** ou métodos de segunda ordem como Newton-Raphson, que convergem em poucas iterações porque a log-verossimilhança é côncava (única solução global).
 
+Para ver como a otimização funciona concretamente, vale calcular o gradiente da log-verossimilhança em relação ao vetor de parâmetros. Derivando $\ell$ em relação a $\boldsymbol{\beta}$ e usando a propriedade da sigmoide $\sigma'(z) = \sigma(z)(1 - \sigma(z))$:
+
+$$\nabla_{\boldsymbol{\beta}}\,\ell = X^\top(y - \hat{p})$$
+
+onde $y$ é o vetor de rótulos binários e $\hat{p}$ é o vetor de probabilidades previstas. O resultado espelha o que acontece no OLS — onde o gradiente do SSR também tem a forma $X^\top e$ — mas agora os "resíduos" são diferenças entre rótulos e probabilidades, não entre valores contínuos. Cada passo do gradiente descendente empurra os parâmetros na direção que reduz esses resíduos probabilísticos.
+
 ---
 
-### Interpretando os coeficientes
+### Interpretando os coeficientes e avaliando sua significância
 
 Com os parâmetros estimados em mãos, a curva ajustada é:
 
@@ -420,6 +434,20 @@ Os coeficientes $\hat{\beta}_0$ e $\hat{\beta}_1$ não se interpretam diretament
 Os dois painéis isolam os efeitos dos parâmetros. À esquerda, três curvas com $\beta_0 = 0$ e $\beta_1$ variando: curvas mais inclinadas correspondem a $\beta_1$ maior em valor absoluto — o modelo passa mais abruptamente de probabilidade baixa para alta. $\beta_1 < 0$ inverte a curva (probabilidade decresce com $x$). À direita, três curvas com $\beta_1$ fixo e $\beta_0$ variando: o ponto de cruzamento em $\hat{p} = 0.5$ se desloca horizontalmente — $\beta_0$ controla o limiar de decisão sem alterar a taxa de transição.
 
 Uma observação importante sobre a conversão de coeficientes em probabilidade: o efeito de uma variação unitária em $x$ sobre $\hat{p}$ **não é constante** — ele depende de onde estamos na curva. O impacto é máximo na região central (em torno do ponto de inflexão, onde $\hat{p} \approx 0.5$) e diminui nas extremas. Por isso, reportar odds ratios é mais informativo do que tentar descrever efeitos em probabilidade sem especificar o ponto de avaliação.
+
+Saber o valor do odds ratio é uma coisa — saber se ele é estatisticamente diferente de 1 é outra. Dois testes respondem a essa pergunta, e os dois testam a hipótese nula $H_0\text{: }\beta_j = 0$ (equivalentemente, odds ratio = 1, nenhum efeito do preditor):
+
+O **teste de Wald** divide o estimador pelo seu erro padrão:
+
+$$z = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}$$
+
+Sob $H_0$, essa estatística segue aproximadamente uma normal padrão — a mesma lógica do teste $t$ da regressão linear, mas usando a distribuição normal porque o MLE é um estimador de grandes amostras. Valores $|z| > 1.96$ correspondem a $p < 0.05$.
+
+O **Teste da Razão de Verossimilhança (LRT)** compara diretamente a log-verossimilhança do modelo completo com a do modelo sem o preditor em questão:
+
+$$\text{LRT} = 2\,(\ell_{\text{completo}} - \ell_{\text{reduzido}}) \;\sim\; \chi^2(1)$$
+
+A multiplicação por 2 garante que a estatística siga uma qui-quadrado com 1 grau de liberdade. O LRT é preferível ao Wald quando a amostra é pequena ou quando os coeficientes são grandes em magnitude — nesses casos, o Wald perde precisão porque calcula o erro padrão localmente, enquanto o LRT compara o ajuste global dos dois modelos. Em amostras razoáveis, os dois costumam concordar; a diferença aparece nos limites: separação quase perfeita, preditores com alta correlação ou poucos eventos por preditor.
 
 ---
 
@@ -474,6 +502,18 @@ A **AUC** (Área sob a Curva ROC) resume a curva inteira em um único número en
 
 Os dois painéis mostram um mesmo modelo avaliado de formas complementares. À esquerda, a matriz de confusão com os quatro quadrantes coloridos: verde para acertos (VP e VN), vermelho para erros (FP e FN) — uma visualização imediata do tipo de erro predominante. À direita, a curva ROC azul acima da diagonal cinza (modelo aleatório): a área sombreada é a AUC. Quanto maior a área, mais o modelo discrimina positivos de negativos independentemente do limiar escolhido.
 
+**Escolha do limiar**
+
+O limiar padrão $\tau = 0.5$ é adequado quando as classes são equilibradas e os dois tipos de erro têm o mesmo custo. Em outros cenários, ele precisa ser ajustado.
+
+Quando as **classes são desbalanceadas** — 5% de fraudes e 95% de transações legítimas, por exemplo — um modelo que prevê sempre 0 acerta 95% dos casos sem aprender nada, e $\tau = 0.5$ tende a reforçar esse comportamento. Nesses casos, a **curva Precisão–Recall** é mais informativa do que a ROC: ela amplifica a diferença entre modelos na região relevante (os poucos positivos) e ajuda a identificar o limiar que equilibra precisão e recall de acordo com a aplicação.
+
+Quando os **custos de FP e FN são assimétricos** — não detectar uma fraude é mais custoso do que alertar um cliente legítimo — o limiar ótimo minimiza o custo esperado total. Sendo $C_{FP}$ e $C_{FN}$ os custos de cada tipo de erro:
+
+$$\tau^* = \frac{C_{FP}}{C_{FP} + C_{FN}}$$
+
+Um $C_{FN}$ alto empurra $\tau^*$ para baixo — o modelo aceita mais falsos positivos para não perder nenhum positivo real. Um $C_{FP}$ alto faz o oposto. Quando os custos não são conhecidos com precisão, a curva ROC permite visualizar o trade-off e escolher um ponto de operação de forma informada.
+
 **Log-loss**
 
 As métricas anteriores avaliam classificações — decisões binárias após aplicar um limiar. Mas às vezes o que importa é a qualidade das probabilidades em si, não das classificações. A **log-loss** avalia exatamente isso: penaliza previsões de probabilidade com alta confiança que se revelam erradas. É o negativo da log-verossimilhança normalizado pelo número de observações:
@@ -481,6 +521,30 @@ As métricas anteriores avaliam classificações — decisões binárias após a
 $$\text{log-loss} = -\frac{1}{n}\sum_{i=1}^n \left[ y_i \log \hat{p}_i + (1 - y_i) \log(1 - \hat{p}_i) \right]$$
 
 Quanto menor a log-loss, melhor. Um modelo que prevê $\hat{p} = 0.99$ para uma observação onde $y = 0$ é punido muito mais duramente do que um que prevê $\hat{p} = 0.6$ — a confiança equivocada é custosa. Log-loss igual a zero significa previsões perfeitas com probabilidade 1 ou 0 para cada classe.
+
+**Calibração**
+
+Uma propriedade que completa a avaliação probabilística é a **calibração**: um modelo bem calibrado produz $\hat{p} = 0.7$ para observações em que, empiricamente, cerca de 70% são positivas — as probabilidades numéricas correspondem às frequências reais. Log-loss e calibração são conceitos relacionados mas distintos: a log-loss penaliza a confiança equivocada de forma global; a calibração avalia especificamente se a escala de probabilidades está correta. É possível ter log-loss baixa sem calibração perfeita, e um modelo calibrado pode ter log-loss alta se suas previsões forem pouco decisivas.
+
+A regressão logística é, em geral, bem calibrada quando suas premissas valem — consequência direta do MLE, que maximiza a log-verossimilhança e, por construção, ajusta as probabilidades às frequências observadas. Outros classificadores como SVM e árvores de decisão não têm essa propriedade e frequentemente requerem ajuste pós-treino. O *reliability diagram* verifica isso visualmente: divide as observações em faixas de $\hat{p}$ e plota a proporção observada de positivos em cada faixa — uma diagonal perfeita indica calibração ideal.
+
+AUC, log-loss e calibração olham para facetas distintas das previsões, mas nenhuma responde à pergunta mais direta: "quão melhor o modelo é do que simplesmente prever sempre a taxa base de positivos?" Para isso existe o **pseudo-R² de McFadden**, que cria um paralelo com o $R^2$ da regressão linear:
+
+$$R^2_{\text{McFadden}} = 1 - \frac{\ell_{\text{completo}}}{\ell_{\text{nulo}}}$$
+
+onde $\ell_{\text{nulo}}$ é a log-verossimilhança de um modelo com apenas o intercepto — equivalente a prever sempre a proporção amostral de positivos, sem usar nenhum preditor. Quando o modelo não acrescenta nada, $\ell_{\text{completo}} = \ell_{\text{nulo}}$ e $R^2_{\text{McFadden}} = 0$. Quando o modelo é perfeito, $\ell_{\text{completo}} \to 0$ e $R^2_{\text{McFadden}} \to 1$.
+
+Uma diferença importante em relação ao $R^2$ linear: a escala não é a mesma. Valores entre 0.2 e 0.4 já são considerados bons em modelos logísticos — não espere ver 0.9 como seria natural na regressão linear. Isso reflete a natureza do problema: prever uma probabilidade a partir de dados ruidosos é intrinsecamente mais difícil do que ajustar uma reta a dados contínuos.
+
+**Diagnóstico de resíduos**
+
+Na regressão linear, os resíduos $e_i = y_i - \hat{y}_i$ são a ferramenta central de diagnóstico — os gráficos de premissas giram em torno deles. Na logística, o resíduo bruto $(y_i - \hat{p}_i)$ existe, mas não tem as mesmas propriedades: sua variância não é constante (é máxima quando $\hat{p}_i = 0.5$), então comparar resíduos diretos entre observações é enganoso.
+
+O equivalente padronizado é o **resíduo de deviance**:
+
+$$d_i = \text{sign}(y_i - \hat{p}_i)\sqrt{-2\left[y_i \log \hat{p}_i + (1 - y_i)\log(1 - \hat{p}_i)\right]}$$
+
+O sinal preserva a direção do erro: positivo se o modelo subestimou $y_i$, negativo se superestimou. O interior da raiz é a contribuição individual à log-loss total — somando $d_i^2$ sobre todas as observações recuperamos a **deviance** do modelo, análoga ao SSR da regressão linear. Observações com $|d_i|$ grande são potencialmente mal ajustadas ou influentes e merecem investigação.
 
 ---
 
@@ -520,30 +584,22 @@ A separação perfeita ocorre quando existe um valor de $x$ (ou combinação de 
 
 ---
 
+### Variações
+
+Cada limitação do modelo base deu origem a uma extensão:
+
+- **Regularização L2 (Ridge logístico)** — adiciona a penalidade $\lambda\|\boldsymbol{\beta}\|^2$ à função de custo, equivalente a impor um prior normal sobre os coeficientes. É a mitigação padrão para separação perfeita, mas também controla overfitting quando há muitos preditores ou amostras pequenas. Os coeficientes são contraídos em direção a zero, mas nenhum é exatamente zerado.
+- **Regularização L1 (Lasso logístico)** — penaliza com $\lambda\|\boldsymbol{\beta}\|_1$ e produz coeficientes exatamente iguais a zero, fazendo seleção automática de variáveis. Útil quando a expectativa é de que poucos preditores sejam relevantes.
+- **Elastic Net** — combina L1 e L2, controlando esparsidade e estabilidade ao mesmo tempo. Prático quando há grupos de preditores correlacionados.
+- **Regressão logística com efeitos mistos** — quando as observações estão agrupadas (clientes dentro de agências, pacientes dentro de hospitais), adiciona termos aleatórios para capturar a estrutura hierárquica sem violar a premissa de independência.
+
+Os detalhes de L1, L2 e Elastic Net são desenvolvidos em `02_regularizacao.md`.
+
+---
+
 ## Conexão com outros tópicos
 
 - **Beta do CAPM:** o $\beta$ do CAPM é o coeficiente de uma regressão linear simples — retorno do ativo em função do retorno do mercado. Notebook 06.
-- **Árvores e Gradient Boosting:** modelos não-lineares que não impõem a premissa de linearidade dos log-odds — alternativas quando a fronteira de decisão é complexa.
-- **Regularização (Ridge, Lasso):** variações do OLS que adicionam penalidade aos coeficientes para evitar overfitting. Nota `02_regularizacao.md`.
+- **Árvores e Gradient Boosting:** modelos não-lineares que não impõem a premissa de linearidade dos log-odds. Preferir logística quando interpretabilidade e calibração são essenciais (crédito, medicina, contextos regulatórios), quando os efeitos dos preditores são aproximadamente lineares nos log-odds, ou quando a amostra é pequena e a simplicidade ajuda a controlar o overfitting. Preferir árvores ou GBM quando as relações são não-lineares, há interações importantes entre variáveis, ou o conjunto inclui muitas features categóricas com muitos níveis — nesses cenários o GBM tende a superar a logística em poder preditivo. Em problemas com exigência de explicabilidade regulatória, a regressão logística ainda é o padrão dominante no mercado.
+- **Regularização (Ridge, Lasso):** adicionam penalidade aos coeficientes para controlar overfitting — aplicável tanto à regressão linear quanto à logística, onde L2 também resolve separação perfeita. Nota `02_regularizacao.md`.
 - **Gradiente Descendente:** alternativa iterativa ao OLS — necessária quando a solução fechada é computacionalmente cara.
-
----
-
-## Dúvidas em aberto
-
-**Regressão Linear**
-- [ ] Qual a diferença prática entre OLS analítico e gradiente descendente — custo computacional, escalabilidade, precisão numérica?
-- [ ] Quando o R² ajustado também é enganoso? (ex: comparação entre modelos com transformações diferentes de $y$, ou seleção entre muitos candidatos)
-
-**Regressão Logística**
-- [ ] Como escolher o limiar de classificação ótimo quando as classes são desbalanceadas ou os custos de FP e FN são assimétricos?
-- [ ] O que significa "calibração" de probabilidades e quando a regressão logística é ou não calibrada?
-- [ ] Quando preferir regressão logística vs árvores de decisão para classificação binária?
-
----
-
-## Checklist de entendimento
-
-- [ ] Consigo explicar o conceito sem consultar anotações
-- [ ] Implementei no notebook de prática
-- [ ] Apliquei em um problema real
