@@ -1,6 +1,8 @@
 # Machine Learning
 
-Modelos supervisionados e não supervisionados aplicados a problemas de risco e tesouraria bancários.
+Machine learning é a capacidade de um sistema aprender padrões a partir de dados, sem ser explicitamente programado para cada regra. Em vez de escrever "se X então Y", o modelo estima essa relação diretamente dos exemplos.
+
+É o primeiro grande pilar de IA — a base sobre a qual deep learning, NLP e os demais pilares são construídos. Neste módulo, os algoritmos são estudados com aplicações a risco de mercado e tesouraria bancários.
 
 ## Submódulos
 

@@ -1,6 +1,8 @@
 # Aprendizado Supervisionado
 
-Teoria e implementação de regressão e classificação, com análises aplicadas a risco de mercado. Cada análise parte de uma pergunta de negócio concreta e documenta premissas, limitações e próximos passos.
+No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: para cada entrada, existe uma resposta correta conhecida. O objetivo é aprender a relação entre entrada e saída de forma que generalize para dados novos.
+
+É chamado "supervisionado" porque o processo de treino é guiado por esse conjunto de respostas corretas — como um aluno que aprende com gabarito. Regressão (prever um valor contínuo) e classificação (prever uma categoria) são os dois tipos fundamentais de problema.
 
 ## Análises
 

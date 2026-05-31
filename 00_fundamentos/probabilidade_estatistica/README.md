@@ -1,6 +1,8 @@
 # Probabilidade e Estatística
 
-Fundamentos de raciocínio sob incerteza — da linguagem dos dados à inferência bayesiana — organizados pela ordem em que cada conceito é necessário para entender modelos de IA.
+Dados são incertos por natureza: preços oscilam, medições têm erro, o futuro não é determinístico. Probabilidade é a linguagem que quantifica essa incerteza; estatística é o conjunto de ferramentas para extrair conclusões confiáveis apesar dela.
+
+Em IA, todo modelo aprende estimando distribuições, minimizando funções de perda derivadas da teoria da informação e sendo avaliado com testes estatísticos. Sem essa base, os modelos funcionam como caixas-pretas — usáveis, mas não compreensíveis.
 
 ## Roteiro de estudo
 
