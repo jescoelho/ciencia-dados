@@ -75,7 +75,7 @@ Isso gera um sistema de duas equações com duas incógnitas. Resolvendo:
 
 $$\sum y_i - n\beta_0 - \beta_1 \sum x_i = 0 \implies \bar{y} - \beta_0 - \beta_1\bar{x} = 0$$
 
-onde $\bar{x} = \frac{1}{n}\sum x_i$ e $\bar{y} = \frac{1}{n}\sum y_i$ são as médias amostrais.
+onde $\bar{x}$ e $\bar{y}$ são as médias amostrais de $x$ e $y$.
 
 $$\boxed{\hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}}$$
 
@@ -281,7 +281,7 @@ O **$R^2$ ajustado** corrige esse comportamento penalizando o número de parâme
 
 $$\bar{R}^2 = 1 - \frac{(1 - R^2)(n - 1)}{n - p - 1}$$
 
-onde $n$ é o número de observações e $p$ o número de preditores. O fator $\frac{n-1}{n-p-1}$ cresce com $p$ — quanto mais preditores, maior a penalidade. Se um novo preditor não contribuir o suficiente para reduzir os resíduos, o $\bar{R}^2$ cai. Ao contrário do $R^2$, o $\bar{R}^2$ pode diminuir quando adicionamos variáveis pouco informativas.
+onde $n$ é o número de observações e $p$ o número de preditores. O fator $(n-1)/(n-p-1)$ cresce com $p$ — quanto mais preditores, maior a penalidade. Se um novo preditor não contribuir o suficiente para reduzir os resíduos, o $\bar{R}^2$ cai. Ao contrário do $R^2$, o $\bar{R}^2$ pode diminuir quando adicionamos variáveis pouco informativas.
 
 Mesmo assim, o $\bar{R}^2$ tem seus próprios limites em três situações:
 

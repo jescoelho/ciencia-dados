@@ -122,7 +122,11 @@ $$\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) \quad \text{se } X, Y \text{
 
 Quando $X$ e $Y$ são dependentes, $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) + 2\,\text{Cov}(X, Y)$.
 
-**Lei dos grandes números**: para $n$ amostras independentes e identicamente distribuídas com $E[X] = \mu$, a média amostral $\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$ converge para $\mu$ quando $n \to \infty$. É o que justifica o SGD: a média do gradiente em um mini-batch é um estimador não-viesado do gradiente esperado sobre o conjunto completo.
+**Lei dos grandes números**: para $n$ amostras independentes e identicamente distribuídas com $E[X] = \mu$, a média amostral
+
+$$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$$
+
+converge para $\mu$ quando $n \to \infty$. É o que justifica o SGD: a média do gradiente em um mini-batch é um estimador não-viesado do gradiente esperado sobre o conjunto completo.
 
 $E[X]$ e $\text{Var}(X)$ sintetizam uma distribuição em dois números — mas sozinhos não descrevem sua forma completa.
 
@@ -320,7 +324,11 @@ $$\ell(\theta) = \sum_{i=1}^n \log f(x_i; \theta)$$
 
 $\theta$ são os parâmetros do modelo. Maximizar $\ell(\theta)$ é a base da Estimação de Máxima Verossimilhança (MLE), coberta na próxima nota. Em redes neurais, minimizar a cross-entropy equivale a maximizar $\ell$ sob uma distribuição Bernoulli (classificação binária) ou Categorical (multiclasse).
 
-**Brier score**: para eventos binários, $\text{BS} = \frac{1}{n}\sum_i (p_i - y_i)^2$, onde $p_i$ é a probabilidade predita e $y_i \in \{0, 1\}$ é o resultado observado. Quanto menor, mais calibrado o modelo.
+**Brier score**: para eventos binários,
+
+$$\text{BS} = \frac{1}{n}\sum_i (p_i - y_i)^2$$
+
+onde $p_i$ é a probabilidade predita e $y_i \in \{0, 1\}$ é o resultado observado. Quanto menor, mais calibrado o modelo.
 
 ---
 
