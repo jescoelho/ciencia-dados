@@ -12,6 +12,7 @@ env/
 
 # Jupyter
 .ipynb_checkpoints/
+*.ipynb
 
 # Ambiente / IDE
 .env
