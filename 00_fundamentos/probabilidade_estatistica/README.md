@@ -17,4 +17,4 @@ Em IA, todo modelo aprende estimando distribuições, minimizando funções de p
 
 ## Notas
 
-Probabilidade e Bayes · Distribuições · MLE e MAP · Testes de hipótese · Teoria da informação · Inferência bayesiana
+[Medidas de posição e dispersão](notas/01_medidas_posicao_dispersao.md) · [Distribuições de probabilidade](notas/02_distribuicoes.md) · [Correlação e dependência](notas/03_correlacao.md) · Probabilidade e Bayes · MLE e MAP · Testes de hipótese · Teoria da informação · Inferência bayesiana
