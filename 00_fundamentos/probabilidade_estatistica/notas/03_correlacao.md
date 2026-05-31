@@ -38,6 +38,8 @@ plt.suptitle("Correlação de Pearson — três cenários", color="white", y=1.0
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/corr_01_tres_cenarios.png)
+
 *À esquerda: pontos alinhados na diagonal ascendente — correlação forte positiva. No centro: nuvem circular — sem correlação linear. À direita: diagonal descendente — correlação forte negativa. A inclinação e compressão da nuvem traduzem o valor de r.*
 
 ---
@@ -116,6 +118,8 @@ plt.suptitle("Quarteto de Anscombe — mesma correlação, padrões completament
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/corr_02_anscombe.png)
+
 *Os quatro datasets têm $r \approx 0.82$, mas os padrões são: I) relação linear com ruído; II) relação quadrática; III) linear perfeita com um outlier; IV) sem variação em X exceto por um ponto extremo. Sempre visualize antes de interpretar r.*
 
 ---
@@ -131,22 +135,35 @@ $$R_{ij} = r(X_i, X_j)$$
 É a base de análise de componentes principais (PCA), modelos de fator e seleção de features. Uma matriz de correlação bem condicionada é pré-requisito para algoritmos que envolvem inversão de matriz (regressão, Gaussian Processes).
 
 ```python
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Heatmap de correlação com estilo escuro
+np.random.seed(42)
+n = 200
+x1 = np.random.normal(0, 1, n)
+df = pd.DataFrame({
+    "Retorno_A": x1,
+    "Retorno_B":  0.8*x1 + np.random.normal(0, 0.6, n),
+    "Hedge":     -0.5*x1 + np.random.normal(0, 0.8, n),
+    "Taxa_CDI":   np.random.normal(0, 1, n),
+})
+
 corr = df.corr()
 
-fig, ax = plt.subplots(figsize=(10, 8), facecolor="#0d1117")
+fig, ax = plt.subplots(figsize=(7, 5), facecolor="#0d1117")
 ax.set_facecolor("#0d1117")
 sns.heatmap(corr, annot=True, fmt=".2f", cmap="coolwarm",
             center=0, vmin=-1, vmax=1, ax=ax,
             linewidths=0.5, linecolor="#30363d",
-            annot_kws={"size": 9, "color": "white"})
+            annot_kws={"size": 12})
 ax.tick_params(colors="white")
 plt.title("Matriz de correlação", color="white")
 plt.tight_layout(); plt.show()
 ```
+
+![](../analises/assets/corr_03_heatmap.png)
 
 ### Correlação parcial
 
@@ -166,10 +183,19 @@ Uma correlação observada pode ser acidental em amostras pequenas. Para testar 
 $$t = \frac{r\sqrt{n-2}}{\sqrt{1-r^2}} \sim t(n-2) \text{ sob } H_0: \rho = 0$$
 
 ```python
+import numpy as np
 from scipy import stats
+
+np.random.seed(42)
+x = np.random.normal(0, 1, 100)
+y = 0.6*x + np.random.normal(0, 0.8, 100)
 
 r, p_valor = stats.pearsonr(x, y)
 print(f"r = {r:.4f}, p-valor = {p_valor:.4f}")
+```
+
+```
+r = 0.5038, p-valor = 0.0000
 ```
 
 Com $n = 10$ e $r = 0.5$, o p-valor é ~0.14 — não significativo. Com $n = 100$ e o mesmo $r = 0.5$, o p-valor é $< 0.0001$. Tamanho amostral importa tanto quanto o valor de $r$.
@@ -197,9 +223,15 @@ Correlação descobre associação; causalidade exige desenho experimental ou in
 ## Na prática
 
 ```python
-import pandas as pd
 import numpy as np
+import pandas as pd
 from scipy import stats
+from itertools import combinations
+
+np.random.seed(42)
+x = np.random.normal(0, 1, 50)
+y = 0.6*x + np.random.normal(0, 0.8, 50)
+df = pd.DataFrame({"A": x, "B": y, "C": np.random.normal(0, 1, 50)})
 
 # Correlação de Pearson
 r, p = stats.pearsonr(x, y)
@@ -216,10 +248,25 @@ df.corr(method="spearman")
 df.corr(method="kendall")
 
 # Correlação com p-valores para cada par
-from itertools import combinations
 for col_a, col_b in combinations(df.columns, 2):
     r, p = stats.pearsonr(df[col_a], df[col_b])
     print(f"{col_a} × {col_b}: r={r:.3f}, p={p:.4f}")
+```
+
+```
+# Pearson:  r=0.6757,   p=0.0000
+# Spearman: rho=0.6934, p=0.0000
+# Kendall:  tau=0.4971, p=0.0000
+
+# df.corr(method='pearson'):
+        A       B       C
+A  1.0000  0.6757 -0.1256
+B  0.6757  1.0000 -0.2460
+C -0.1256 -0.2460  1.0000
+
+A × B: r=0.676, p=0.0000
+A × C: r=-0.126, p=0.3824
+B × C: r=-0.246, p=0.0850
 ```
 
 **Armadilhas comuns**

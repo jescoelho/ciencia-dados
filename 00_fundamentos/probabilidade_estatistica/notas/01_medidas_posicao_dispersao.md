@@ -30,6 +30,8 @@ ax.legend(facecolor="#161b22", labelcolor="white")
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/medidas_01_histograma.png)
+
 *Os dois histogramas compartilham a mesma média (linha verde), mas o conjunto laranja se espalha muito mais. Ignorar a dispersão os tornaria indistinguíveis.*
 
 ---
@@ -102,10 +104,19 @@ $$\mu_k' = \frac{1}{n} \sum_{i=1}^{n} \left(\frac{x_i - \bar{x}}{s}\right)^k$$
 **Curtose** — a normal tem curtose = 3 (ou excesso de curtose = 0). Distribuições com curtose > 3 têm caudas mais pesadas (*leptocúrticas*) e são mais comuns em dados financeiros — eventos raros acontecem com frequência maior do que a normal prevê.
 
 ```python
+import numpy as np
 from scipy import stats
+
+np.random.seed(42)
+dados = np.random.normal(50, 10, 300)
 
 print(f"skewness: {stats.skew(dados):.3f}")
 print(f"kurtosis (excess): {stats.kurtosis(dados):.3f}")  # 0 = normal
+```
+
+```
+skewness: 0.174
+kurtosis (excess): 0.567  # 0 = normal
 ```
 
 ---
@@ -133,7 +144,12 @@ A mediana e o IQR formam um par robusto: ambos ignoram valores extremos. A médi
 Uma boa prática é sempre reportar os dois pares — mediana + IQR e média + dp — e usar o boxplot como inspeção visual antes de decidir qual resumo usar.
 
 ```python
+import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+dados = np.concatenate([np.random.normal(50, 10, 280), [100, 110, -5]])
 
 s = pd.Series(dados)
 print(s.describe())
@@ -151,6 +167,19 @@ ax.tick_params(colors="white"); ax.spines[:].set_color("#30363d")
 plt.tight_layout(); plt.show()
 ```
 
+```
+count    283.00
+mean      50.02
+std       11.35
+min       -5.00
+25%       42.89
+50%       50.46
+75%       56.19
+max      110.00
+```
+
+![](../analises/assets/medidas_03_boxplot.png)
+
 *O boxplot mostra em uma figura: Q1, mediana (linha laranja), Q3 (caixa azul), whiskers até 1.5·IQR, e outliers como pontos verdes. Se a mediana estiver deslocada para um lado da caixa, a distribuição é assimétrica.*
 
 ---
@@ -160,8 +189,10 @@ plt.tight_layout(); plt.show()
 ```python
 import numpy as np
 import pandas as pd
+from scipy import stats
 
-x = pd.Series([...])
+np.random.seed(42)
+x = pd.Series(np.random.normal(50, 10, 100))  # exemplo: 100 valores N(50, 10)
 
 # Posição
 x.mean()          # média
@@ -179,9 +210,32 @@ x.quantile(0.75) - x.quantile(0.25)  # IQR
 x.describe()      # count, mean, std, min, quartis, max
 
 # Momentos de forma
-from scipy import stats
 stats.skew(x)
 stats.kurtosis(x)  # excesso de curtose (0 = normal)
+```
+
+```
+x.mean()          # 48.9615
+x.median()        # 48.7304
+x.mode()[0]       # 23.8025
+x.quantile(0.25)  # 43.9909
+x.std()           # 9.0817
+x.var()           # 82.4770
+x.std()/x.mean()  # 0.1855  (CV)
+IQR               # 10.0686
+
+x.describe():
+count    100.0000
+mean      48.9615
+std        9.0817
+min       23.8025
+25%       43.9909
+50%       48.7304
+75%       54.0595
+max       68.5228
+
+stats.skew(x)      # -0.1753
+stats.kurtosis(x)  # -0.1554
 ```
 
 **Armadilhas comuns**

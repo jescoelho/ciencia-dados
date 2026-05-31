@@ -42,6 +42,8 @@ axes[1].legend(facecolor="#161b22", labelcolor="white")
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/dist_01_hist_pdf_cdf.png)
+
 *À esquerda: o histograma empírico (barras azuis) converge para a curva teórica (linha laranja) conforme n cresce. À direita: a PDF (azul) mostra onde a probabilidade se concentra; a CDF (verde) mostra a probabilidade acumulada até cada ponto — parte de 0 e termina em 1.*
 
 ---
@@ -131,6 +133,8 @@ ax.set_title("t de Student vs Normal — caudas mais pesadas para ν pequeno", c
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/dist_02_t_student.png)
+
 *A normal (azul sólido) tem caudas que caem exponencialmente. A t com poucos graus de liberdade (laranja tracejado) tem caudas que caem em lei de potência — eventos extremos são muito mais prováveis. À medida que ν cresce, a t converge para a normal.*
 
 ---
@@ -166,6 +170,11 @@ A pergunta "meus dados seguem uma distribuição X?" não tem resposta binária 
 **Q-Q plot** — plota os quantis empíricos dos dados contra os quantis teóricos da distribuição candidata. Se os pontos ficam na diagonal, o ajuste é bom. Desvios nas extremidades indicam caudas diferentes do modelo.
 
 ```python
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+np.random.seed(42)
 fig, ax = plt.subplots(figsize=(6, 6), facecolor="#0d1117")
 ax.set_facecolor("#0d1117")
 
@@ -181,13 +190,25 @@ ax.legend(facecolor="#161b22", labelcolor="white")
 plt.tight_layout(); plt.show()
 ```
 
+![](../analises/assets/dist_03_qqplot.png)
+
 *Se os pontos seguem a linha laranja, a distribuição t(5) é um bom modelo. Desvios na cauda superior significariam que os dados têm eventos extremos ainda mais frequentes do que a t prevê.*
 
 **Teste de Kolmogorov-Smirnov** — mede a máxima distância entre a CDF empírica e a CDF teórica. O p-valor baixo rejeita o ajuste.
 
 ```python
+import numpy as np
+from scipy import stats
+
+np.random.seed(42)
+dados = np.random.standard_t(5, 500)
+
 stat, p = stats.kstest(dados, "t", args=(5,))
 print(f"KS stat={stat:.4f}, p={p:.4f}")
+```
+
+```
+KS stat=0.0394, p=0.4087
 ```
 
 ---
@@ -213,6 +234,8 @@ Em finanças, retornos de ativos têm assimetria negativa e curtose > 3 — a no
 from scipy import stats
 import numpy as np
 
+np.random.seed(42)
+
 # Instanciar e usar distribuições
 normal = stats.norm(loc=0, scale=1)
 normal.pdf(0)          # densidade em x=0: 0.3989
@@ -233,6 +256,16 @@ stats.beta(a=2, b=5)       # Beta (probabilidades)
 
 # Q-Q plot
 stats.probplot(dados, dist="norm", plot=plt)
+```
+
+```
+normal.pdf(0)          # 0.3989
+normal.cdf(1.96)       # 0.9750
+normal.ppf(0.975)      # 1.9600
+
+# Ajuste em amostra N(5, 2):
+mu_hat    = 5.0137
+sigma_hat = 1.9605
 ```
 
 **Armadilhas comuns**
