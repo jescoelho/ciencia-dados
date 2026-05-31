@@ -114,6 +114,8 @@ As propriedades que tornam esperança e variância utilizáveis em modelos:
 
 $$E[aX + b] = aE[X] + b \qquad E[X + Y] = E[X] + E[Y]$$
 
+$a$ e $b$ são constantes reais; $Y$ é outra variável aleatória. A segunda igualdade vale sempre — mesmo que $X$ e $Y$ sejam dependentes.
+
 **Variância sob transformações lineares e somas**:
 
 $$\text{Var}(aX + b) = a^2\,\text{Var}(X)$$
@@ -125,6 +127,8 @@ Quando $X$ e $Y$ são dependentes, $\text{Var}(X + Y) = \text{Var}(X) + \text{Va
 **Lei dos grandes números**: para $n$ amostras independentes e identicamente distribuídas com $E[X] = \mu$, a média amostral
 
 $$\bar{X}_n = \frac{1}{n}\sum_{i=1}^n X_i$$
+
+$X_i$ é a $i$-ésima observação da amostra; $\bar{X}_n$ é a média das $n$ observações.
 
 converge para $\mu$ quando $n \to \infty$. É o que justifica o SGD: a média do gradiente em um mini-batch é um estimador não-viesado do gradiente esperado sobre o conjunto completo.
 
@@ -250,7 +254,7 @@ Uma das propriedades mais poderosas do Teorema de Bayes é que observações pod
 
 $$P(\theta \mid x_1, \ldots, x_n) \propto P(\theta) \prod_{i=1}^n P(x_i \mid \theta)$$
 
-$\propto$ significa "proporcional a" — o denominador é um número fixo que garante que o posterior some 1, e pode ser ignorado na comparação entre hipóteses. O produto acumula evidências: cada observação empurra o posterior em direção aos valores de $\theta$ compatíveis com os dados.
+$P(\theta)$ é o prior — a crença sobre $\theta$ antes dos dados; $P(x_i \mid \theta)$ é a verossimilhança de cada observação; $\prod_{i=1}^n$ indica o produto dos $n$ termos. $\propto$ significa "proporcional a" — o denominador é um número fixo que garante que o posterior some 1, e pode ser ignorado na comparação entre hipóteses. O produto acumula evidências: cada observação empurra o posterior em direção aos valores de $\theta$ compatíveis com os dados.
 
 ```python
 import matplotlib
@@ -300,6 +304,8 @@ A esperança pode ser calculada dado o valor de outra variável: $E[Y \mid X = x
 
 $$E[Y] = E\!\left[E[Y \mid X]\right]$$
 
+$E[Y \mid X]$ é a esperança de $Y$ calculada para cada valor fixo de $X$; o $E[\,\cdot\,]$ externo é a média disso sobre todos os valores possíveis de $X$.
+
 Um modelo de regressão estima exatamente $E[Y \mid X]$ — a esperança condicional de $Y$ dado o vetor de features $X$. Regressão linear, árvores de decisão e redes neurais de regressão são formas diferentes de aproximar essa função.
 
 ### Independência condicional e Naive Bayes
@@ -307,6 +313,8 @@ Um modelo de regressão estima exatamente $E[Y \mid X]$ — a esperança condici
 $X$ e $Y$ são **condicionalmente independentes** dado $Z$ se $P(X, Y \mid Z) = P(X \mid Z)\, P(Y \mid Z)$. Saber $Z$ torna $X$ e $Y$ irrelevantes um para o outro. O classificador Naive Bayes assume exatamente isso — features independentes dada a classe:
 
 $$P(\text{classe} \mid x_1, \ldots, x_p) \propto P(\text{classe}) \prod_{j=1}^p P(x_j \mid \text{classe})$$
+
+$p$ é o número de features; $x_j$ é o valor da $j$-ésima feature; $\prod_{j=1}^p$ é o produto das verossimilhanças de cada feature individualmente.
 
 A suposição raramente vale nos dados, mas o modelo funciona porque o sinal principal vem da verossimilhança conjunta, não das dependências residuais entre features.
 
@@ -322,7 +330,7 @@ Como saber se um modelo probabilístico está descrevendo bem a incerteza?
 
 $$\ell(\theta) = \sum_{i=1}^n \log f(x_i; \theta)$$
 
-$\theta$ são os parâmetros do modelo. Maximizar $\ell(\theta)$ é a base da Estimação de Máxima Verossimilhança (MLE), coberta na próxima nota. Em redes neurais, minimizar a cross-entropy equivale a maximizar $\ell$ sob uma distribuição Bernoulli (classificação binária) ou Categorical (multiclasse).
+$\ell$ é a log-verossimilhança; $f(x_i; \theta)$ é a densidade (ou probabilidade, no caso discreto) do ponto $x_i$ segundo o modelo parametrizado por $\theta$. Maximizar $\ell(\theta)$ é a base da Estimação de Máxima Verossimilhança (MLE), coberta na próxima nota. Em redes neurais, minimizar a cross-entropy equivale a maximizar $\ell$ sob uma distribuição Bernoulli (classificação binária) ou Categorical (multiclasse).
 
 **Brier score**: para eventos binários,
 
