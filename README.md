@@ -1,8 +1,8 @@
 # ciencia-dados
 
-Estudos de **inteligência artificial** — dos fundamentos matemáticos aos modelos modernos (~2020) — com análises aplicadas a **risco e tesouraria bancários**.
+Estudos de **inteligência artificial** com análises aplicadas a **risco e tesouraria bancários**.
 
-Os conceitos são construídos progressivamente: cada módulo aprofunda a teoria e a aplica a problemas concretos do setor bancário. Quando um ativo de referência é necessário, ITUB4 serve de caso de estudo por sua liquidez e representatividade no setor.
+Organizado em três camadas: fundamentos matemáticos necessários, pilares de IA (Machine Learning, Deep Learning, NLP, Visão, RL, IA Generativa) e aplicações a problemas concretos do setor bancário. Quando um ativo de referência é necessário, ITUB4 serve de caso de estudo.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange?logo=jupyter)](https://jupyter.org/)
@@ -21,11 +21,10 @@ Os conceitos são construídos progressivamente: cada módulo aprofunda a teoria
 
 ## Módulos
 
-| # | Módulo | Status |
-|---|--------|--------|
-| 00 | Fundamentos (probabilidade, estatística, álgebra linear, Python) | Em andamento |
-| 01 | Machine Learning supervisionado | Em andamento |
-| 02–10 | Deep Learning, NLP, Visão, RL, IA Generativa, MLOps... | Pendente |
+| Camada | Módulo | Status |
+|--------|--------|--------|
+| Fundamentos | 00 · Probabilidade, estatística, álgebra linear, cálculo, Python | Em andamento |
+| Pilares | 01 · Machine Learning | Em andamento |
 
 ---
 
