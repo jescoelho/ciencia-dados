@@ -1,8 +1,6 @@
 # ciencia-dados
 
-Estudos de **inteligência artificial** com análises aplicadas a **risco e tesouraria bancários**.
-
-Organizado em três camadas: fundamentos matemáticos necessários, pilares de IA (Machine Learning, Deep Learning, NLP, Visão, RL, IA Generativa) e aplicações a problemas concretos do setor bancário. Quando um ativo de referência é necessário, ITUB4 serve de caso de estudo.
+Estudos de **inteligência artificial** — dos fundamentos matemáticos aos modelos modernos — com análises aplicadas a **risco e tesouraria bancários**.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange?logo=jupyter)](https://jupyter.org/)
@@ -10,27 +8,55 @@ Organizado em três camadas: fundamentos matemáticos necessários, pilares de I
 
 ---
 
-## Módulos
+## Como está organizado
 
-| Camada | Módulo | Status |
-|--------|--------|--------|
-| Fundamentos | 00 · Probabilidade, estatística, álgebra linear, cálculo, Python | Em andamento |
-| Pilares | 01 · Machine Learning | Em andamento |
+```
+Fundamentos  ──►  Pilares de IA  ──►  Aplicações bancárias
+(linguagem)        (modelos)           (problemas reais)
+```
+
+| Camada | O que cobre | Por que importa |
+|--------|-------------|-----------------|
+| **Fundamentos** | Probabilidade, álgebra linear, cálculo, Python | Todo modelo de IA é uma equação — essa camada ensina a linguagem |
+| **Pilares** | ML, Deep Learning, NLP, Visão, RL, IA Generativa | Cada pilar é uma família de soluções para uma classe de problemas |
+| **Aplicações** | Risco de mercado, crédito, tesouraria | Os modelos aplicados a decisões reais do setor bancário |
 
 ---
 
-## Análises disponíveis
+## Módulos ativos
 
-| # | Pergunta de negócio | Método |
-|---|---------------------|--------|
-| [01](01_machine_learning/supervisionado/analises/01_predicao_choque_itub4.md) | Dado queda de 3% no Ibovespa, quanto cai o ITUB4? | OLS, diagnóstico de premissas |
-| [02](01_machine_learning/supervisionado/analises/02_regularizacao_multifator_itub4.md) | Quais fatores de risco explicam o retorno em excesso do ITUB4? | Lasso · Ridge · Elastic Net, Fama-French 5 fatores |
+### 00 · Fundamentos
+
+| Submódulo | Tópicos | Notas e análises |
+|-----------|---------|-----------------|
+| [Probabilidade e Estatística](00_fundamentos/probabilidade_estatistica/README.md) | Distribuições · Medidas · Correlação · Bayes · MLE/MAP · Teoria da informação | 3 notas · 5 análises |
+
+### 01 · Machine Learning
+
+| Submódulo | Tópicos | Notas e análises |
+|-----------|---------|-----------------|
+| [Supervisionado](01_machine_learning/supervisionado/README.md) | Regressão linear/logística · Regularização · Avaliação de modelos | 2 notas · 3 análises |
+
+---
+
+## Roteiro
+
+| # | Módulo | Status |
+|---|--------|--------|
+| 00 | Fundamentos matemáticos | Em andamento |
+| 01 | Machine Learning | Em andamento |
+| 02 | Deep Learning | — |
+| 03 | Processamento de Linguagem Natural | — |
+| 04 | Visão Computacional | — |
+| 05 | Aprendizado por Reforço | — |
+| 06 | IA Generativa | — |
+| 07 | Aplicações bancárias | — |
 
 ---
 
 ## Stack
 
-Python · scikit-learn · statsmodels · yfinance · NEFIN/USP · pandas · matplotlib
+Python · pandas · numpy · scikit-learn · statsmodels · matplotlib · scipy · yfinance · NEFIN/USP
 
 ---
 
