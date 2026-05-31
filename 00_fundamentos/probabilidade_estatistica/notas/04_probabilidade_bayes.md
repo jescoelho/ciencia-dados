@@ -4,6 +4,8 @@ Distribuições e correlação descrevem o que acontece com dados já observados
 
 Em IA, quase toda saída de modelo é uma afirmação probabilística. Um classificador não retorna "spam" — retorna $P(\text{spam} \mid \text{e-mail})$, a probabilidade de ser spam dado o conteúdo. Durante o treino, a função de perda é derivada de uma suposição sobre como os dados se distribuem: minimizar a cross-entropy equivale a maximizar a probabilidade dos dados sob o modelo. O Teorema de Bayes é o fundamento de classificadores Naive Bayes, filtros de spam, redes neurais probabilísticas e da inferência variacional que treina VAEs. Variáveis aleatórias, esperança e variância definem o que um modelo está tentando estimar e quão incerto ele está sobre essa estimativa.
 
+> **Análise:** [04 — Probabilidade, distribuições e testes em modelos](../analises/04_probabilidade_distribuicoes_testes_modelos.ipynb)
+
 ---
 
 ## Intuição
