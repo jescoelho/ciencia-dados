@@ -1,6 +1,6 @@
 # Distribuições de Probabilidade
 
-Medidas de posição e dispersão resumem um conjunto de dados em dois números — mas dois números não capturam a forma. Distribuições de probabilidade são o modelo completo: elas descrevem como a probabilidade se distribui sobre todos os valores possíveis. Em IA, todo modelo é, no fundo, uma afirmação sobre qual distribuição os dados seguem.
+Medidas de posição e dispersão resumem um conjunto de dados em dois números — mas dois números não capturam a forma. Distribuições de probabilidade são o modelo completo: elas descrevem como a probabilidade se distribui sobre todos os valores possíveis. Em IA, todo modelo é uma afirmação implícita sobre qual distribuição os dados seguem: regressão linear postula normalidade dos erros; regressão logística modela probabilidades via Bernoulli; redes neurais generativas — VAEs e modelos de difusão — estimam e amostram distribuições no espaço latente. Escolher a função de perda é, matematicamente, escolher qual distribuição o modelo assume — e por isso esse conhecimento é insubstituível.
 
 > **Análise:** [03 — Médias e distribuições de probabilidade](../analises/03_medias_distribuicoes_probabilidade.ipynb) · [04 — Probabilidade, distribuições e testes em modelos](../analises/04_probabilidade_distribuicoes_testes_modelos.ipynb)
 

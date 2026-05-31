@@ -2,6 +2,8 @@
 
 Dados raramente vêm com um único valor: preços de ativos, altura de pacientes, latência de requisições — são sempre conjuntos. A primeira pergunta ao olhar para qualquer conjunto é dupla: *onde os valores tendem a se concentrar?* e *quão espalhados estão em torno desse centro?* Posição e dispersão são, respectivamente, as respostas a essas duas perguntas.
 
+Em aprendizado de máquina, essas medidas permeiam cada etapa do pipeline: a padronização de features — subtrair a média e dividir pelo desvio padrão — é pré-requisito para estabilidade numérica no gradiente descendente; o Erro Quadrático Médio (MSE), função de perda mais comum em regressão, é a variância dos resíduos do modelo; o Batch Normalization normaliza ativações de redes profundas com média e variância de cada mini-batch para acelerar o treinamento. Antes de qualquer modelo, entender o que os dados *são* numericamente é o que impede decisões de modelagem cegas.
+
 > **Análise:** [02 — Medidas de posição (fundos CVM)](../analises/02_medidas_posicao.ipynb)
 
 ---

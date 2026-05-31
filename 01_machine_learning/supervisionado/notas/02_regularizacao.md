@@ -6,6 +6,8 @@
 
 ---
 
+Regularização é o mecanismo central pelo qual modelos de IA generalizam além do conjunto de treino. Em redes neurais profundas, L2 regularization é implementada como weight decay no otimizador; dropout é interpretado como regularização implícita por média de submodelos; a busca por esparsidade em grandes modelos usa penalidades L1 sobre pesos. O trade-off entre ajuste e complexidade formulado aqui é o mesmo que determina capacidade de generalização em qualquer escala — de uma regressão simples a um modelo com bilhões de parâmetros.
+
 ## Intuição
 
 Na nota anterior, vimos que o OLS minimiza o SSR sem nenhuma restrição sobre o tamanho dos coeficientes. Essa liberdade é o problema: num modelo com muitos preditores, os coeficientes podem crescer arbitrariamente para capturar o ruído da amostra de treino, produzindo um ajuste quase perfeito in-sample mas com péssima generalização. O modelo aprendeu o dataset, não o fenômeno.

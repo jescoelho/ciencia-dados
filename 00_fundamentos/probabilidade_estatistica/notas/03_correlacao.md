@@ -2,6 +2,8 @@
 
 Distribuições descrevem uma variável de cada vez. Mas dados reais vivem em múltiplas dimensões e as variáveis interagem: preços de ativos se movem juntos, features de um modelo se redundam, erros de medição se propagam. Correlação é a linguagem para quantificar esse movimento conjunto — e entender seus limites é tão importante quanto calculá-la.
 
+Em IA, correlação entre features afeta diretamente a estabilidade de modelos lineares: preditores altamente correlacionados inflam a variância dos coeficientes e dificultam a interpretação. A Análise de Componentes Principais (PCA) é, algebricamente, uma fatoração da matriz de correlação que elimina redundância entre variáveis. Em modelos de sequência modernos, o mecanismo de atenção generaliza essa ideia para medir dependência entre posições em espaços de alta dimensão — correlação com parâmetros aprendidos.
+
 > **Análise:** [05 — Outliers, correlação, causalidade e hipóteses](../analises/05_outliers_correlacao_causalidade_hipoteses.ipynb)
 
 ---
