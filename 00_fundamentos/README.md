@@ -2,10 +2,6 @@
 
 Base matemática e computacional para machine learning.
 
-## Tópicos
+## Submódulos
 
-Probabilidade e estatística · Álgebra linear · Cálculo e otimização · Python para dados
-
-## Análises exploratórias
-
-Distribuições, medidas estatísticas, correlação e testes de hipóteses aplicados a dados de fundos CVM.
+- **probabilidade_estatistica** — distribuições, inferência bayesiana, MLE/MAP, teoria da informação
