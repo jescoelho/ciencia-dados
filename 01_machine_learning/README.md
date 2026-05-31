@@ -6,4 +6,4 @@ Machine learning é a capacidade de um sistema aprender padrões a partir de dad
 
 ## Submódulos
 
-- **supervisionado** — regressão, classificação, regularização, árvores, SVM, gradient boosting
+- **[supervisionado](supervisionado/README.md)** — regressão, classificação, regularização, árvores, SVM, gradient boosting

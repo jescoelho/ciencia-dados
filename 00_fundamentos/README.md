@@ -6,4 +6,4 @@ Este módulo cobre esses fundamentos na ordem em que se tornam necessários, con
 
 ## Submódulos
 
-- **probabilidade_estatistica** — distribuições, inferência bayesiana, MLE/MAP, teoria da informação
+- **[probabilidade_estatistica](probabilidade_estatistica/README.md)** — distribuições, inferência bayesiana, MLE/MAP, teoria da informação
