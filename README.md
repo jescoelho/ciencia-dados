@@ -1,8 +1,8 @@
 # ciencia-dados
 
-Estudos e análises aplicadas a **risco e tesouraria bancários** — dos fundamentos matemáticos a modelos de machine learning.
+Estudos de **inteligência artificial** — dos fundamentos matemáticos aos modelos modernos (~2020) — com análises aplicadas a **risco e tesouraria bancários**.
 
-O fio condutor são os problemas do dia a dia de um banco: risco de mercado, sensibilidade a fatores, gestão de carteira. Quando um ativo concreto é necessário, ITUB4 serve de caso de estudo por sua liquidez e representatividade no setor.
+Os conceitos são construídos progressivamente: cada módulo aprofunda a teoria e a aplica a problemas concretos do setor bancário. Quando um ativo de referência é necessário, ITUB4 serve de caso de estudo por sua liquidez e representatividade no setor.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange?logo=jupyter)](https://jupyter.org/)

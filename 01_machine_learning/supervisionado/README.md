@@ -1,6 +1,6 @@
 # Aprendizado Supervisionado
 
-Regressão e classificação aplicadas a problemas de risco e tesouraria bancários. Cada análise parte de uma pergunta de negócio concreta — ITUB4 como caso de estudo — e documenta premissas, limitações e próximos passos.
+Teoria e implementação de regressão e classificação, com análises aplicadas a risco de mercado. Cada análise parte de uma pergunta de negócio concreta e documenta premissas, limitações e próximos passos.
 
 ## Análises
 
