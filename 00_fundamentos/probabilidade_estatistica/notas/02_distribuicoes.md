@@ -1,6 +1,6 @@
 # Distribuições de Probabilidade
 
-Medidas de posição e dispersão resumem um conjunto de dados em dois números — mas dois números não capturam a forma. Distribuições de probabilidade são o modelo completo: elas descrevem como a probabilidade se distribui sobre todos os valores possíveis. Em IA, todo modelo é uma afirmação implícita sobre qual distribuição os dados seguem: regressão linear postula normalidade dos erros; regressão logística modela probabilidades via Bernoulli; redes neurais generativas — VAEs e modelos de difusão — estimam e amostram distribuições no espaço latente. Escolher a função de perda é, matematicamente, escolher qual distribuição o modelo assume — e por isso esse conhecimento é insubstituível.
+Medidas de posição e dispersão resumem um conjunto de dados em dois números — mas dois números não capturam a forma. Distribuições de probabilidade são o modelo completo: elas descrevem como a probabilidade se distribui sobre todos os valores possíveis. Em IA, todo modelo faz uma aposta implícita sobre como os dados se distribuem. Regressão linear assume que os erros seguem uma curva em sino — a distribuição normal. Regressão logística modela a probabilidade de um evento usando a distribuição de Bernoulli, a mesma de um lançamento de moeda. Modelos que geram imagens ou texto aprendem distribuições inteiras sobre espaços de representação interna e amostram essas distribuições para criar conteúdo novo. O critério que o modelo minimiza durante o treino — a função de perda — é sempre derivado de uma distribuição assumida: trocar a função de perda é, matematicamente, trocar a suposição sobre como os dados se comportam.
 
 > **Análise:** [03 — Médias e distribuições de probabilidade](../analises/03_medias_distribuicoes_probabilidade.ipynb) · [04 — Probabilidade, distribuições e testes em modelos](../analises/04_probabilidade_distribuicoes_testes_modelos.ipynb)
 
@@ -159,7 +159,7 @@ A normal, Bernoulli, Poisson, exponencial e beta (entre outras) são membros da 
 
 $$f(x;\eta) = h(x)\exp\!\bigl(\eta^\top T(x) - A(\eta)\bigr)$$
 
-onde $\eta$ são os **parâmetros naturais**, $T(x)$ são as **estatísticas suficientes** e $A(\eta)$ é a função log-partição (normalizador). Essa estrutura unificada explica por que o MLE dessas distribuições tem solução fechada, e é a base dos **modelos lineares generalizados (GLMs)** — a camada 3 constrói sobre isso.
+onde $\eta$ são os **parâmetros naturais** — a forma reformulada dos parâmetros que simplifica a estrutura matemática da distribuição —, $T(x)$ são as **estatísticas suficientes** — a parte dos dados que concentra toda a informação sobre os parâmetros, descartando o resto — e $A(\eta)$ é a **função log-partição**, um normalizador que garante que a distribuição integra 1. Essa estrutura unificada explica por que o MLE dessas distribuições tem solução fechada, e é a base dos **modelos lineares generalizados (GLMs)** — a camada 3 constrói sobre isso.
 
 ---
 
@@ -222,7 +222,7 @@ Cada família distribucional existe porque descreve um *mecanismo gerador* espec
 | Normal | Soma de muitos efeitos aditivos independentes | Dados em leis de potência, caudas pesadas |
 | Poisson | Eventos raros, independentes, taxa constante | Taxa variável no tempo (processos de Cox) |
 | Exponencial | Tempo entre eventos Poisson (sem memória) | Quando o sistema "envelhece" (ex: desgaste mecânico) |
-| Binomial | Tentativas i.i.d., $p$ fixo | Probabilidade de sucesso varia entre tentativas |
+| Binomial | Tentativas independentes com a mesma probabilidade de sucesso (*i.i.d.*), $p$ fixo | Probabilidade de sucesso varia entre tentativas |
 
 Em finanças, retornos de ativos têm assimetria negativa e curtose > 3 — a normal os subestima sistematicamente. A distribuição t com poucos graus de liberdade é o modelo mais comum na prática.
 

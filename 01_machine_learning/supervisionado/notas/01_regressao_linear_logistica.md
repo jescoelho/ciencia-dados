@@ -6,7 +6,7 @@
 
 ---
 
-Regressão linear e logística são os modelos mais simples que aprendem uma relação a partir de dados — e por isso formam a base conceitual para todo o restante. Uma rede neural profunda é uma composição de transformações lineares intercaladas por não-linearidades; um neurônio de saída de classificação binária é uma regressão logística. Compreender gradiente descendente, funções de perda e regularização nesse contexto simples é o que torna esses conceitos transferíveis para arquiteturas de qualquer complexidade.
+Regressão linear e logística são os modelos mais simples que aprendem uma relação a partir de dados — e por isso formam a base conceitual para todo o restante. Uma rede neural profunda empilha dezenas de camadas de processamento, mas cada camada faz essencialmente o que uma regressão faz: combina as entradas com pesos e produz uma saída. O modelo que classifica um e-mail como spam ou detecta uma transação fraudulenta é, em sua última camada, uma regressão logística. Entender como a regressão encontra seus parâmetros, mede seu desempenho e decide quando está generalizando bem ou memorizando os dados de treino é o que torna esses mecanismos compreensíveis em qualquer escala de complexidade.
 
 ## Regressão Linear Simples
 

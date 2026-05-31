@@ -6,7 +6,7 @@
 
 ---
 
-Regularização é o mecanismo central pelo qual modelos de IA generalizam além do conjunto de treino. Em redes neurais profundas, L2 regularization é implementada como weight decay no otimizador; dropout é interpretado como regularização implícita por média de submodelos; a busca por esparsidade em grandes modelos usa penalidades L1 sobre pesos. O trade-off entre ajuste e complexidade formulado aqui é o mesmo que determina capacidade de generalização em qualquer escala — de uma regressão simples a um modelo com bilhões de parâmetros.
+Regularização é o mecanismo central pelo qual modelos de IA aprendem a generalizar — ou seja, funcionar bem em dados que nunca viram, não apenas naqueles usados no treino. Em redes neurais profundas, uma variante chamada *weight decay* penaliza pesos grandes diretamente durante o treino — o efeito é o mesmo que a penalidade L2 vista aqui, aplicada em escala muito maior. Outra técnica comum, o *dropout*, desativa aleatoriamente parte das conexões da rede a cada passo do treino, forçando o modelo a aprender múltiplos caminhos para a mesma resposta em vez de depender excessivamente de um único. O equilíbrio central explorado nesta nota — entre ajustar bem os dados de treino e manter o modelo simples o suficiente para generalizar — é o mesmo em qualquer escala, de uma regressão com dez variáveis a um modelo com bilhões de parâmetros.
 
 ## Intuição
 
@@ -62,7 +62,7 @@ A primeira é **numérica**: mesmo quando $X^\top X$ é singular — o que ocorr
 
 A segunda é o **shrinkage**: comparado ao OLS, cada coeficiente Ridge é reduzido por um fator menor que 1 — determinado por $\lambda$ e pela estrutura de correlação entre os preditores. Mas nenhum coeficiente chega a zero exatamente. Por quê? A derivada da penalidade L2 em relação a $\beta_j$ é $2\lambda\beta_j$ — vai a zero conforme $\beta_j \to 0$. O custo marginal de manter um coeficiente pequeno também é pequeno, e como removê-lo sempre eleva o SSR em alguma quantidade, o modelo prefere mantê-lo com valor pequeno mas não nulo. Ridge encolhe, mas não elimina.
 
-Do ponto de vista bayesiano, Ridge equivale a estimar os coeficientes por máxima a posteriori (MAP) com um prior gaussiano centrado em zero, $\beta_j \sim \mathcal{N}(0, \sigma^2/\lambda)$. Quanto maior $\lambda$, mais concentrado é o prior e mais forte o encolhimento.
+Há também uma interpretação em termos probabilísticos: em vez de estimar os coeficientes apenas pelos dados, podemos partir de uma suposição inicial de que os coeficientes verdadeiros provavelmente são pequenos — próximos de zero — e ajustar essa suposição com base no que os dados mostram. Ridge é o resultado desse processo quando a suposição inicial segue uma curva em sino centrada em zero. Quanto maior $\lambda$, mais forte é essa suposição inicial e mais o modelo encolhe os coeficientes em sua direção.
 
 O shrinkage do Ridge é estável e preciso, mas tem um custo: quando há muitos preditores irrelevantes, Ridge os mantém no modelo com coeficientes pequenos — o modelo resultante pode ter dezenas de preditores com efeitos mínimos. Se a esparsidade importa, precisamos de um mecanismo diferente.
 

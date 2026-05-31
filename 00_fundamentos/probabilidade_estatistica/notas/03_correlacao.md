@@ -2,7 +2,7 @@
 
 Distribuições descrevem uma variável de cada vez. Mas dados reais vivem em múltiplas dimensões e as variáveis interagem: preços de ativos se movem juntos, features de um modelo se redundam, erros de medição se propagam. Correlação é a linguagem para quantificar esse movimento conjunto — e entender seus limites é tão importante quanto calculá-la.
 
-Em IA, correlação entre features afeta diretamente a estabilidade de modelos lineares: preditores altamente correlacionados inflam a variância dos coeficientes e dificultam a interpretação. A Análise de Componentes Principais (PCA) é, algebricamente, uma fatoração da matriz de correlação que elimina redundância entre variáveis. Em modelos de sequência modernos, o mecanismo de atenção generaliza essa ideia para medir dependência entre posições em espaços de alta dimensão — correlação com parâmetros aprendidos.
+Em IA, quando duas variáveis de entrada de um modelo medem essencialmente a mesma coisa — ou seja, são altamente correlacionadas —, o modelo tem dificuldade em separar o efeito de cada uma sobre a saída, e seus parâmetros ficam instáveis. A Análise de Componentes Principais (PCA) é uma técnica que usa a estrutura de correlação dos dados para criar novas variáveis sem redundância, resumindo a informação de forma mais compacta. Em modelos modernos de linguagem, o mecanismo de atenção — o componente que decide quais partes do texto são relevantes para cada palavra — pode ser interpretado como uma forma generalizada de correlação: ele mede o quanto dois elementos de uma sequência se relacionam, mas com pesos aprendidos a partir dos dados.
 
 > **Análise:** [05 — Outliers, correlação, causalidade e hipóteses](../analises/05_outliers_correlacao_causalidade_hipoteses.ipynb)
 
@@ -218,7 +218,7 @@ Com $n = 10$ e $r = 0.5$, o p-valor é ~0.14 — não significativo. Com $n = 10
 
 Correlação descobre associação; causalidade exige desenho experimental ou instrumentos causais.
 
-**Correlações instáveis no tempo** — em séries temporais financeiras, a correlação entre ativos muda de regime: cai em bull markets e sobe abruptamente em crises. Uma correlação calculada sobre toda a janela histórica mascara essa dinâmica. Use janelas deslizantes ou modelos DCC-GARCH para correlação dinâmica.
+**Correlações instáveis no tempo** — em séries temporais financeiras, a correlação entre ativos muda de regime: cai em bull markets e sobe abruptamente em crises. Uma correlação calculada sobre toda a janela histórica mascara essa dinâmica. Use janelas deslizantes — calculando a correlação apenas sobre os últimos N dias, avançando no tempo — ou modelos de correlação dinâmica (como o DCC-GARCH, que estimam como as correlações mudam de regime ao longo do tempo) para capturar essa variação.
 
 ---
 
@@ -275,8 +275,8 @@ B × C: r=-0.246, p=0.0850
 
 - `df.corr()` ignora silenciosamente pares com NaN — cheque missings antes.
 - Nunca interprete uma correlação sem ver o scatterplot. O Quarteto de Anscombe é um aviso permanente.
-- Em séries temporais, correlações entre variáveis não-estacionárias são espúrias por definição — stationarize primeiro.
-- Correlação entre variáveis com distribuição muito diferente (ex: binária vs contínua) não é bem capturada por Pearson; use correlação ponto-bisserial ou tetracórica.
+- Em séries temporais, variáveis que crescem continuamente — como preços de ações ou PIB — tendem a parecer correlacionadas entre si mesmo sem nenhuma relação real, simplesmente porque ambas sobem com o tempo. Esse fenômeno é chamado de correlação espúria. Antes de calcular correlações em séries temporais, remova essa tendência comum — por exemplo, usando retornos percentuais em vez de preços absolutos.
+- Quando uma variável é contínua e a outra é binária (0 ou 1), Pearson não captura bem a associação — use a correlação ponto-bisserial, que é a versão de Pearson adaptada para esse caso misto. Quando ambas são binárias, use a correlação tetracórica, que estima a correlação que existiria se as duas variáveis fossem contínuas por baixo.
 
 ---
 
