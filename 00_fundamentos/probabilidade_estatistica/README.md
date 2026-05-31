@@ -4,7 +4,7 @@ Dados são incertos por natureza: preços oscilam, medições têm erro, o futur
 
 Em IA, todo modelo aprende estimando distribuições, minimizando funções de perda derivadas da teoria da informação e sendo avaliado com testes estatísticos. Sem essa base, os modelos funcionam como caixas-pretas — usáveis, mas não compreensíveis.
 
-## Roteiro de estudo
+## Progressão
 
 | Camada | Tópico | Conceitos-chave | Para entender em IA |
 |--------|--------|-----------------|---------------------|
@@ -15,6 +15,6 @@ Em IA, todo modelo aprende estimando distribuições, minimizando funções de p
 | 5 | Fundamento de deep learning | Entropia, divergência KL, informação mútua | Cross-entropy loss, VAEs e modelos de difusão são derivados diretamente daqui |
 | 6 | Incerteza em modelos | Inferência bayesiana, prior/posterior, distribuições conjugadas | Visão unificada de modelos probabilísticos; pré-requisito para Gaussian Processes e BNNs |
 
-## Notas de estudo
+## Notas
 
 Probabilidade e Bayes · Distribuições · MLE e MAP · Testes de hipótese · Teoria da informação · Inferência bayesiana
