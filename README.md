@@ -1,6 +1,6 @@
 # ciencia-dados
 
-Estudos de **inteligência artificial** — dos fundamentos matemáticos aos modelos modernos — com análises aplicadas a **risco e tesouraria bancários**.
+Estudos de **inteligência artificial** com análises aplicadas a **risco e tesouraria bancários**.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-Notebooks-orange?logo=jupyter)](https://jupyter.org/)
@@ -8,49 +8,45 @@ Estudos de **inteligência artificial** — dos fundamentos matemáticos aos mod
 
 ---
 
-## Como está organizado
+## Por que este repositório existe
 
-```
-Fundamentos  ──►  Pilares de IA  ──►  Aplicações bancárias
-(linguagem)        (modelos)           (problemas reais)
-```
+Usar um modelo de IA sem entender o que ele faz é como usar uma calculadora sem saber matemática — funciona até o momento em que dá errado e você não sabe por quê.
 
-| Camada | O que cobre | Por que importa |
-|--------|-------------|-----------------|
-| **Fundamentos** | Probabilidade, álgebra linear, cálculo, Python | Todo modelo de IA é uma equação — essa camada ensina a linguagem |
-| **Pilares** | ML, Deep Learning, NLP, Visão, RL, IA Generativa | Cada pilar é uma família de soluções para uma classe de problemas |
-| **Aplicações** | Risco de mercado, crédito, tesouraria | Os modelos aplicados a decisões reais do setor bancário |
+Este repositório documenta um percurso de aprendizado que parte da base matemática e avança até os modelos modernos, sempre conectando teoria e aplicação concreta. O fio condutor é o setor bancário: risco de mercado, crédito e tesouraria são os domínios onde os conceitos aterrisam.
 
 ---
 
-## Módulos ativos
+## Como o conteúdo está organizado
 
-### 00 · Fundamentos
+O percurso tem três camadas, cada uma dependendo da anterior:
 
-| Submódulo | Tópicos | Notas e análises |
-|-----------|---------|-----------------|
-| [Probabilidade e Estatística](00_fundamentos/probabilidade_estatistica/README.md) | Distribuições · Medidas · Correlação · Bayes · MLE/MAP · Teoria da informação | 3 notas · 5 análises |
+**Fundamentos** — a linguagem dos modelos. Probabilidade, álgebra linear, cálculo e programação. Sem essa base, os modelos funcionam como caixas-pretas: usáveis, mas não compreensíveis.
 
-### 01 · Machine Learning
+**Pilares de IA** — as famílias de modelos. Machine Learning, Deep Learning, NLP, Visão Computacional, Aprendizado por Reforço e IA Generativa. Cada pilar tem suas próprias análises aplicadas.
 
-| Submódulo | Tópicos | Notas e análises |
-|-----------|---------|-----------------|
-| [Supervisionado](01_machine_learning/supervisionado/README.md) | Regressão linear/logística · Regularização · Avaliação de modelos | 2 notas · 3 análises |
+**Aplicações bancárias** — os problemas reais. Risco de mercado, precificação, crédito, tesouraria. Os modelos dos pilares aplicados a decisões concretas do setor.
+
+Cada módulo combina dois tipos de material: **notas de estudo** (teoria com código executável) e **análises aplicadas** (notebooks com dados reais).
 
 ---
 
-## Roteiro
+## Mapa de módulos
 
-| # | Módulo | Status |
-|---|--------|--------|
-| 00 | Fundamentos matemáticos | Em andamento |
-| 01 | Machine Learning | Em andamento |
-| 02 | Deep Learning | — |
-| 03 | Processamento de Linguagem Natural | — |
-| 04 | Visão Computacional | — |
-| 05 | Aprendizado por Reforço | — |
-| 06 | IA Generativa | — |
-| 07 | Aplicações bancárias | — |
+Os módulos ativos têm link para seu próprio README, onde estão as análises e notas detalhadas.
+
+| Camada | Módulo | Tópicos principais |
+|--------|--------|--------------------|
+| Fundamentos | [Probabilidade e Estatística](00_fundamentos/probabilidade_estatistica/README.md) | Distribuições · Medidas · Correlação · Bayes · MLE/MAP · Teoria da informação |
+| ML | [Supervisionado](01_machine_learning/supervisionado/README.md) | Regressão · Regularização · Avaliação de modelos |
+| ML | Não supervisionado | — |
+| ML | Ensemble e árvores | — |
+| Deep Learning | Redes neurais | — |
+| Deep Learning | CNNs e Visão | — |
+| Deep Learning | RNNs e séries temporais | — |
+| NLP | Linguagem natural | — |
+| IA Generativa | LLMs e difusão | — |
+| Aprendizado por Reforço | Políticas e agentes | — |
+| Aplicações | Risco e tesouraria bancários | — |
 
 ---
 
