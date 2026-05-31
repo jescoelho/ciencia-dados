@@ -208,7 +208,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_7_0.png)
+![png](assets/01_predicao_choque_itub4_7_0.png)
     
 
 
@@ -253,7 +253,7 @@ print(f'Cenario ({CHOQUE*100:.0f}%): percentil {pct_choque:.2f}% -- {modo}')
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_10_0.png)
+![png](assets/01_predicao_choque_itub4_10_0.png)
     
 
 
@@ -318,7 +318,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_14_0.png)
+![png](assets/01_predicao_choque_itub4_14_0.png)
     
 
 
@@ -426,7 +426,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_20_0.png)
+![png](assets/01_predicao_choque_itub4_20_0.png)
     
 
 
@@ -532,7 +532,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_28_0.png)
+![png](assets/01_predicao_choque_itub4_28_0.png)
     
 
 
@@ -582,7 +582,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_33_0.png)
+![png](assets/01_predicao_choque_itub4_33_0.png)
     
 
 
@@ -629,7 +629,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_37_0.png)
+![png](assets/01_predicao_choque_itub4_37_0.png)
     
 
 
@@ -679,7 +679,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_41_0.png)
+![png](assets/01_predicao_choque_itub4_41_0.png)
     
 
 
@@ -748,7 +748,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_46_0.png)
+![png](assets/01_predicao_choque_itub4_46_0.png)
     
 
 
@@ -793,7 +793,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_49_0.png)
+![png](assets/01_predicao_choque_itub4_49_0.png)
     
 
 
@@ -856,7 +856,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_54_0.png)
+![png](assets/01_predicao_choque_itub4_54_0.png)
     
 
 
@@ -1014,7 +1014,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_62_1.png)
+![png](assets/01_predicao_choque_itub4_62_1.png)
     
 
 
@@ -1069,7 +1069,7 @@ plt.show()
 
 
     
-![png](01_predicao_choque_itub4_files/01_predicao_choque_itub4_64_0.png)
+![png](assets/01_predicao_choque_itub4_64_0.png)
     
 
 
