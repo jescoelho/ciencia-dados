@@ -86,7 +86,7 @@ onde um par $(i,j)$ é concordante se $(x_i - x_j)$ e $(y_i - y_j)$ têm o mesmo
 
 Convenções práticas para $|r|$ de Pearson:
 
-| $|r|$ | Intensidade |
+| $\lvert r \rvert$ | Intensidade |
 |-------|-------------|
 | < 0.3 | fraca |
 | 0.3 – 0.5 | moderada |
