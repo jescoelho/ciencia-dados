@@ -2,7 +2,7 @@
 
 Distribuições e correlação descrevem o que acontece com dados já observados. Mas dados raramente chegam completos: um e-mail está chegando e ainda não sabemos se é spam; um paciente está sendo examinado e ainda não sabemos o diagnóstico; um modelo está sendo treinado e não sabemos quais parâmetros descrevem os dados. Probabilidade é a linguagem para quantificar essa incerteza — e probabilidade condicional é a ferramenta para atualizá-la conforme novas informações chegam.
 
-Em IA, quase toda saída de modelo é uma afirmação probabilística. Um classificador não retorna "spam" — retorna $P(\text{spam} \mid \text{e-mail})$, a probabilidade de ser spam dado o conteúdo. Durante o treino, a função de perda é derivada de uma suposição sobre como os dados se distribuem: minimizar a cross-entropy equivale a maximizar a probabilidade dos dados sob o modelo. O Teorema de Bayes é o fundamento de classificadores Naive Bayes, filtros de spam, redes neurais probabilísticas e da inferência variacional que treina VAEs. Variáveis aleatórias, esperança e variância definem o que um modelo está tentando estimar e quão incerto ele está sobre essa estimativa.
+Em IA, quase toda saída de modelo é uma afirmação probabilística. Um classificador não retorna "spam" — retorna $P(\text{spam} \mid \text{e-mail})$, a probabilidade de ser spam dado o conteúdo. Durante o treino, a função de perda vem de uma suposição sobre como os dados se distribuem: minimizar a cross-entropy equivale a maximizar a probabilidade dos dados sob o modelo. O Teorema de Bayes fundamenta classificadores como o Naive Bayes e filtros de spam, e está no centro de modelos generativos que aprendem a criar imagens e texto. Variáveis aleatórias, esperança e variância definem o que um modelo está tentando estimar e quão incerto ele está sobre essa estimativa.
 
 > **Análise:** [04 — Probabilidade, distribuições e testes em modelos](../analises/04_probabilidade_distribuicoes_testes_modelos.ipynb)
 
@@ -10,9 +10,9 @@ Em IA, quase toda saída de modelo é uma afirmação probabilística. Um classi
 
 ## Intuição
 
-Imagine o conjunto de todos os resultados possíveis de um experimento — lançar uma moeda, sortear um e-mail da caixa de entrada, escolher um paciente aleatório. Probabilidade é um número entre 0 e 1 que mede qual fração desses resultados corresponde a um evento de interesse.
+Imagine que você sorteia um e-mail aleatório da caixa de entrada. A chance de ele ser spam é a probabilidade: um número entre 0 e 1 que mede qual fração de todos os e-mails possíveis caem nessa categoria.
 
-Probabilidade condicional responde a uma pergunta diferente: dado que já sei que B ocorreu, qual fração dos casos com B também tem A? Condicionar é restringir o universo — em vez de olhar para todos os resultados possíveis, olho apenas para os compatíveis com B.
+Agora imagine que você já sabe que o e-mail tem a palavra "promoção". Isso muda sua estimativa — e muito. Probabilidade condicional é exatamente isso: a chance de algo acontecer *dado que já sabemos outra coisa*. Condicionar é trocar o universo de referência — em vez de considerar todos os e-mails, consideramos só os que têm "promoção", e medimos qual fração desses é spam.
 
 ```python
 import matplotlib
@@ -198,7 +198,7 @@ Essa é a regra de Bayes. Ela permite *inverter a condição*: se sei $P(B \mid 
 
 $$P(B) = \sum_i P(B \mid A_i)\, P(A_i)$$
 
-quando $A_1, A_2, \ldots$ particionam o espaço — são mutuamente exclusivos e cobrem todos os casos possíveis.
+quando $A_1, A_2, \ldots$ cobrem todos os casos possíveis sem se sobrepor — como "doente" e "saudável" num diagnóstico.
 
 Cada termo tem um papel distinto no mecanismo de atualização:
 
@@ -250,7 +250,7 @@ Uma das propriedades mais poderosas do Teorema de Bayes é que observações pod
 
 $$P(\theta \mid x_1, \ldots, x_n) \propto P(\theta) \prod_{i=1}^n P(x_i \mid \theta)$$
 
-$\propto$ indica proporcionalidade — o denominador é constante de normalização independente de $\theta$. O produto de verossimilhanças acumula evidências: cada observação empurra o posterior em direção às regiões de $\theta$ compatíveis com os dados.
+$\propto$ significa "proporcional a" — o denominador é um número fixo que garante que o posterior some 1, e pode ser ignorado na comparação entre hipóteses. O produto acumula evidências: cada observação empurra o posterior em direção aos valores de $\theta$ compatíveis com os dados.
 
 ```python
 import matplotlib
