@@ -18,15 +18,13 @@ Este repositório documenta um percurso de aprendizado que parte da base matemá
 
 ## Como o conteúdo está organizado
 
-O percurso tem três camadas, cada uma dependendo da anterior:
+O percurso tem duas camadas progressivas:
 
 **Fundamentos** — a linguagem dos modelos. Probabilidade, álgebra linear, cálculo e programação. Sem essa base, os modelos funcionam como caixas-pretas: usáveis, mas não compreensíveis.
 
-**Pilares de IA** — as famílias de modelos. Machine Learning, Deep Learning, NLP, Visão Computacional, Aprendizado por Reforço e IA Generativa. Cada pilar tem suas próprias análises aplicadas.
+**Pilares de IA** — as famílias de modelos. Machine Learning, Deep Learning, NLP, Visão Computacional, Aprendizado por Reforço e IA Generativa.
 
-**Aplicações bancárias** — os problemas reais. Risco de mercado, precificação, crédito, tesouraria. Os modelos dos pilares aplicados a decisões concretas do setor.
-
-Cada módulo combina dois tipos de material: **notas de estudo** (teoria com código executável) e **análises aplicadas** (notebooks com dados reais).
+Cada módulo combina dois tipos de material: **notas de estudo** (teoria com código executável) e **análises aplicadas** (notebooks com dados reais de risco e tesouraria bancários).
 
 ---
 
@@ -46,7 +44,6 @@ Os módulos ativos têm link para seu próprio README, onde estão as análises 
 | NLP | Linguagem natural | — |
 | IA Generativa | LLMs e difusão | — |
 | Aprendizado por Reforço | Políticas e agentes | — |
-| Aplicações | Risco e tesouraria bancários | — |
 
 ---
 
