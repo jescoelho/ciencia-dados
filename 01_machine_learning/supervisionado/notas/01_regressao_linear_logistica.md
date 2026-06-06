@@ -457,7 +457,7 @@ $$\ell(\beta_0, \beta_1) = \sum_{i=1}^n \left[ y_i \log p_i + (1 - y_i)\log(1 - 
 
 onde $p_i = \sigma(\beta_0 + \beta_1 x_i)$. Maximizar $\ell$ é equivalente a minimizar o negativo dela — a **log-loss** (ou entropia cruzada binária), que reaparece na seção de avaliação como métrica de desempenho.
 
-Diferentemente do OLS, essa função não tem solução fechada: a sigmoide dentro do logaritmo cria uma equação transcendental sem forma analítica. Os parâmetros são encontrados por otimização iterativa — tipicamente **gradiente descendente** ou métodos de segunda ordem como Newton-Raphson, que convergem em poucas iterações porque a log-verossimilhança é côncava (única solução global).
+Diferentemente do OLS, essa função não tem solução fechada: a sigmoide dentro do logaritmo cria uma equação transcendental sem forma analítica. Os parâmetros são encontrados por otimização iterativa — tipicamente **gradiente descendente** ou métodos de segunda ordem como **Newton-Raphson**, que além do gradiente usam a curvatura da função (a hessiana) para dar passos maiores e mais certeiros, convergindo em poucas iterações. A convergência é garantida porque a log-verossimilhança é côncava — existe uma única solução global.
 
 Para ver como a otimização funciona concretamente, vale calcular o gradiente da log-verossimilhança em relação ao vetor de parâmetros. Derivando $\ell$ em relação a $\boldsymbol{\beta}$ e usando a propriedade da sigmoide $\sigma'(z) = \sigma(z)(1 - \sigma(z))$:
 
@@ -578,7 +578,7 @@ Os dois painéis mostram o mesmo conjunto desbalanceado (90% negativos, 10% posi
 
 As duas abordagens são complementares: pesos de classe corrigem o modelo durante o treino; o limiar $\tau$ afina a decisão final sobre o modelo já treinado. Em desbalanceamento severo, combinar os dois tende a produzir os melhores resultados.
 
-Quando os **custos de FP e FN são assimétricos** — não detectar uma fraude é mais custoso do que alertar um cliente legítimo — o limiar ótimo minimiza o custo esperado total. Sendo $C_{FP}$ e $C_{FN}$ os custos de cada tipo de erro:
+Quando os **custos de FP e FN são assimétricos** — não detectar uma fraude é mais custoso do que alertar um cliente legítimo — o limiar ótimo minimiza o custo esperado total. A condição de equilíbrio é classificar como positivo sempre que o custo esperado de errar for menor do que o de acertar: $\hat{p} \cdot C_{FN} \geq (1 - \hat{p}) \cdot C_{FP}$. Resolvendo para $\hat{p}$, o limiar que iguala os dois custos é:
 
 $$\tau^* = \frac{C_{FP}}{C_{FP} + C_{FN}}$$
 
@@ -614,7 +614,7 @@ O equivalente padronizado é o **resíduo de deviance**:
 
 $$d_i = \text{sign}(y_i - \hat{p}_i)\sqrt{-2\left[y_i \log \hat{p}_i + (1 - y_i)\log(1 - \hat{p}_i)\right]}$$
 
-O sinal preserva a direção do erro: positivo se o modelo subestimou $y_i$, negativo se superestimou. O interior da raiz é a contribuição individual à log-loss total — somando $d_i^2$ sobre todas as observações recuperamos a **deviance** do modelo, análoga ao SSR da regressão linear. Observações com $|d_i|$ grande são potencialmente mal ajustadas ou influentes e merecem investigação.
+O sinal preserva a direção do erro: positivo se o modelo subestimou $y_i$, negativo se superestimou. O interior do colchete — $y_i \log \hat{p}_i + (1-y_i)\log(1-\hat{p}_i)$ — é sempre negativo (logaritmo de probabilidade), então o sinal negativo na frente garante que a expressão sob a raiz seja sempre não negativa. Esse interior é exatamente a contribuição individual à log-loss total — somando $d_i^2$ sobre todas as observações recuperamos a **deviance** do modelo, análoga ao SSR da regressão linear. Observações com $|d_i|$ grande são potencialmente mal ajustadas ou influentes e merecem investigação.
 
 ---
 
