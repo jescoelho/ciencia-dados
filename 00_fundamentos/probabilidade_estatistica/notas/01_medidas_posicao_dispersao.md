@@ -121,6 +121,8 @@ skewness: 0.174
 kurtosis (excess): 0.567  # 0 = normal
 ```
 
+*Para dados gerados de N(50, 10) com n=300, skewness próximo de zero confirma simetria — sem cauda dominante. Kurtosis de 0.57 está levemente acima do esperado para normal pura (0.0), dentro da variação amostral esperada para esse tamanho de amostra.*
+
 ---
 
 ## Interpretação
