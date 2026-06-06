@@ -26,3 +26,4 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 | 01 | [Predição de choque — ITUB4](analises/01_predicao_choque_itub4.md) | Regressão linear simples, CAPM |
 | 02 | [Modelo multifator com regularização — ITUB4](analises/02_regularizacao_multifator_itub4.md) | Ridge, Lasso, Elastic Net |
 | 03 | [Probabilidade de default em cartão de crédito](analises/03_default_cartao_credito.md) | Regressão logística, credit scoring |
+| 04 | [Predição de default — LendingClub (2008–2011)](analises/04_lendingclub_oot.md) | Regressão logística, validação out-of-time |
