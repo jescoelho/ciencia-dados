@@ -67,7 +67,7 @@ plt.rcParams.update({
 
 Em qualquer banco que opere sob Basileia II, a **Probabilidade de Default (PD)** é um insumo central: ela determina o capital regulatório mínimo exigido para cada exposição de crédito. Sob o IFRS 9, o aumento significativo da PD desde a originação é o gatilho para migração do Estágio 1 para o Estágio 2 — o que expande o horizonte de provisionamento de 12 meses para a vida inteira do ativo. Em ambos os contextos, o banco precisa de um modelo que estime probabilidades confiáveis por tomador, não apenas classifique binariamente.
 
-O modelo que construiremos aqui é um **scorecard probabilístico**: para cada cliente, produz $\hat{p}$, a probabilidade estimada de default no mês seguinte. O objetivo principal é ranquear os clientes do mais arriscado ao menos arriscado com o máximo de separação possível — não acertar uma classificação binária.
+O modelo que construiremos aqui é um **scorecard probabilístico**: para cada cliente, produz p̂, a probabilidade estimada de default no mês seguinte. O objetivo principal é ranquear os clientes do mais arriscado ao menos arriscado com o máximo de separação possível — não acertar uma classificação binária.
 
 Por isso a métrica de sucesso é a **AUC-ROC**, e não a acurácia. Acurácia é enganosa em dados desbalanceados: um modelo que prevê sempre "adimplente" acerta automaticamente 78% dos casos sem aprender nada. A AUC mede se o modelo atribui probabilidade maior ao inadimplente do que ao adimplente, para qualquer par aleatório de um e outro — isso captura exatamente o poder de ordenação por risco.
 
@@ -115,11 +115,11 @@ As variáveis estão organizadas em três grupos:
 |-------|-----------|-----------|
 | Demográficas | SEX, EDUCATION, MARRIAGE, AGE | Perfil do cliente |
 | Financeiras | LIMIT_BAL | Limite de crédito total concedido (NT$) |
-| Comportamentais | PAY\_0, PAY\_2–PAY\_6 | Status de pagamento nos últimos 6 meses (≤0 = em dia; 1–9 = meses de atraso) |
-| Históricas | BILL\_AMT1–6 | Valor da fatura por mês (NT$) |
-| Históricas | PAY\_AMT1–6 | Valor pago por mês (NT$) |
+| Comportamentais | PAY_0, PAY_2–PAY_6 | Status de pagamento nos últimos 6 meses (≤0 = em dia; 1–9 = meses de atraso) |
+| Históricas | BILL_AMT1–6 | Valor da fatura por mês (NT$) |
+| Históricas | PAY_AMT1–6 | Valor pago por mês (NT$) |
 
-*Nota: não existe PAY\_1 no dataset. A sequência vai de PAY\_0 (setembro de 2005) para PAY\_2 (agosto de 2005), numeração original do dataset.*
+*Nota: não existe PAY_1 no dataset. A sequência vai de PAY_0 (setembro de 2005) para PAY_2 (agosto de 2005), numeração original do dataset.*
 
 ![Distribuição do target: 23.364 adimplentes (77,9%) e 6.636 inadimplentes (22,1%).](assets/03_distribuicao_classes.png)
 
@@ -127,7 +127,7 @@ As variáveis estão organizadas em três grupos:
 
 ### 2.2 Padrão de pagamento e default
 
-A variável mais informativa antes de qualquer modelagem é o **status de pagamento mais recente** (PAY\_0). Calculando a taxa de default por valor de PAY\_0:
+A variável mais informativa antes de qualquer modelagem é o **status de pagamento mais recente** (`PAY_0`). Calculando a taxa de default por valor de `PAY_0`:
 
 ```python
 df_pay0 = pd.DataFrame({'PAY_0': X_raw['PAY_0'].values, 'default': y_all})
@@ -150,7 +150,7 @@ print(taxa.to_string())
 
 ![Taxa de default por status de pagamento (PAY_0). Barras azuis: em dia (PAY_0 ≤ 0). Barras vermelhas: meses de atraso. Linha dourada: taxa média (22%).](assets/03_pay0_vs_default.png)
 
-*Clientes em dia (PAY\_0 ≤ 0) têm taxa de default entre 13% e 17% — perto da média. Com 1 mês de atraso, a taxa salta para 34%. Com 2 meses, atinge 69%. A descontinuidade é acentuada: um único mês de atraso mais que dobra o risco. Isso orienta a modelagem — o histórico de pagamento recente deve dominar o modelo.*
+*Clientes em dia (PAY_0 ≤ 0) têm taxa de default entre 13% e 17% — perto da média. Com 1 mês de atraso, a taxa salta para 34%. Com 2 meses, atinge 69%. A descontinuidade é acentuada: um único mês de atraso mais que dobra o risco. Isso orienta a modelagem — o histórico de pagamento recente deve dominar o modelo.*
 
 ## Fase 3 — Preparação dos Dados
 
@@ -190,7 +190,7 @@ print(X_raw['n_delays'].value_counts().sort_index().to_string())
     5      188
     6       153
 
-*`n_delays` conta em quantos dos últimos 6 meses o cliente teve algum atraso (PAY > 0). Um cliente com `n_delays = 0` nunca atrasou nenhum mês; com `n_delays = 6`, atrasou todos os 6 meses. Esse atributo sintetiza em uma dimensão o padrão de comportamento que as 6 variáveis PAY\_ capturam individualmente.*
+*`n_delays` conta em quantos dos últimos 6 meses o cliente teve algum atraso (PAY > 0). Um cliente com `n_delays = 0` nunca atrasou nenhum mês; com `n_delays = 6`, atrasou todos os 6 meses. Esse atributo sintetiza em uma dimensão o padrão de comportamento que as 6 variáveis `PAY_*` capturam individualmente.*
 
 ### 3.2 Divisão e padronização
 
@@ -212,9 +212,9 @@ print(f"Teste : {X_test.shape[0]:,} obs  | {y_test.mean():.1%} default")
 
 ## Fase 4 — Modelagem
 
-A regressão logística com regularização L2 (Ridge logístico) é o ponto de partida natural para credit scoring: produz probabilidades calibradas pelo MLE, os coeficientes são interpretáveis via odds ratios e a penalidade L2 evita que coeficientes cresçam descontroladamente em preditores correlacionados — o que é relevante aqui, já que as 6 variáveis PAY\_ e o atributo `n_delays` derivado delas carregam informação parcialmente redundante.
+A regressão logística com regularização L2 (Ridge logístico) é o ponto de partida natural para credit scoring: produz probabilidades calibradas pelo MLE, os coeficientes são interpretáveis via odds ratios e a penalidade L2 evita que coeficientes cresçam descontroladamente em preditores correlacionados — o que é relevante aqui, já que as 6 variáveis `PAY_*` e o atributo `n_delays` derivado delas carregam informação parcialmente redundante.
 
-Treinamos dois modelos com os mesmos hiperparâmetros ($C = 1$), diferenciados apenas pelo tratamento do desequilíbrio:
+Treinamos dois modelos com os mesmos hiperparâmetros (C = 1), diferenciados apenas pelo tratamento do desequilíbrio:
 
 ```python
 m1 = LogisticRegression(C=1, max_iter=1000, random_state=42)
@@ -231,9 +231,9 @@ print(f"AUC — Modelo 2 (com pesos): {roc_auc_score(y_test, p2):.3f}")
     AUC — Modelo 1 (sem pesos): 0.740
     AUC — Modelo 2 (com pesos): 0.743
 
-*Os dois modelos têm AUC praticamente idêntica. Isso faz sentido: a AUC é uma métrica de ranqueamento — ela avalia se o modelo coloca inadimplentes antes de adimplentes — e o ranqueamento relativo se preserva mesmo quando os coeficientes mudam. O `class_weight='balanced'` altera a fronteira de decisão (os $\hat{\boldsymbol{\beta}}$ estimados mudam, conforme discutido na nota), mas não altera significativamente quem o modelo considera mais ou menos arriscado em termos relativos.*
+*Os dois modelos têm AUC praticamente idêntica. Isso faz sentido: a AUC é uma métrica de ranqueamento — ela avalia se o modelo coloca inadimplentes antes de adimplentes — e o ranqueamento relativo se preserva mesmo quando os coeficientes mudam. O `class_weight='balanced'` altera a fronteira de decisão (os β̂ estimados mudam, conforme discutido na nota), mas não altera significativamente quem o modelo considera mais ou menos arriscado em termos relativos.*
 
-*O parâmetro $C$ controla a intensidade da regularização: $C = 1/\lambda$, então $C = 1$ é o valor padrão do scikit-learn. Ajustar $C$ via validação cruzada — o procedimento correto para produção — é o tema da [nota de regularização](../notas/02_regularizacao.md).*
+*O parâmetro C controla a intensidade da regularização: C = 1/λ, então C = 1 é o valor padrão do scikit-learn. Ajustar C via validação cruzada — o procedimento correto para produção — é o tema da [nota de regularização](../notas/02_regularizacao.md).*
 
 ## Fase 5 — Avaliação
 
@@ -247,7 +247,7 @@ print(f"AUC — Modelo 2 (com pesos): {roc_auc_score(y_test, p2):.3f}")
 
 ### 5.2 Decisões — matrizes de confusão
 
-Aplicando o limiar padrão de $\tau = 0.5$, a diferença operacional entre os dois modelos se torna concreta:
+Aplicando o limiar padrão de τ = 0,5, a diferença operacional entre os dois modelos se torna concreta:
 
 ```python
 print("── Modelo 1 — sem pesos ──────────────────────────────────────────────")
@@ -303,14 +303,14 @@ df_or      = (pd.DataFrame({'feature': feat_names, 'or': or_vals})
 
 O modelo logístico com `class_weight='balanced'` é o mais adequado para monitoramento de carteira: captura 56% dos inadimplentes com um mês de antecedência, o que é suficiente para acionar alertas preventivos e ajustar limites antes do evento de default. Ele produz probabilidades calibradas — consequência direta do MLE — que podem ser usadas diretamente como estimativas de PD em sistemas de scoring regulatório.
 
-O resultado central é econometricamente coerente: **comportamento de pagamento acumulado domina todo o resto**. O atributo engineerado `n_delays` supera PAY\_0 isolado, o que reforça que a consistência ao longo do tempo é mais preditiva do que um incidente pontual. O limite de crédito é inversamente relacionado ao default por seleção histórica do banco, e variáveis demográficas têm peso marginal — um resultado relevante sob óticas de equidade de crédito, dado que mostra que incluí-las acrescenta pouco e pode criar passivo regulatório.
+O resultado central é econometricamente coerente: **comportamento de pagamento acumulado domina todo o resto**. O atributo engineerado `n_delays` supera `PAY_0` isolado, o que reforça que a consistência ao longo do tempo é mais preditiva do que um incidente pontual. O limite de crédito é inversamente relacionado ao default por seleção histórica do banco, e variáveis demográficas têm peso marginal — um resultado relevante sob óticas de equidade de crédito, dado que mostra que incluí-las acrescenta pouco e pode criar passivo regulatório.
 
 **Limitações desta análise:**
 
 - O dataset representa Taiwan em 2005; comportamentos de pagamento, condições econômicas e regulação diferem de outros mercados e períodos.
 - Não há validação *out-of-time* — treinar em períodos anteriores e testar em posteriores, que é o padrão exigido em modelos de PD regulatórios para demonstrar estabilidade temporal.
-- O hiperparâmetro $C$ não foi otimizado. A busca pelo $C$ ótimo via validação cruzada, descrita na [nota de regularização](../notas/02_regularizacao.md), tende a melhorar modestamente a AUC.
-- A inclusão simultânea de `n_delays` e dos 6 atributos PAY\_ individuais gera colinearidade. Um próximo passo natural é testar o modelo apenas com `n_delays` e PAY\_0 para quantificar o quanto a informação individual acrescenta além do agregado.
+- O hiperparâmetro C não foi otimizado. A busca pelo C ótimo via validação cruzada, descrita na [nota de regularização](../notas/02_regularizacao.md), tende a melhorar modestamente a AUC.
+- A inclusão simultânea de `n_delays` e dos 6 atributos `PAY_*` individuais gera colinearidade. Um próximo passo natural é testar o modelo apenas com `n_delays` e `PAY_0` para quantificar o quanto a informação individual acrescenta além do agregado.
 
 ---
 
