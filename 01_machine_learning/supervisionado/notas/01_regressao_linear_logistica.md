@@ -291,6 +291,34 @@ Mesmo assim, o $\bar{R}^2$ tem seus próprios limites em três situações:
 
 ---
 
+### Significância estatística
+
+O $\bar{R}^2$ informa *quanto* da variância de $y$ o modelo captura — mas não responde se os coeficientes estimados são distinguíveis de zero ou poderiam ser apenas ruído amostral. Há dois testes que respondem a isso em níveis diferentes.
+
+**t-test — significância individual de cada $\hat{\beta}_j$**
+
+Para cada preditor $x_j$, testamos $H_0\text{: }\beta_j = 0$ — o preditor não tem efeito sobre $y$, controlando pelos demais. A estatística é:
+
+$$t_j = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}, \qquad \text{SE}(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2\,\left[(X^\top X)^{-1}\right]_{jj}}$$
+
+onde $\hat{\sigma}^2 = \text{SSE}/(n-p-1)$ é a variância residual estimada e $[(X^\top X)^{-1}]_{jj}$ é o $j$-ésimo elemento diagonal da matriz de covariância dos estimadores — já derivada na seção de estimação. Sob $H_0$ e com as premissas satisfeitas, $t_j$ segue uma distribuição $t$ com $n - p - 1$ graus de liberdade. O intervalo de confiança a 95% correspondente é $\hat{\beta}_j \pm t_{0.025} \cdot \text{SE}(\hat{\beta}_j)$: se esse intervalo não cruzar zero, o coeficiente é significativo a 5%.
+
+É o análogo direto do teste de Wald da regressão logística — a diferença é que aqui a distribuição é $t$ em vez de normal padrão, porque $\sigma^2$ é estimado dos dados em vez de ser conhecido.
+
+**F-test — significância global do modelo**
+
+O t-test examina cada coeficiente isoladamente. O F-test responde se o conjunto dos $p$ preditores é significativamente melhor do que o modelo nulo — que prevê sempre $\bar{y}$. A hipótese nula é $H_0\text{: }\beta_1 = \cdots = \beta_p = 0$. A estatística decompõe a variância total:
+
+$$F = \frac{R^2/p}{(1 - R^2)/(n - p - 1)} \;\sim\; F(p,\; n - p - 1)$$
+
+Numerador é a variância explicada por preditor; denominador é a variância residual por grau de liberdade. A fórmula torna explícita a dependência de $n$: um $R^2 = 0.15$ pode ser altamente significativo com $n = 500$ e não significativo com $n = 30$ — a mesma proporção explicada tem evidência estatística muito diferente dependendo do tamanho da amostra.
+
+![Significância dos coeficientes e decomposição da variância](assets/01_linear_significancia.png)
+
+À esquerda, o gráfico de coeficientes: cada ponto é $\hat{\beta}_j$ e o segmento é o intervalo de confiança de 95%. $x_1$ e $x_5$, cujos intervalos não cruzam zero, são significativos (verde); $x_2$, $x_3$ e $x_4$ não se distinguem de zero com os dados disponíveis — os valores de $t$ confirmam isso. À direita, a decomposição da variância total: a porção verde é $SSR$ (explicada pelo modelo), a cinza é $SSE$ (residual). O F-test compara as duas parcelas; os valores de $F$ e $R^2$ na base conectam diretamente a decomposição visual à fórmula acima.
+
+---
+
 ### Trade-off viés-variância
 
 O $R^2$ sempre aumenta com mais preditores porque o modelo fica mais flexível — mas flexibilidade em excesso é um problema. Esse é o **trade-off viés-variância**, central em todos os modelos de ML.
