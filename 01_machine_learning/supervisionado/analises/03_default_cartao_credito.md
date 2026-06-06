@@ -208,7 +208,7 @@ print(f"Teste : {X_test.shape[0]:,} obs  | {y_test.mean():.1%} default")
     Treino: 24.000 obs | 22.1% default
     Teste : 6.000 obs  | 22.1% default
 
-*A divisão é estratificada: preserva 22.1% de inadimplentes em ambos os conjuntos. O `StandardScaler` é ajustado apenas no treino e depois aplicado ao teste — ajustá-lo no dataset inteiro introduziria data leakage, porque o modelo teria acesso à escala dos dados de avaliação durante o treino.*
+*A divisão é estratificada: preserva 22,1% de inadimplentes em ambos os conjuntos. O `StandardScaler` é ajustado apenas no treino e depois aplicado ao teste — ajustá-lo no dataset inteiro introduziria data leakage, porque o modelo teria acesso à escala dos dados de avaliação durante o treino.*
 
 ## Fase 4 — Modelagem
 
@@ -239,11 +239,11 @@ print(f"AUC — Modelo 2 (com pesos): {roc_auc_score(y_test, p2):.3f}")
 
 ### 5.1 Discriminação — curvas ROC e Precisão–Recall
 
-![Curva ROC (esquerda) e curva Precisão–Recall (direita) para os dois modelos. Na ROC, as duas curvas se sobrepõem (AUC=0.740 para ambos). Na PR, o Modelo 2 sustenta precisão maior para altos valores de recall.](assets/03_roc_pr.png)
+![Curva ROC (esquerda) e curva Precisão–Recall (direita) para os dois modelos. Na ROC, as duas curvas se sobrepõem (AUC=0,740 para ambos). Na PR, o Modelo 2 sustenta precisão maior para altos valores de recall.](assets/03_roc_pr.png)
 
-*Na curva ROC (esquerda), as duas linhas se sobrepõem quase perfeitamente — mesma AUC, mesmo poder discriminativo. A referência é a diagonal cinza: um modelo aleatório (AUC = 0.5). AUC = 0.74 indica que, dados um inadimplente e um adimplente aleatórios, o modelo classifica o inadimplente com probabilidade maior em 74% das vezes.*
+*Na curva ROC (esquerda), as duas linhas se sobrepõem quase perfeitamente — mesma AUC, mesmo poder discriminativo. A referência é a diagonal cinza: um modelo aleatório (AUC = 0,5). AUC = 0,74 indica que, dados um inadimplente e um adimplente aleatórios, o modelo classifica o inadimplente com probabilidade maior em 74% das vezes.*
 
-*Na curva Precisão–Recall (direita), a diferença aparece. Essa curva foca na classe minoritária e mostra o trade-off entre precisão (quantos dos alertados são de fato inadimplentes) e recall (quantos dos inadimplentes reais foram alertados). A linha tracejada é o desempenho do classificador nulo (prever sempre a taxa base, 0.22). Ambos os modelos superam o nulo, e o Modelo 2 sustenta uma precisão ligeiramente maior para altos valores de recall — exatamente onde importa para monitoramento de carteira.*
+*Na curva Precisão–Recall (direita), a diferença aparece. Essa curva foca na classe minoritária e mostra o trade-off entre precisão (quantos dos alertados são de fato inadimplentes) e recall (quantos dos inadimplentes reais foram alertados). A linha tracejada é o desempenho do classificador nulo (prever sempre a taxa base, 0,22). Ambos os modelos superam o nulo, e o Modelo 2 sustenta uma precisão ligeiramente maior para altos valores de recall — exatamente onde importa para monitoramento de carteira.*
 
 ### 5.2 Decisões — matrizes de confusão
 
@@ -291,11 +291,11 @@ df_or      = (pd.DataFrame({'feature': feat_names, 'or': or_vals})
 
 ![Odds ratios dos 6 coeficientes com maior e menor efeito (Modelo 1, sem pesos). Vermelho (OR > 1): aumenta risco de default. Azul (OR < 1): reduz risco.](assets/03_odds_ratio.png)
 
-*O atributo com maior odds ratio é `n_delays` (OR = 2.24): cada desvio padrão adicional no número de meses com atraso nos últimos 6 meses multiplica as chances de default por 2,24. O comportamento acumulado ao longo de vários meses é um sinal mais forte do que o atraso mais recente isolado — faz sentido que um cliente que atrasou sistematicamente seja mais arriscado do que aquele que atrasou apenas uma vez.*
+*O atributo com maior odds ratio é `n_delays` (OR = 2,24): cada desvio padrão adicional no número de meses com atraso nos últimos 6 meses multiplica as chances de default por 2,24. O comportamento acumulado ao longo de vários meses é um sinal mais forte do que o atraso mais recente isolado — faz sentido que um cliente que atrasou sistematicamente seja mais arriscado do que aquele que atrasou apenas uma vez.*
 
-*`PAY_0` (OR = 1.42) confirma que o status mais recente também pesa, mas com intensidade menor depois que `n_delays` absorve parte da mesma informação (os dois são correlacionados por construção).*
+*`PAY_0` (OR = 1,42) confirma que o status mais recente também pesa, mas com intensidade menor depois que `n_delays` absorve parte da mesma informação (os dois são correlacionados por construção).*
 
-*`LIMIT_BAL` tem OR = 0.77: clientes com limite de crédito mais alto têm menor probabilidade de default. Isso não significa que limites altos protegem — significa que o banco historicamente concede mais crédito a clientes que demonstraram ser mais confiáveis. É um **efeito de seleção**, não de causalidade.*
+*`LIMIT_BAL` tem OR = 0,77: clientes com limite de crédito mais alto têm menor probabilidade de default. Isso não significa que limites altos protegem — significa que o banco historicamente concede mais crédito a clientes que demonstraram ser mais confiáveis. É um **efeito de seleção**, não de causalidade.*
 
 *As variáveis demográficas (SEX, EDUCATION, MARRIAGE, AGE) têm OR muito próximos de 1 — efeito marginal. O risco de default está no comportamento financeiro recente, não no perfil cadastral.*
 
