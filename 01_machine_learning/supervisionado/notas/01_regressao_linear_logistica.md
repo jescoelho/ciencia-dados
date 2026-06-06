@@ -389,6 +389,22 @@ O lado esquerdo é o **log-odds** (também chamado de **logit**): ele transforma
 
 ---
 
+### Fronteira de decisão
+
+A equação do log-odds cria um objeto geométrico direto: a **fronteira de decisão**. Classificamos com $\hat{y} = 1$ quando $\hat{p} \geq 0.5$, o que equivale a log-odds $\geq 0$, portanto:
+
+$$\hat{y} = 1 \iff \beta_0 + \beta_1 x \geq 0$$
+
+O conjunto de pontos onde o log-odds é exatamente zero — $\beta_0 + \beta_1 x = 0$ — é a fronteira. Em uma dimensão é um ponto $x^* = -\beta_0/\beta_1$; com dois preditores é uma reta; com $p$ preditores é um **hiperplano** em $\mathbb{R}^p$.
+
+![Fronteira de decisão em 1D e 2D](assets/01_logistica_fronteira.png)
+
+À esquerda, a curva sigmoide com a fronteira marcada em laranja: o ponto $x^* = -\beta_0/\beta_1$ divide o eixo em duas regiões de classificação. À direita, o mesmo conceito em dois preditores: a fronteira deixa de ser um ponto e passa a ser uma reta — o hiperplano $\mathbf{x}^\top\boldsymbol{\beta} = 0$ — que separa as duas classes no espaço de $x_1$ e $x_2$. O gradiente de cores é a superfície de probabilidade; a linha laranja é onde ela cruza $\hat{p} = 0.5$.
+
+Essa estrutura reaparece em SVMs (que também encontram um hiperplano separador) e é o que cada neurônio de uma rede neural implementa individualmente. É o motivo pelo qual a regressão logística é dita um **classificador linear**: não porque a probabilidade seja linear em $x$, mas porque a fronteira de decisão é.
+
+---
+
 ### Estimação: por que não OLS e como funciona o MLE
 
 O OLS minimiza a soma dos quadrados dos resíduos — uma função quadrática convexa com solução fechada. Quando o target é binário, aplicar esse critério não é apenas inconveniente: é conceitualmente errado. O OLS trata os resíduos como simétricos e de variância constante, mas quando $y \in \{0, 1\}$, a variância do erro depende de $p$ — ela é máxima quando $p = 0.5$ e cai a zero quando $p \to 0$ ou $p \to 1$. Além disso, minimizar quadrados sobre um target binário não leva à solução sigmoide — a estrutura da sigmoide não emerge naturalmente do critério quadrático.
@@ -467,6 +483,14 @@ $$P(y = c \mid \mathbf{x}) = \frac{e^{\mathbf{x}^\top \boldsymbol{\beta}_c}}{\su
 
 A sigmoide binária é um caso especial do softmax com $k = 2$.
 
+Uma abordagem alternativa ao softmax é o **One-vs-Rest (OvR)**: em vez de um modelo conjunto, treinam-se $k$ classificadores binários independentes — cada um aprende a separar uma classe das demais. Para classificar um novo ponto, aplica-se cada classificador e atribui-se a classe com maior $\hat{p}$.
+
+![OvR vs Softmax — fronteiras de decisão em três classes](assets/01_logistica_ovr_softmax.png)
+
+Os dois painéis mostram o mesmo conjunto de três classes. À esquerda (OvR): cada fronteira foi treinada de forma isolada; como os $k$ classificadores não se enxergam, as probabilidades das classes não somam 1 por construção — em regiões ambíguas, nenhum modelo tem confiança clara. À direita (Softmax): uma única otimização garante $\sum_c \hat{p}_c = 1$ para todo ponto, tornando as fronteiras geometricamente coerentes.
+
+A diferença prática: OvR é o default do scikit-learn (`multi_class='ovr'`) e funciona com qualquer classificador binário, não apenas o logístico — o que o torna útil quando se quer usar SVMs ou Lasso em problemas de muitas classes. Softmax é preferível quando a calibração das probabilidades importa ou quando as classes não são mutuamente independentes, pois a normalização conjunta é garantida por construção.
+
 ---
 
 ### Medindo o ajuste
@@ -509,6 +533,18 @@ Os dois painéis mostram um mesmo modelo avaliado de formas complementares. À e
 O limiar padrão $\tau = 0.5$ é adequado quando as classes são equilibradas e os dois tipos de erro têm o mesmo custo. Em outros cenários, ele precisa ser ajustado.
 
 Quando as **classes são desbalanceadas** — 5% de fraudes e 95% de transações legítimas, por exemplo — um modelo que prevê sempre 0 acerta 95% dos casos sem aprender nada, e $\tau = 0.5$ tende a reforçar esse comportamento. Nesses casos, a **curva Precisão–Recall** é mais informativa do que a ROC: ela amplifica a diferença entre modelos na região relevante (os poucos positivos) e ajuda a identificar o limiar que equilibra precisão e recall de acordo com a aplicação.
+
+Ajustar $\tau$ modifica onde se corta a previsão, mas não muda o que o modelo aprendeu. Uma abordagem complementar — que atua durante o treino — é atribuir **pesos de classe** à log-loss, penalizando mais os erros na classe minoritária:
+
+$$\ell_w = -\frac{1}{n}\sum_{i=1}^n \left[ w_1\, y_i \log \hat{p}_i + w_0\,(1 - y_i)\log(1 - \hat{p}_i) \right]$$
+
+onde $w_1$ e $w_0$ são os pesos das classes positiva e negativa. Uma escolha comum é $w_c = n\,/\,(k \cdot n_c)$ — inversamente proporcional à frequência de cada classe — o `class_weight='balanced'` do scikit-learn. Ao contrário do ajuste de $\tau$, os pesos alteram os próprios $\hat{\boldsymbol{\beta}}$ estimados: o modelo aprende uma fronteira de decisão diferente, não apenas aplica um limiar diferente sobre a mesma curva.
+
+![Fronteira de decisão sem e com pesos de classe](assets/01_logistica_pesos_classe.png)
+
+Os dois painéis mostram o mesmo conjunto desbalanceado (90% negativos, 10% positivos). À esquerda, sem pesos: a fronteira (laranja) é empurrada para dentro da região da classe minoritária — o modelo "prefere" prever negativo para minimizar a perda. À direita, com `class_weight='balanced'`: a fronteira desloca-se em direção aos positivos, capturando mais da classe minoritária ao custo de mais falsos positivos. A diferença não está só no limiar — a posição da fronteira de decisão muda porque os próprios coeficientes mudam.
+
+As duas abordagens são complementares: pesos de classe corrigem o modelo durante o treino; o limiar $\tau$ afina a decisão final sobre o modelo já treinado. Em desbalanceamento severo, combinar os dois tende a produzir os melhores resultados.
 
 Quando os **custos de FP e FN são assimétricos** — não detectar uma fraude é mais custoso do que alertar um cliente legítimo — o limiar ótimo minimiza o custo esperado total. Sendo $C_{FP}$ e $C_{FN}$ os custos de cada tipo de erro:
 
