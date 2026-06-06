@@ -18,3 +18,11 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 ## Notas
 
 [Regressão linear e logística](notas/01_regressao_linear_logistica.md) · [Regularização](notas/02_regularizacao.md) · Árvores e ensembles · Gradient Boosting · SVM
+
+## Análises
+
+| # | Título | Tema |
+|---|--------|------|
+| 01 | [Predição de choque — ITUB4](analises/01_predicao_choque_itub4.md) | Regressão linear simples, CAPM |
+| 02 | [Modelo multifator com regularização — ITUB4](analises/02_regularizacao_multifator_itub4.md) | Ridge, Lasso, Elastic Net |
+| 03 | [Probabilidade de default em cartão de crédito](analises/03_default_cartao_credito.md) | Regressão logística, credit scoring |
