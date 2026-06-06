@@ -332,6 +332,10 @@ A scatter matrix exibe os scatterplots de todos os pares de preditores. Na linha
 
 ---
 
+### Parâmetros e hiperparâmetros
+
+O OLS base não possui hiperparâmetros: os únicos valores que o algoritmo determina são os parâmetros $\hat{\boldsymbol{\beta}}$ — estimados analiticamente a partir dos dados, sem nenhuma escolha prévia do praticante. Hiperparâmetros surgem apenas nas variações abaixo, onde restrições externas são impostas ao critério de estimação.
+
 ### Variações do OLS
 
 O OLS é o ponto de partida, mas cada limitação que ele encontra deu origem a uma variação:
@@ -621,6 +625,17 @@ A separação perfeita ocorre quando existe um valor de $x$ (ou combinação de 
 À esquerda, quatro sigmoides com $\beta_1$ crescente: conforme $\beta_1 \to \infty$, a curva se aproxima de um degrau — a transição de probabilidade 0 para 1 ocorre de forma instantânea em $x = 0$. Não há máximo finito da log-verossimilhança porque $\beta_1$ pode sempre crescer mais. À direita, um conjunto de dados com separação perfeita: todos os negativos (azul) estão à esquerda de $x = 0$ e todos os positivos (vermelho) à direita — a fronteira verde separa as classes sem nenhum erro. A sigmoide amarela mostra o modelo tentando se ajustar com $\beta_1$ muito grande: ele acerta perfeitamente os dados de treino, mas os coeficientes divergem e os erros padrão tornam-se inúteis.
 
 ---
+
+### Parâmetros e hiperparâmetros
+
+Os parâmetros do modelo logístico são exclusivamente os coeficientes $\hat{\boldsymbol{\beta}}$, estimados pelo MLE. Hiperparâmetros são valores que o praticante fixa antes do treino — não aprendidos dos dados. Estão distribuídos em seções anteriores desta nota:
+
+| Hiperparâmetro | Seção | O que controla |
+|---|---|---|
+| $\tau$ | Escolha do limiar | ponto de corte sobre $\hat{p}$ para produzir $\hat{y} \in \{0,1\}$ |
+| $w_0, w_1$ | Pesos de classe | reponderação da log-loss por classe durante o treino — altera os próprios $\hat{\boldsymbol{\beta}}$ |
+| OvR vs Softmax | Generalização | estratégia de treinamento para $k > 2$ classes |
+| $\lambda$ | Variações (abaixo) | intensidade da penalidade sobre $\|\boldsymbol{\beta}\|$ |
 
 ### Variações
 
