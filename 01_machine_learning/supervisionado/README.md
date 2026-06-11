@@ -17,7 +17,7 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 
 ## Notas
 
-[Regressão linear e logística](notas/01_regressao_linear_logistica.md) · [Regularização](notas/02_regularizacao.md) · Árvores e ensembles · Gradient Boosting · SVM
+[Regressão linear e logística](notas/01_regressao_linear_logistica.md) · [Regularização](notas/02_regularizacao.md) · [Árvores e ensembles](notas/04_arvores_ensembles.md) · Gradient Boosting · SVM
 
 ## Análises
 
