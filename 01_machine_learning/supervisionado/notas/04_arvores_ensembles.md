@@ -57,7 +57,7 @@ Com a impureza definida, a árvore pode buscar sistematicamente a pergunta que m
 O algoritmo CART (Classification and Regression Trees) constrói a árvore de cima para baixo, de forma gulosa:
 
 1. Para cada variável $j$ e cada limiar candidato $t$, calcule a redução de impureza da divisão
-2. Escolha o par $(j^*, t^*)$ que maximiza essa redução
+2. Escolha o par $(j^{\ast}, t^{\ast})$ que maximiza essa redução
 3. Crie dois nós filhos e repita o processo em cada um
 4. Pare quando um critério for atingido: profundidade máxima, mínimo de observações por folha, ou ganho mínimo exigido
 
