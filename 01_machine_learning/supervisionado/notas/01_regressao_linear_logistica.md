@@ -237,7 +237,7 @@ Vale notar que "linear" se refere aos **parâmetros**, não às variáveis. Um m
 
 ### Estimação: equações normais
 
-O SSR em notação matricial é $\|y - X\boldsymbol{\beta}\|^2$, que expandido fica:
+O SSR em notação matricial é $\lVert y - X\boldsymbol{\beta}\rVert^2$, que expandido fica:
 
 $$\text{SSR}(\boldsymbol{\beta}) = (y - X\boldsymbol{\beta})^\top(y - X\boldsymbol{\beta}) = y^\top y - 2\boldsymbol{\beta}^\top X^\top y + \boldsymbol{\beta}^\top X^\top X\boldsymbol{\beta}$$
 
@@ -413,7 +413,7 @@ Para entender o que o modelo está fazendo internamente, é útil reorganizar a 
 
 $$\frac{p}{1-p} = e^{\beta_0 + \beta_1 x}$$
 
-O termo $\frac{p}{1-p}$ é a **odds** — a razão entre a probabilidade de ocorrência e a de não-ocorrência. Aplicando logaritmo em ambos os lados:
+O termo $p/(1-p)$ é a **odds** — a razão entre a probabilidade de ocorrência e a de não-ocorrência. Aplicando logaritmo em ambos os lados:
 
 $$\log\!\left(\frac{p}{1-p}\right) = \beta_0 + \beta_1 x$$
 
@@ -663,14 +663,14 @@ Os parâmetros do modelo logístico são exclusivamente os coeficientes $\hat{\b
 | $\tau$ | Escolha do limiar | ponto de corte sobre $\hat{p}$ para produzir $\hat{y} \in \{0,1\}$ |
 | $w_0, w_1$ | Pesos de classe | reponderação da log-loss por classe durante o treino — altera os próprios $\hat{\boldsymbol{\beta}}$ |
 | OvR vs Softmax | Generalização | estratégia de treinamento para $k > 2$ classes |
-| $\lambda$ | Variações (abaixo) | intensidade da penalidade sobre $\|\boldsymbol{\beta}\|$ |
+| $\lambda$ | Variações (abaixo) | intensidade da penalidade sobre $\lVert\boldsymbol{\beta}\rVert$ |
 
 ### Variações
 
 Cada limitação do modelo base deu origem a uma extensão:
 
-- **Regularização L2 (Ridge logístico)** — adiciona a penalidade $\lambda\|\boldsymbol{\beta}\|^2$ à função de custo, equivalente a impor um prior normal sobre os coeficientes. É a mitigação padrão para separação perfeita, mas também controla overfitting quando há muitos preditores ou amostras pequenas. Os coeficientes são contraídos em direção a zero, mas nenhum é exatamente zerado.
-- **Regularização L1 (Lasso logístico)** — penaliza com $\lambda\|\boldsymbol{\beta}\|_1$ e produz coeficientes exatamente iguais a zero, fazendo seleção automática de variáveis. Útil quando a expectativa é de que poucos preditores sejam relevantes.
+- **Regularização L2 (Ridge logístico)** — adiciona a penalidade $\lambda\lVert\boldsymbol{\beta}\rVert^2$ à função de custo, equivalente a impor um prior normal sobre os coeficientes. É a mitigação padrão para separação perfeita, mas também controla overfitting quando há muitos preditores ou amostras pequenas. Os coeficientes são contraídos em direção a zero, mas nenhum é exatamente zerado.
+- **Regularização L1 (Lasso logístico)** — penaliza com $\lambda\lVert\boldsymbol{\beta}\rVert_1$ e produz coeficientes exatamente iguais a zero, fazendo seleção automática de variáveis. Útil quando a expectativa é de que poucos preditores sejam relevantes.
 - **Elastic Net** — combina L1 e L2, controlando esparsidade e estabilidade ao mesmo tempo. Prático quando há grupos de preditores correlacionados.
 - **Regressão logística com efeitos mistos** — quando as observações estão agrupadas (clientes dentro de agências, pacientes dentro de hospitais), adiciona termos aleatórios para capturar a estrutura hierárquica sem violar a premissa de independência.
 
