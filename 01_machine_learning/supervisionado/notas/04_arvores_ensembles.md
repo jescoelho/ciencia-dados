@@ -111,7 +111,9 @@ A instabilidade e o overfitting das árvores individuais levam diretamente à so
 
 ## Interpretação da árvore
 
-Cada folha acumula observações com o mesmo caminho de perguntas. A previsão é a classe majoritária (classificação) ou a média de $y$ (regressão). A **importância de variável** (MDI — Mean Decrease in Impurity) é a contribuição acumulada de cada variável para a redução de impureza ao longo de todas as divisões:
+Cada folha acumula observações com o mesmo caminho de perguntas. Há duas formas de extrair a previsão: `predict()` retorna a **classe majoritária** — o rótulo com mais observações naquela folha; `predict_proba()` retorna a **proporção de cada classe** — a fração de amostras de treino de cada rótulo que chegou até ali. É essa proporção que alimenta o AUC: uma folha com 90 amostras da classe 1 e 10 da classe 0 retorna `[0.1, 0.9]`, não simplesmente `1`. Para regressão, `predict()` retorna a média de $y$ nas observações da folha.
+
+A **importância de variável** (MDI — Mean Decrease in Impurity) é a contribuição acumulada de cada variável para a redução de impureza ao longo de todas as divisões:
 
 $$\text{Importância}(j) = \sum_{\text{nós com variável }j} \frac{n_t}{n} \cdot \Delta G_t$$
 
@@ -175,11 +177,30 @@ As métricas de avaliação (AUC, F1, RMSE) são as mesmas dos capítulos anteri
 
 **Sem extrapolação**: uma árvore prevê a média da folha mais próxima para valores fora do intervalo de treino — a previsão é constante além dos extremos vistos. Modelos lineares extrapolam (para o bem e para o mal); árvores não.
 
-**Viés de importância por tipo de variável**: variáveis contínuas com muitos valores únicos têm mais limiares candidatos, o que infla artificialmente sua importância MDI. Para comparações entre variáveis de naturezas diferentes, use importância por permutação (`sklearn.inspection.permutation_importance`).
+**Viés de importância por tipo de variável**: variáveis contínuas com muitos valores únicos têm mais limiares candidatos, o que infla artificialmente sua importância MDI. Para comparações entre variáveis de naturezas diferentes, use importância por permutação: embaralha-se cada variável uma por vez no conjunto de teste e mede-se a queda no desempenho — variáveis importantes causam queda grande; variáveis irrelevantes causam queda próxima de zero.
+
+```python
+from sklearn.inspection import permutation_importance
+
+result = permutation_importance(rf, X_te, y_te, n_repeats=10,
+                                scoring="roc_auc", random_state=42)
+for i in result.importances_mean.argsort()[::-1][:5]:
+    print(f"{feature_names[i]:<30} {result.importances_mean[i]:.3f} ± {result.importances_std[i]:.3f}")
+```
+```text
+worst area                     0.012 ± 0.007
+worst perimeter                0.007 ± 0.006
+worst concave points           0.006 ± 0.007
+worst radius                   0.002 ± 0.003
+mean concave points            0.001 ± 0.002
+```
+*A ordem das variáveis é consistente com o MDI, mas as magnitudes são menores — a permutação mede impacto real no AUC de teste, não contribuição acumulada no treino. O desvio padrão (± ) indica estabilidade: variáveis com desvio alto têm importância dependente da amostra.*
 
 **Variáveis categóricas**: o sklearn não aceita variáveis categóricas nativas — cada feature precisa ser numérica antes do treino. Para variáveis ordinais (grau de instrução, rating de crédito), encoding ordinal preserva a ordem e permite que a árvore use limiares naturais. Para variáveis nominais sem ordem (UF, tipo de produto, segmento de cliente), one-hot encoding é o caminho padrão; quando há muitas categorias, target encoding — substituir cada categoria pela média de $y$ nela, estimada no treino — produz representações mais compactas e evita explosão de dimensionalidade. A afirmação de que árvores "não exigem transformação das variáveis" vale para escala e distribuição — não para tipo de dado.
 
 **Valores ausentes**: o sklearn não suporta `NaN` — qualquer missing causa erro no treino e na predição. A solução mais comum é imputação prévia: mediana para variáveis contínuas (robusta a outliers), moda para categóricas. Em dados de crédito, porém, o padrão de ausência frequentemente carrega informação preditiva — um cliente que não informa renda tem perfil sistematicamente diferente de quem informa. Descartar essa informação via imputação simples custa sinal. A solução é adicionar uma feature indicadora `variavel_missing` (0/1) antes de imputar: a árvore pode aprender a usar ambas.
+
+**Desbalanceamento de classes**: em datasets onde a classe positiva é rara — inadimplência de 5%, fraude de 1%, default corporativo de 3% — a árvore minimiza a impureza global priorizando a classe majoritária. O resultado é um modelo que prevê "não default" para quase tudo e ainda assim acerta 95% das observações, sem utilidade operacional. O parâmetro `class_weight="balanced"` corrige isso: o sklearn calcula automaticamente um peso inversamente proporcional à frequência de cada classe, fazendo com que erros na classe minoritária pesem mais na função de impureza. Para controle fino, `class_weight={0: 1, 1: 10}` define os pesos manualmente. Em problemas de crédito, avalie sempre com F1-score, curva precision-recall ou KS statistic além do AUC — essas métricas são mais sensíveis ao desempenho na classe minoritária do que a acurácia ou o AUC isolado.
 
 ## Na prática
 
@@ -203,7 +224,7 @@ Os hiperparâmetros mais impactantes, em ordem de prioridade:
 | Parâmetro | Efeito | Valor inicial |
 |---|---|---|
 | `n_estimators` | Mais árvores reduz variância; rendimento decresce após ~200 | 200–500 |
-| `max_features` | Menos features por divisão decorrela árvores, reduz $\rho$ | `"sqrt"` |
+| `max_features` | Menos features por divisão decorrela árvores, reduz $\rho$; padrão `"sqrt"` para classificação e `1.0` (todas) para regressão — prefira `"sqrt"` ou `0.33` também em regressão | `"sqrt"` |
 | `min_samples_leaf` | Maior = menos overfitting, mais viés | 1–20 |
 | `min_samples_split` | Mínimo de obs. para tentar dividir um nó; complementa `min_samples_leaf` | 2–20 |
 | `max_depth` | Limitar pode ajudar em datasets muito ruidosos | `None` por padrão |
