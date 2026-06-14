@@ -12,6 +12,9 @@ O processo de uma árvore de decisão é uma série de perguntas binárias. Imag
 
 Uma árvore de decisão formaliza exatamente esse processo. Cada nó interno é uma pergunta da forma *variável j > limiar t*; cada ramo é a resposta; cada folha é a previsão para as observações que chegaram até ali. O resultado geométrico é uma partição do espaço de variáveis em regiões retangulares, eixo-alinhadas — sem nenhuma necessidade de padronização ou transformação.
 
+![Estrutura de uma árvore de decisão com profundidade 3](assets/04_arvores_estrutura.png)
+*Cada nó interno mostra a variável e o limiar escolhidos (ex.: "worst radius ≤ 16.8"), a impureza de Gini atual, o número de amostras que chegou até ali e a distribuição entre classes. As folhas (nós sem filhos) contêm a previsão final — classe majoritária e proporção de amostras de cada classe. A cor mais intensa indica nós mais puros.*
+
 ![Regressão logística vs. árvore de decisão em dados não-lineares](assets/04_arvores_splits.png)
 *O padrão em meia-lua não pode ser separado por uma linha reta. A regressão logística (esquerda) erra sistematicamente na região de sobreposição. A árvore de profundidade 4 (direita) aproxima a fronteira com regiões retangulares, capturando o padrão não-linear sem transformação das variáveis.*
 
@@ -88,6 +91,9 @@ max_depth=4       AUC=0.936  nós=23
 max_depth=None    AUC=0.944  nós=31
 ```
 *A árvore de profundidade 4 tem mais nós que a de profundidade 2, mas AUC menor — ela começou a memorizar padrões específicos do treino. A árvore sem limite cresce até profundidade 7 (31 nós) e recupera parte do desempenho, mas nenhuma das três supera o ensemble que veremos a seguir.*
+
+![Curva viés-variância por profundidade da árvore](assets/04_arvores_bias_variance.png)
+*À esquerda (laranja), árvores rasas erram em treino e teste — underfitting. À direita (vermelho), o AUC de treino sobe para 1.0 enquanto o de teste cai — overfitting: a árvore memorizou o conjunto de treino. O ponto ótimo neste dataset está em profundidade 3 (AUC de teste 0.957); a partir daí, crescer a árvore só acrescenta ruído.*
 
 Para controlar esse trade-off existem duas estratégias com lógicas opostas: **pré-poda** e **pós-poda**.
 
