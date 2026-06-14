@@ -122,7 +122,7 @@ plt.tight_layout(); plt.show()
 
 ![](../analises/assets/corr_02_anscombe.png)
 
-*Os quatro datasets têm $r \approx 0.82$, mas os padrões são: I) relação linear com ruído; II) relação quadrática; III) linear perfeita com um outlier; IV) sem variação em X exceto por um ponto extremo. Sempre visualize antes de interpretar r.*
+Os quatro datasets têm $r \approx 0.82$, mas os padrões são: I) relação linear com ruído; II) relação quadrática; III) linear perfeita com um outlier; IV) sem variação em X exceto por um ponto extremo. Sempre visualize antes de interpretar r.
 
 ---
 
