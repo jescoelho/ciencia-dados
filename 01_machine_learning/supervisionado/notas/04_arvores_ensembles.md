@@ -59,11 +59,11 @@ O algoritmo CART (Classification and Regression Trees) constrói a árvore de ci
 1. Para cada variável $j$ e cada limiar candidato $t$, calcule a redução de impureza da divisão
 2. Escolha o par $(j^{\ast}, t^{\ast})$ que maximiza essa redução
 3. Crie dois nós filhos e repita o processo em cada um
-4. Pare quando um critério for atingido: profundidade máxima, mínimo de observações por folha, ou ganho mínimo exigido
+4. Pare quando um critério for atingido: profundidade máxima (`max_depth`), mínimo de observações para tentar uma divisão em um nó (`min_samples_split`), mínimo de observações em cada folha resultante (`min_samples_leaf`), ou ganho mínimo exigido
 
 O processo é **guloso**: a melhor divisão local em cada nó não garante a melhor árvore global. Na prática isso funciona bem, mas há uma consequência importante: pequenas mudanças nos dados de treino podem resultar em estruturas completamente diferentes. Essa instabilidade é a principal fraqueza das árvores individuais.
 
-A profundidade controla diretamente o trade-off viés-variância:
+A profundidade controla diretamente o trade-off viés-variância. Uma árvore muito rasa faz poucas perguntas e produz previsões grosseiras que não conseguem capturar os padrões reais dos dados — é **underfitting** (alto viés, baixa variância): o modelo erra sistematicamente porque simplifica demais. Uma árvore sem limite cresce até memorizar cada grupo específico do treino, incluindo o ruído — é **overfitting** (baixo viés, alta variância): o modelo acerta no treino e erra na generalização. Os parâmetros de parada definem onde a árvore cai nesse espectro:
 
 ```python
 from sklearn.datasets import load_breast_cancer
@@ -88,6 +88,14 @@ max_depth=4       AUC=0.936  nós=23
 max_depth=None    AUC=0.944  nós=31
 ```
 *A árvore de profundidade 4 tem mais nós que a de profundidade 2, mas AUC menor — ela começou a memorizar padrões específicos do treino. A árvore sem limite cresce até profundidade 7 (31 nós) e recupera parte do desempenho, mas nenhuma das três supera o ensemble que veremos a seguir.*
+
+Para controlar esse trade-off existem duas estratégias com lógicas opostas: **pré-poda** e **pós-poda**.
+
+**Pré-poda** (pre-pruning) interrompe o crescimento durante a construção, antes mesmo de criar os nós que seriam problemáticos. Os critérios de parada do passo 4 são exatamente isso: `max_depth` limita o número de níveis; `min_samples_split` exige um mínimo de observações antes de qualquer divisão ser tentada em um nó — se o nó já tem poucas amostras, não há sentido em subdividi-lo; `min_samples_leaf` exige um mínimo em cada folha resultante da divisão. A árvore simplesmente para quando qualquer condição é violada.
+
+**Pós-poda** (post-pruning) constrói a árvore completa primeiro e depois a simplifica. O método disponível no scikit-learn é o *cost-complexity pruning*: cada subárvore recebe um custo proporcional ao número de folhas que ela gera, controlado pelo hiperparâmetro `ccp_alpha`. Para `ccp_alpha=0` a árvore original é mantida intacta; conforme o valor cresce, ramos com pouco ganho de impureza relativo ao custo são podados progressivamente — a árvore encolhe de fora para dentro. O valor ótimo de `ccp_alpha` é escolhido por validação cruzada sobre uma grade de valores candidatos gerada por `cost_complexity_pruning_path`.
+
+Na prática, pré-poda é mais rápida e suficiente na maioria dos casos. Pós-poda é útil quando não há intuição prévia sobre a profundidade adequada: constrói-se a árvore completa, varre-se a grade de `ccp_alpha`, e escolhe-se o valor que minimiza o erro de validação.
 
 A instabilidade e o overfitting das árvores individuais levam diretamente à solução mais poderosa do capítulo.
 
@@ -153,7 +161,7 @@ As métricas de avaliação (AUC, F1, RMSE) são as mesmas dos capítulos anteri
 
 **Estacionariedade**: a relação entre variáveis e resposta precisa ser estável ao longo do tempo. Em dados de crédito durante crises, os padrões aprendidos no treino podem deixar de ser representativos — e o modelo continua prevendo com base em folhas desatualizadas.
 
-**Dados por folha**: folhas com poucas observações produzem previsões instáveis. Controla-se com `min_samples_leaf` (aumentar para 5–20 em datasets ruidosos).
+**Dados por folha**: folhas com poucas observações produzem previsões instáveis. Controla-se com `min_samples_leaf` (mínimo de amostras em cada folha resultante — aumentar para 5–20 em datasets ruidosos) e `min_samples_split` (mínimo de amostras para que um nó seja candidato a divisão — impede que a árvore tente subdividir regiões já pequenas demais para ser estatisticamente significativas).
 
 **Sem extrapolação**: uma árvore prevê a média da folha mais próxima para valores fora do intervalo de treino — a previsão é constante além dos extremos vistos. Modelos lineares extrapolam (para o bem e para o mal); árvores não.
 
@@ -183,6 +191,7 @@ Os hiperparâmetros mais impactantes, em ordem de prioridade:
 | `n_estimators` | Mais árvores reduz variância; rendimento decresce após ~200 | 200–500 |
 | `max_features` | Menos features por divisão decorrela árvores, reduz $\rho$ | `"sqrt"` |
 | `min_samples_leaf` | Maior = menos overfitting, mais viés | 1–20 |
+| `min_samples_split` | Mínimo de obs. para tentar dividir um nó; complementa `min_samples_leaf` | 2–20 |
 | `max_depth` | Limitar pode ajudar em datasets muito ruidosos | `None` por padrão |
 
 Random Forest não exige normalização. Variáveis em escalas muito diferentes — renda em reais e idade em anos, por exemplo — não afetam o resultado porque as divisões são comparações de limiar, não distâncias. Isso é fundamentalmente diferente de todos os modelos das notas anteriores.
