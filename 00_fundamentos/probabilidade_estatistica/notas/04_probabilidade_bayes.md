@@ -106,7 +106,7 @@ $$E[X] = \int_{-\infty}^{\infty} x\, f(x)\,dx \qquad \text{(contínua)}$$
 
 A **variância** mede a dispersão quadrática média em torno da esperança:
 
-$$\text{Var}(X) = E\!\left[(X - E[X])^2\right] = E[X^2] - (E[X])^2$$
+$$\text{Var}(X) = E\left[(X - E[X])^2\right] = E[X^2] - (E[X])^2$$
 
 As propriedades que tornam esperança e variância utilizáveis em modelos:
 
@@ -221,7 +221,7 @@ O teorema é um mecanismo de atualização de crenças: começamos com um prior,
 
 O exemplo mais revelador de Bayes não é abstrato — é clínico.
 
-Um teste para uma doença rara tem **sensibilidade** de 99% ($P(\text{positivo} \mid \text{doente}) = 0{,}99$) e **especificidade** de 99% ($P(\text{negativo} \mid \text{saudável}) = 0{,}99$). A doença afeta 1 em cada 1000 pessoas. O teste deu positivo: qual é a probabilidade de estar doente?
+Um teste para uma doença rara tem **sensibilidade** de 99% ($P(\text{positivo} \mid \text{doente}) = 0.99$) e **especificidade** de 99% ($P(\text{negativo} \mid \text{saudável}) = 0.99$). A doença afeta 1 em cada 1000 pessoas. O teste deu positivo: qual é a probabilidade de estar doente?
 
 ```python
 p_doenca            = 0.001   # prevalência: 1 em 1000
@@ -242,7 +242,7 @@ P(doenca | teste +) = 9.0%
 
 Apenas 9%, mesmo com um teste de 99% de precisão. A razão: a doença é rara, então a maioria das pessoas testadas são saudáveis — e 1% de falsos positivos numa base grande supera os verdadeiros positivos de uma base pequena. O prior (prevalência baixíssima) domina.
 
-Esse é o **erro de inversão das probabilidades**: confundir $P(\text{positivo} \mid \text{doente}) = 0{,}99$ com $P(\text{doente} \mid \text{positivo}) = 0{,}09$. Em IA, a versão equivalente é confundir a acurácia do modelo em exemplos de uma classe com a probabilidade de o modelo estar certo quando prevê essa classe — o que depende da prevalência das classes nos dados de entrada.
+Esse é o **erro de inversão das probabilidades**: confundir $P(\text{positivo} \mid \text{doente}) = 0.99$ com $P(\text{doente} \mid \text{positivo}) = 0.09$. Em IA, a versão equivalente é confundir a acurácia do modelo em exemplos de uma classe com a probabilidade de o modelo estar certo quando prevê essa classe — o que depende da prevalência das classes nos dados de entrada.
 
 ---
 
@@ -302,7 +302,7 @@ plt.close()
 
 A esperança pode ser calculada dado o valor de outra variável: $E[Y \mid X = x]$ é a média de $Y$ entre todos os casos em que $X$ vale $x$. A **lei da esperança total** garante que a esperança incondicional se recupera marginalizando:
 
-$$E[Y] = E\!\left[E[Y \mid X]\right]$$
+$$E[Y] = E\left[E[Y \mid X]\right]$$
 
 $E[Y \mid X]$ é a esperança de $Y$ calculada para cada valor fixo de $X$; o $E[\,\cdot\,]$ externo é a média disso sobre todos os valores possíveis de $X$.
 
@@ -324,7 +324,7 @@ A suposição raramente vale nos dados, mas o modelo funciona porque o sinal pri
 
 Como saber se um modelo probabilístico está descrevendo bem a incerteza?
 
-**Calibração**: um modelo bem calibrado retorna $P = 0{,}7$ quando o evento ocorre em aproximadamente 70% dos casos com essa predição. Modelos confiantes demais — que retornam probabilidades próximas de 0 ou 1 quando erram sistematicamente — são mal calibrados.
+**Calibração**: um modelo bem calibrado retorna $P = 0.7$ quando o evento ocorre em aproximadamente 70% dos casos com essa predição. Modelos confiantes demais — que retornam probabilidades próximas de 0 ou 1 quando erram sistematicamente — são mal calibrados.
 
 **Log-verossimilhança**: para dados $x_1, \ldots, x_n$ com densidade assumida $f(x;\theta)$:
 

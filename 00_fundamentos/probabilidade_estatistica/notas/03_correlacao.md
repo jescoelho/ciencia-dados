@@ -169,7 +169,7 @@ plt.tight_layout(); plt.show()
 
 ### Correlação parcial
 
-$r(X, Y \mid Z)$ mede a correlação entre $X$ e $Y$ *após remover o efeito linear de $Z$*. Útil para separar correlação direta de correlação mediada por uma terceira variável.
+$r(X, Y \mid Z)$ mede a correlação entre $X$ e $Y$ após remover o efeito linear de $Z$. Útil para separar correlação direta de correlação mediada por uma terceira variável.
 
 ```python
 from pingouin import partial_corr
