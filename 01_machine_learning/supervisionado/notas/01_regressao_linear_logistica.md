@@ -95,7 +95,7 @@ Portanto:
 
 $$\boxed{\hat{\beta}_1 = \frac{\sum_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^n (x_i - \bar{x})^2} = \frac{\text{Cov}(x, y)}{\text{Var}(x)}}$$
 
-**Covariância** mede se $x$ e $y$ tendem a se mover na mesma direção: positiva quando crescem juntos, negativa quando um sobe enquanto o outro desce, zero quando não há relação linear. **Variância** mede o quanto $x$ se dispersa em torno da sua própria média — quanto maior, mais espalhados estão os valores de $x$. A divisão normaliza: $\hat{\beta}_1$ expressa o movimento de $y$ *por unidade de variação de $x$*, independente da escala dos dados.
+**Covariância** mede se $x$ e $y$ tendem a se mover na mesma direção: positiva quando crescem juntos, negativa quando um sobe enquanto o outro desce, zero quando não há relação linear. **Variância** mede o quanto $x$ se dispersa em torno da sua própria média — quanto maior, mais espalhados estão os valores de $x$. A divisão normaliza: $\hat{\beta}_1$ expressa o movimento de $y$ por unidade de variação de $x$, independente da escala dos dados.
 
 Essa é a **solução analítica** (ou forma fechada): uma fórmula que entrega a resposta exata em um número fixo de operações. O oposto seria um algoritmo iterativo — como o gradiente descendente — que parte de um chute inicial e vai ajustando até convergir. Na regressão linear simples, a iteração é desnecessária.
 
