@@ -53,7 +53,11 @@ $$\text{Impureza}(t) = \frac{1}{n_t} \sum_{i \in t} (y_i - \bar{y}_t)^2$$
 
 onde $n_t$ é o número de observações no nó $t$ e $\bar{y}_t$ é a média de $y$ naquele nó.
 
-Com a impureza definida, a árvore pode buscar sistematicamente a pergunta que mais purifica os grupos — é isso que o algoritmo CART faz.
+Com a impureza definida, a árvore pode buscar a pergunta que mais purifica os grupos. Para cada par (variável $j$, limiar $t$), a **redução de impureza** da divisão é:
+
+$$\Delta G = G(t) - \frac{n_L}{n_t}\,G(t_L) - \frac{n_R}{n_t}\,G(t_R)$$
+
+onde $G(t)$ é a impureza do nó pai, $G(t_L)$ e $G(t_R)$ são as impurezas dos filhos esquerdo e direito, e $n_L/n_t$, $n_R/n_t$ são as proporções de observações que vão para cada ramo. A divisão escolhida é a que maximiza $\Delta G$ — é isso que o algoritmo CART faz.
 
 ## Como a árvore é construída
 
@@ -172,6 +176,10 @@ As métricas de avaliação (AUC, F1, RMSE) são as mesmas dos capítulos anteri
 **Sem extrapolação**: uma árvore prevê a média da folha mais próxima para valores fora do intervalo de treino — a previsão é constante além dos extremos vistos. Modelos lineares extrapolam (para o bem e para o mal); árvores não.
 
 **Viés de importância por tipo de variável**: variáveis contínuas com muitos valores únicos têm mais limiares candidatos, o que infla artificialmente sua importância MDI. Para comparações entre variáveis de naturezas diferentes, use importância por permutação (`sklearn.inspection.permutation_importance`).
+
+**Variáveis categóricas**: o sklearn não aceita variáveis categóricas nativas — cada feature precisa ser numérica antes do treino. Para variáveis ordinais (grau de instrução, rating de crédito), encoding ordinal preserva a ordem e permite que a árvore use limiares naturais. Para variáveis nominais sem ordem (UF, tipo de produto, segmento de cliente), one-hot encoding é o caminho padrão; quando há muitas categorias, target encoding — substituir cada categoria pela média de $y$ nela, estimada no treino — produz representações mais compactas e evita explosão de dimensionalidade. A afirmação de que árvores "não exigem transformação das variáveis" vale para escala e distribuição — não para tipo de dado.
+
+**Valores ausentes**: o sklearn não suporta `NaN` — qualquer missing causa erro no treino e na predição. A solução mais comum é imputação prévia: mediana para variáveis contínuas (robusta a outliers), moda para categóricas. Em dados de crédito, porém, o padrão de ausência frequentemente carrega informação preditiva — um cliente que não informa renda tem perfil sistematicamente diferente de quem informa. Descartar essa informação via imputação simples custa sinal. A solução é adicionar uma feature indicadora `variavel_missing` (0/1) antes de imputar: a árvore pode aprender a usar ambas.
 
 ## Na prática
 
