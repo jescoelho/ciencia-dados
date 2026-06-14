@@ -221,7 +221,7 @@ O teorema é um mecanismo de atualização de crenças: começamos com um prior,
 
 O exemplo mais revelador de Bayes não é abstrato — é clínico.
 
-Um teste para uma doença rara tem **sensibilidade** de 99% ($P(\text{positivo} \mid \text{doente}) = 0.99$) e **especificidade** de 99% ($P(\text{negativo} \mid \text{saudável}) = 0.99$). A doença afeta 1 em cada 1000 pessoas. O teste deu positivo: qual é a probabilidade de estar doente?
+Um teste para uma doença rara tem **sensibilidade** de 99%, $P(\text{positivo} \mid \text{doente}) = 0.99$, e **especificidade** de 99%, $P(\text{negativo} \mid \text{saudável}) = 0.99$. A doença afeta 1 em cada 1000 pessoas. O teste deu positivo: qual é a probabilidade de estar doente?
 
 ```python
 p_doenca            = 0.001   # prevalência: 1 em 1000
@@ -348,7 +348,7 @@ onde $p_i$ é a probabilidade predita e $y_i \in \{0, 1\}$ é o resultado observ
 
 **Independência condicional raramente vale literalmente.** Naive Bayes assume features independentes dada a classe. Na prática, palavras co-ocorrem, retornos de ativos correlacionam, features médicas se sobrepõem. O modelo funciona porque a monotonia da verossimilhança preserva a ordenação de probabilidades mesmo com a suposição violada.
 
-**Inverter a condição é o erro mais comum.** $P(A \mid B) \neq P(B \mid A)$ em geral. Essa confusão — chamada de *falácia da transposição* ou *inversão das probabilidades* — aparece em diagnósticos clínicos, em avaliação de modelos e em interpretação de testes estatísticos. O p-valor ($P(\text{dados extremos} \mid H_0)$) não é $P(H_0 \mid \text{dados})$ — distinção central explorada na nota de Testes de Hipótese.
+**Inverter a condição é o erro mais comum.** $P(A \mid B) \neq P(B \mid A)$ em geral. Essa confusão — chamada de *falácia da transposição* ou *inversão das probabilidades* — aparece em diagnósticos clínicos, em avaliação de modelos e em interpretação de testes estatísticos. O p-valor $P(\text{dados extremos} \mid H_0)$ não é $P(H_0 \mid \text{dados})$ — distinção central explorada na nota de Testes de Hipótese.
 
 ---
 
