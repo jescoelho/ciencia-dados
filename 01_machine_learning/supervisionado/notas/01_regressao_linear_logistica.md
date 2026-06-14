@@ -81,7 +81,7 @@ $$\boxed{\hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}}$$
 
 O intercepto depende de $\hat{\beta}_1$, então primeiro resolvemos para a inclinação.
 
-**Da segunda equação** — substituindo $\hat{\beta}_0 = \bar{y} - \hat{\beta}_1\bar{x}$ e reorganizando:
+**Da segunda equação** — substituindo $\hat{\beta}_0$ pela expressão acima e reorganizando:
 
 $$\sum x_i y_i - \bar{y}\sum x_i = \hat{\beta}_1\!\left(\sum x_i^2 - \bar{x}\sum x_i\right)$$
 
@@ -273,7 +273,7 @@ O mesmo conjunto de dados, dois modelos diferentes. **Esquerda:** regressão sim
 
 ### Medindo o ajuste: R² e R² ajustado
 
-As métricas de erro da regressão simples — MAE, MSE e RMSE — continuam válidas aqui sem alteração: os resíduos $e_i = y_i - \hat{y}_i$ são calculados da mesma forma, independente do número de preditores. O que muda é o $R^2$.
+As métricas de erro da regressão simples — MAE, MSE e RMSE — continuam válidas aqui sem alteração: os resíduos são calculados da mesma forma, independente do número de preditores. O que muda é o $R^2$.
 
 O $R^2$ definido no caso simples continua válido aqui. O problema é que ele **sempre aumenta** quando um novo preditor é adicionado ao modelo — mesmo que esse preditor seja irrelevante — porque qualquer variável adicional, por pior que seja, nunca piora o ajuste in-sample. Isso torna o $R^2$ um critério enganoso para comparar modelos com números diferentes de preditores.
 
@@ -301,13 +301,21 @@ Para cada preditor $x_j$, testamos $H_0\text{: }\beta_j = 0$ — o preditor não
 
 $$t_j = \frac{\hat{\beta}_j}{\text{SE}(\hat{\beta}_j)}, \qquad \text{SE}(\hat{\beta}_j) = \sqrt{\hat{\sigma}^2\,\left[(X^\top X)^{-1}\right]_{jj}}$$
 
-onde $\hat{\sigma}^2 = \text{SSE}/(n-p-1)$ é a variância residual estimada e $[(X^\top X)^{-1}]_{jj}$ é o $j$-ésimo elemento diagonal da matriz de covariância dos estimadores — já derivada na seção de estimação. Sob $H_0$ e com as premissas satisfeitas, $t_j$ segue uma distribuição $t$ com $n - p - 1$ graus de liberdade. O intervalo de confiança a 95% correspondente é $\hat{\beta}_j \pm t_{0.025} \cdot \text{SE}(\hat{\beta}_j)$: se esse intervalo não cruzar zero, o coeficiente é significativo a 5%.
+onde $\hat{\sigma}^2 = \text{SSE}/(n-p-1)$ é a variância residual estimada e $[(X^\top X)^{-1}]_{jj}$ é o $j$-ésimo elemento diagonal da matriz de covariância dos estimadores — já derivada na seção de estimação. Sob $H_0$ e com as premissas satisfeitas, $t_j$ segue uma distribuição $t$ com $n - p - 1$ graus de liberdade. O intervalo de confiança a 95% correspondente é:
+
+$$\hat{\beta}_j \pm t_{0.025} \cdot \text{SE}(\hat{\beta}_j)$$
+
+Se esse intervalo não cruzar zero, o coeficiente é significativo a 5%.
 
 É o análogo direto do teste de Wald da regressão logística — a diferença é que aqui a distribuição é $t$ em vez de normal padrão, porque $\sigma^2$ é estimado dos dados em vez de ser conhecido.
 
 **F-test — significância global do modelo**
 
-O t-test examina cada coeficiente isoladamente. O F-test responde se o conjunto dos $p$ preditores é significativamente melhor do que o modelo nulo — que prevê sempre $\bar{y}$. A hipótese nula é $H_0\text{: }\beta_1 = \cdots = \beta_p = 0$. A estatística decompõe a variância total:
+O t-test examina cada coeficiente isoladamente. O F-test responde se o conjunto dos $p$ preditores é significativamente melhor do que o modelo nulo — que prevê sempre $\bar{y}$. A hipótese nula é que todos os coeficientes são simultaneamente zero:
+
+$$H_0: \beta_1 = \cdots = \beta_p = 0$$
+
+A estatística decompõe a variância total:
 
 $$F = \frac{R^2/p}{(1 - R^2)/(n - p - 1)} \;\sim\; F(p,\; n - p - 1)$$
 
