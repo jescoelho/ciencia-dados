@@ -35,8 +35,8 @@ A escolha de $\Omega(\boldsymbol{\beta})$ define o método:
 | Penalidade | Norma | Método |
 |---|---|---|
 | $\displaystyle\sum_{j=1}^{p} \beta_j^2$ | L2 | Ridge |
-| $\displaystyle\sum_{j=1}^{p} |\beta_j|$ | L1 | Lasso |
-| $\displaystyle\alpha \sum_j |\beta_j| + (1-\alpha)\sum_j \beta_j^2$ | L1 + L2 | Elastic Net |
+| $\displaystyle\sum_{j=1}^{p} \lvert\beta_j\rvert$ | L1 | Lasso |
+| $\displaystyle\alpha \sum_j \lvert\beta_j\rvert + (1-\alpha)\sum_j \beta_j^2$ | L1 + L2 | Elastic Net |
 
 Em todos os casos, o intercepto $\beta_0$ é excluído da penalidade — penalizá-lo distorceria a estimação da média da resposta sem nenhum ganho de regularização.
 
