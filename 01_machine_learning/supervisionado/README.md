@@ -27,3 +27,4 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 | 02 | [Modelo multifator com regularização — ITUB4](analises/02_regularizacao_multifator_itub4.md) | Ridge, Lasso, Elastic Net |
 | 03 | [Probabilidade de default em cartão de crédito](analises/03_default_cartao_credito.md) | Regressão logística, credit scoring |
 | 04 | [Predição de default — LendingClub (2008–2011)](analises/04_lendingclub_oot.md) | Regressão logística, validação out-of-time |
+| 05 | [Árvore de decisão para default de cartão de crédito](analises/05_arvore_decisao_default.md) | CART, poda por ccp_alpha, credit scoring |
