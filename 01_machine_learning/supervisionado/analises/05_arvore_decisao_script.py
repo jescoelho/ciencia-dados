@@ -25,6 +25,13 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import warnings
 warnings.filterwarnings('ignore')
 
+from pathlib import Path
+
+# Diretório do script — usado para construir caminhos absolutos.
+# Isso garante que o script funcione independentemente de onde é chamado.
+SCRIPT_DIR = Path(__file__).resolve().parent
+DATA_PATH  = SCRIPT_DIR / '../../../data/raw/UCI_Credit_Card.csv'
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -63,7 +70,7 @@ print("=" * 70)
 # O dataset está no formato padrão UCI — uma linha por cliente, sem índice
 # explícito além do ID. O strip() no nome das colunas remove espaços ocultos
 # que causam KeyError silencioso em versões do arquivo baixadas com padding.
-df = pd.read_csv('../../../data/raw/UCI_Credit_Card.csv')
+df = pd.read_csv(DATA_PATH)
 df.columns = df.columns.str.strip()
 
 print("\n--- Estrutura bruta ---")
