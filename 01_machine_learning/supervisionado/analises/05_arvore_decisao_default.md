@@ -165,6 +165,66 @@ for col in pay_status:
 
 *O padrão é consistente nos 6 meses: atraso ≥ 2 meses sempre resulta em taxa de default acima de 50%. O sinal é mais forte no mês mais recente (PAY_0): o degrau entre 1 mês de atraso (33,9%) e 2 meses (69,1%) é o mais pronunciado de toda a série. Clientes sem atraso (status ≤ 0) ficam abaixo de 20% em todos os meses.*
 
+### Trajetória temporal de pagamento
+
+A análise por mês isolado revela o sinal individual de cada variável, mas não captura o padrão ao longo da série. Um cliente com dois meses de atraso pode ter trajetórias opostas: queda recente (de adimplente para atrasado nos últimos meses) ou recuperação (atrasado no passado, adimplente agora). A taxa de default difere substancialmente entre esses perfis.
+
+Quatro trajetórias são definidas com base no status de setembro (PAY_0, mais recente) e abril (PAY_6, mais antigo):
+
+```python
+pay_cols = ['PAY_0','PAY_2','PAY_3','PAY_4','PAY_5','PAY_6']
+
+def classifica_trajetoria(row):
+    recente, remoto = row['PAY_0'], row['PAY_6']
+    if (row[pay_cols] <= 0).all():
+        return 'Sempre adimplente'
+    elif recente >= 2 and remoto <= 0:
+        return 'Degradacao recente'
+    elif recente >= 2 and remoto >= 2:
+        return 'Atraso persistente'
+    elif recente <= 0 and remoto >= 2:
+        return 'Recuperacao'
+    else:
+        return 'Padrao misto'
+
+df['trajetoria'] = df[pay_cols].apply(classifica_trajetoria, axis=1)
+
+def meses_consec_atraso_final(row):
+    consec = 0
+    for col in pay_cols:
+        if row[col] >= 2: consec += 1
+        else: break
+    return consec
+
+df['consec_atraso'] = df[pay_cols].apply(meses_consec_atraso_final, axis=1)
+
+print(df.groupby('trajetoria')[tgt].agg(['mean','count','size']))
+print(df.groupby('consec_atraso')[tgt].agg(['mean','count']))
+```
+
+```text
+                    taxa_default      n      %base
+Sempre adimplente         0.117  19.931   66,4%
+Padrao misto              0.313   5.742   19,1%
+Recuperacao               0.273   1.197    4,0%
+Degradacao recente        0.649   1.881    6,3%
+Atraso persistente        0.766   1.249    4,2%
+
+Meses consecutivos de atraso (do mais recente):
+consec_atraso  taxa_default      n
+0                    0.166  26.870
+1                    0.657     991
+2                    0.648     403
+3                    0.686     392
+4                    0.654     243
+5                    0.681     163
+6                    0.774     938
+```
+
+![Trajetórias de pagamento e persistência de atraso](assets/ARVORE_05_pay_temporal.png)
+
+*À esquerda: 66,4% dos clientes nunca tiveram atraso — taxa de default de 11,7%. "Degradação recente" (PAY_0 ≥ 2 e PAY_6 ≤ 0, 6,3% da base) atinge 64,9%; "Atraso persistente" (ambos ≥ 2, 4,2% da base) atinge 76,6%. "Recuperação" (PAY_0 ≤ 0, PAY_6 ≥ 2) tem taxa de 27,3% — maior que o geral, mas bem abaixo dos em atraso ativo, confirmando que a reversão do comportamento reduz o risco. À direita: um único mês consecutivo de atraso recente eleva a taxa de 16,6% para 65,7% — salto de 49 p.p. Seis meses consecutivos (clientes que nunca saíram do atraso nos 6 meses) atingem 77,4%.*
+
 ### Limite de crédito — LIMIT_BAL
 
 Apesar dos 30.000 registros, `LIMIT_BAL` possui apenas 81 valores únicos — todos múltiplos redondos de NT$10.000. Os limites são atribuídos por faixas de política institucional, não de forma contínua. O valor mais frequente é NT$50.000 (3.365 clientes), e a distribuição é assimétrica à direita, com concentração na faixa baixa.
@@ -238,6 +298,38 @@ A proporção de clientes com pagamento zero é consistentemente maior entre ina
 ![Mediana da fatura e % zeros por classe — 6 meses](assets/ARVORE_05_bill_pay_por_classe_6meses.png)
 
 *À esquerda: a mediana da fatura é próxima entre adimplentes e inadimplentes em todos os meses — BILL_AMT sozinho discrimina pouco as classes. À direita: a proporção de zeros em PAY_AMT mantém uma diferença estável de ~10 p.p. entre as classes ao longo dos 6 meses, com inadimplentes pagando zero com mais frequência em todos os períodos.*
+
+### Outliers em variáveis contínuas
+
+Valores extremos podem introduzir splits espúrios em árvores de decisão — uma única observação com limite de NT$1.000.000 pode forçar um nó com n=1. O objetivo aqui é verificar se os extremos concentram risco distinto do núcleo da distribuição.
+
+Usam-se os percentis P1 e P99 como limites: o que cai abaixo de P1 é extremo baixo; acima de P99, extremo alto. Para cada segmento calcula-se a taxa de default.
+
+```python
+for col in ['LIMIT_BAL', 'PAY_AMT1', 'PAY_AMT2', 'PAY_AMT3',
+            'PAY_AMT4', 'PAY_AMT5', 'PAY_AMT6']:
+    p1, p99 = df[col].quantile([0.01, 0.99])
+    dr_core = df.loc[(df[col] >= p1) & (df[col] <= p99), tgt].mean()
+    dr_high = df.loc[df[col] > p99, tgt].mean()
+    n_high  = (df[col] > p99).sum()
+    print(f'{col}: p99={p99:,.0f}  n_acima={n_high}  '
+          f'dr_core={dr_core:.3f}  dr_acima_p99={dr_high:.3f}')
+```
+
+```text
+LIMIT_BAL: p99=500.000  n_acima=206   dr_core=0.222  dr_acima_p99=0.112
+PAY_AMT1:  p99= 66.522  n_acima=300   dr_core=0.223  dr_acima_p99=0.063
+PAY_AMT2:  p99= 76.651  n_acima=300   dr_core=0.223  dr_acima_p99=0.080
+PAY_AMT3:  p99= 70.000  n_acima=297   dr_core=0.222  dr_acima_p99=0.108
+PAY_AMT4:  p99= 67.054  n_acima=300   dr_core=0.222  dr_acima_p99=0.113
+PAY_AMT5:  p99= 65.608  n_acima=300   dr_core=0.222  dr_acima_p99=0.127
+PAY_AMT6:  p99= 82.619  n_acima=300   dr_core=0.222  dr_acima_p99=0.133
+Nota: P1 = 0 para todas as PAY_AMT (piso natural). Nenhum outlier no extremo baixo.
+```
+
+![Taxa de default nos extremos de LIMIT_BAL e PAY_AMT1](assets/ARVORE_05_outliers_continuas.png)
+
+*O padrão é assimétrico: não há outliers no extremo baixo — `PAY_AMT` é naturalmente zerado para quem não paga, e `LIMIT_BAL` tem piso acima de P1. No extremo alto, os outliers são sistematicamente mais seguros: clientes com limite acima de NT$500k (0,7% da base) inadimplem 11,2% vs. 22,2% do núcleo; clientes que pagaram acima de NT$66k em setembro (1% da base) inadimplem apenas 6,3%. Esses valores extremos não representam ruído — são clientes genuinamente diferentes. A árvore aprenderá a segmentá-los por splits de alto limite ou alto pagamento, o que é comportamentalmente correto.*
 
 ### Correlação ponto-bisserial com o target
 
@@ -344,6 +436,46 @@ AGE
 
 *Todos os testes atingem significância estatística — reflexo do n=30.000, não de efeito prático. O V de Cramér confirma: o maior efeito é `EDUCATION` (V=0.074), ainda negligenciável. As taxas de default variam pouco entre categorias: em `SEX`, a diferença é de 3,4 p.p.; em `MARRIAGE`, de 2,7 p.p.; em `AGE`, clientes acima de 60 anos inadimplem ~27% versus ~20% dos 30–40 anos, mas AGE não aparece entre os preditores relevantes pela correlação. Esse padrão é consistente com a literatura de credit scoring: histórico comportamental recente supera perfil demográfico como preditor de inadimplência.*
 
+### Correlação entre preditores
+
+Com o sinal individual mapeado, a etapa seguinte verifica redundância entre variáveis: correlação alta entre dois preditores indica que carregam informação equivalente e um deles pode ser descartado sem perda de sinal. A análise é feita nos 23 preditores originais, sobre o dataset completo, antes de qualquer engenharia de features.
+
+```python
+corr_m = df.drop(columns=[tgt]).corr().abs()
+upper  = corr_m.where(np.triu(np.ones(corr_m.shape), k=1).astype(bool))
+high   = upper.stack().reset_index()
+high.columns = ['var1','var2','r']
+print(high[high['r'] > 0.70].sort_values('r', ascending=False).to_string(index=False))
+```
+
+```text
+     var1      var2      r
+BILL_AMT1 BILL_AMT2  0.951
+BILL_AMT5 BILL_AMT6  0.946
+BILL_AMT4 BILL_AMT5  0.940
+BILL_AMT2 BILL_AMT3  0.928
+BILL_AMT3 BILL_AMT4  0.924
+BILL_AMT4 BILL_AMT6  0.901
+BILL_AMT2 BILL_AMT4  0.892
+BILL_AMT1 BILL_AMT3  0.892
+BILL_AMT3 BILL_AMT5  0.884
+BILL_AMT1 BILL_AMT4  0.860
+BILL_AMT2 BILL_AMT5  0.860
+BILL_AMT3 BILL_AMT6  0.853
+BILL_AMT2 BILL_AMT6  0.832
+BILL_AMT1 BILL_AMT5  0.830
+    PAY_4     PAY_5  0.820
+    PAY_5     PAY_6  0.817
+BILL_AMT1 BILL_AMT6  0.803
+    PAY_3     PAY_4  0.777
+    PAY_2     PAY_3  0.767
+    PAY_4     PAY_6  0.716
+```
+
+![Heatmap de correlação absoluta entre os 23 preditores originais](assets/ARVORE_05_corr_preditores_orig.png)
+
+*Todos os 15 pares possíveis do bloco `BILL_AMT` têm r > 0,80. Essa colinearidade interna extrema, combinada com o sinal quase nulo com o target (r ≤ 0,023 e três variáveis não-significativas), torna o bloco inteiro candidato a remoção: há redundância máxima sem informação discriminante. Os pares `PAY_4–PAY_5` (0,82) e `PAY_5–PAY_6` (0,82) têm colinearidade elevada, mas sinal individual relevante (r ≈ 0,20), o que justifica mantê-los. `PAY_AMT` e demográficas não apresentam colinearidade relevante entre si.*
+
 ### Resumo dos pontos de atenção para a próxima fase
 
 | Ponto | Decisão pendente |
@@ -352,8 +484,10 @@ AGE
 | Variável `ID` | Remover — não é preditor |
 | Escalonamento | Árvores de decisão não requerem padronização; não será aplicado |
 | Desequilíbrio de classes (22%) | Avaliar na fase de modelagem se `class_weight='balanced'` melhora recall |
-| Bloco `BILL_AMT` | Correlação próxima de zero (três não-significativas); candidatos a descarte ou transformação em Fase 3 |
+| Bloco `BILL_AMT` | Correlação próxima de zero (três não-significativas) + colinearidade interna extrema (r > 0,80); candidatos a remoção em Fase 3 |
 | Variáveis demográficas | Efeito negligenciável (V < 0.08); manter na modelagem sem expectativa de contribuição expressiva |
+| Outliers em contínuas | Extremos altos (LIMIT_BAL > P99, PAY_AMT > P99) são sistematicamente mais seguros — não há ruído, representam segmentos reais |
+| Trajetórias de pagamento | "Atraso persistente" (4,2% da base, 76,6% default) e "Degradação recente" (6,3%, 64,9%) são os grupos de maior risco; um mês consecutivo de atraso já eleva o default para 65,7% |
 
 ---
 
@@ -495,9 +629,9 @@ BILL_AMT6             r=-0.0082  p=2.05e-01  ← não significativo
 
 *`n_meses_atraso` lidera o sinal (r=0.401), seguida pelas variáveis de status de pagamento e `LIMIT_BAL`. Todo o bloco `BILL_AMT` concentra-se na cauda — `BILL_AMT5` e `BILL_AMT6` não atingem significância estatística. `util_rate` (r=0.091) tem sinal 4× maior que qualquer `BILL_AMT` individual (r ≤ 0.023).*
 
-#### Correlação entre preditores
+#### Correlação entre preditores (pós-FE)
 
-Com o sinal individual mapeado, a etapa seguinte verifica redundância entre preditores: alta correlação entre si indica que duas variáveis carregam informação equivalente e uma delas pode ser descartada sem perda de sinal.
+A Fase 2 identificou colinearidade extrema no bloco `BILL_AMT` (todos os 15 pares com r > 0,80) e sinal quase nulo com o target. A análise a seguir confirma esse padrão no conjunto de treino após a criação das quatro features engineered, verificando se as novas variáveis introduzem redundância.
 
 ```python
 corr_m = X_train.fillna(X_train.median()).corr().abs()
