@@ -238,9 +238,9 @@ print(df.groupby('lim_q', observed=True)['default.payment.next.month'].mean().ro
 Q1    0.318   Q2    0.247   Q3    0.173   Q4    0.140
 ```
 
-![Taxa de default por decil de limite de crédito](assets/ARVORE_05_default_por_decil_limite.png)
+![Taxa de default por quartil de limite de crédito](assets/ARVORE_05_default_por_decil_limite.png)
 
-*A relação entre limite e inadimplência é monotônica: do primeiro decil (≤NT$30 mil, 35,8%) ao décimo (≤NT$1.000 mil, 11,9%), a taxa cai de forma consistente em todos os degraus. Clientes no menor decil inadimplem três vezes mais do que os do maior.*
+*A relação entre limite e inadimplência é monotônica: do primeiro quartil (Q1=31,8%) ao quarto (Q4=14,0%), a taxa cai de forma consistente em todos os degraus. Clientes no quartil inferior inadimplem mais do que o dobro dos do quartil superior.*
 
 ### Valor da fatura e valor pago — BILL_AMT e PAY_AMT
 
@@ -510,6 +510,8 @@ for X in [X_train, X_test]:
 print(f'Candidatos após feature engineering: {X_train.shape[1]}')   # 27
 ```
 
+O limiar `>= 1` em `n_meses_atraso` — e não `>= 2` como nas análises de trajetória da Fase 2 — inclui meses com PAY=1 (taxa de default de 33,9% em PAY_0), que sinalizam risco intermediário real. A árvore pode diferenciar internamente esse grupo com splits adicionais; excluí-los do contador reduziria o sinal da feature.
+
 Os candidatos rejeitados — `pay_ratio_1` (não significativo, p=0.31) e `max_atraso` (r=0.766 com PAY_0, redundante) — não foram incorporados.
 
 ### Análise de dimensionalidade
@@ -596,7 +598,7 @@ k= 7  mean=0.7718  std=0.0089
 k=10  mean=0.7704  std=0.0158
 ```
 
-**k=5** — média estável (0.7713), variância baixa (0.0086), 1.061 inadimplentes por fold. Acima de k=7, o desvio padrão dobra sem ganho na estimativa.
+**k=5** — média estável (0.7713), variância baixa (0.0086), 1.061 inadimplentes por fold. k=7 tem média marginalmente maior (0.7718), mas o desvio padrão já sobe para 0.0089 e em k=10 quase dobra (0.0158) sem ganho adicional. k=5 segue a convenção da literatura e é adotado aqui.
 
 ### Pós-poda — caminho de ccp_alpha
 
@@ -670,7 +672,7 @@ A pós-poda reduziu a árvore a 11 folhas com profundidade 5 — estrutura diret
 
 ### Otimização conjunta de hiperparâmetros
 
-O `min_samples_leaf` foi fixado em 20 antes da busca por `ccp_alpha`. Essa abordagem sequencial pode deixar passar combinações em que uma pré-poda mais leve — árvore mais complexa antes do corte — seguida de uma pós-poda mais agressiva encontra um ponto de viés-variância superior. O gap de 0,0086 sugere margem de variância disponível, o que justifica testar `min_samples_leaf` ∈ {5, 10, 20} com reotimização independente de `ccp_alpha` para cada valor.
+O `min_samples_leaf` foi fixado em 20 antes da busca por `ccp_alpha`. Essa abordagem sequencial pode deixar passar combinações em que uma pré-poda mais leve — árvore mais complexa antes do corte — seguida de uma pós-poda mais agressiva encontra um ponto de viés-variância superior. O gap de 0,0086 indica que o modelo atual não está no limite do overfitting — há espaço para testar configurações mais complexas sem risco imediato de colapso da generalização. Isso justifica testar `min_samples_leaf` ∈ {5, 10, 20} com reotimização independente de `ccp_alpha` para cada valor.
 
 ```python
 from sklearn.model_selection import StratifiedKFold
@@ -789,7 +791,7 @@ Melhores hiperparametros:
   class_weight_1       = 2.488
 ```
 
-O Optuna encontrou uma configuração com F1 CV de 0,5399 vs 0,5256 do baseline em CV — diferença de 0,014 no conjunto de validação. Para verificar se esse ganho se transfere para o conjunto de teste, o modelo com os parâmetros ótimos é treinado e avaliado:
+O Optuna encontrou uma configuração com F1 CV de 0,5399. O baseline atinge F1=0,5256 no conjunto de **teste** com threshold 0,5 — seu F1 em CV não foi calculado, pois ele foi selecionado por AUC, não por F1. A comparação direta de F1 CV não está disponível; a verificação definitiva é no teste, abaixo. Para verificar se o ganho em CV se transfere para o conjunto de teste, o modelo com os parâmetros ótimos é treinado e avaliado:
 
 ```python
 dt_opt = DecisionTreeClassifier(
@@ -955,7 +957,7 @@ F1-Score:  0.5256
 
 ![KS e Calibração](assets/ARVORE_05_ks_calibracao.png)
 
-**KS = 0,410.** A estatística de Kolmogorov-Smirnov é calculada como o máximo de TPR − FPR ao longo de todos os thresholds da curva ROC — ou seja, é a maior distância vertical entre as taxas de captura de inadimplentes e o erro sobre adimplentes em algum ponto de corte. Existe uma definição alternativa, derivada das CDFs dos scores ordenados (curva KS clássica de scorecard), que retorna o mesmo valor numérico em decis bem definidos mas é interpretada como percentil de clientes percorridos. Os dois caminhos chegam ao mesmo número; a implementação usada aqui é a primeira (via `roc_curve`). Na escala de referência do mercado de crédito (KS < 0,20: fraco; 0,20–0,40: aceitável; > 0,40: bom), o modelo está no limiar superior da faixa aceitável.
+**KS = 0,410.** A estatística de Kolmogorov-Smirnov é calculada como o máximo de TPR − FPR ao longo de todos os thresholds da curva ROC — ou seja, é a maior distância vertical entre as taxas de captura de inadimplentes e o erro sobre adimplentes em algum ponto de corte. Existe uma definição alternativa, derivada das CDFs dos scores ordenados (curva KS clássica de scorecard), que retorna o mesmo valor numérico em decis bem definidos mas é interpretada como percentil de clientes percorridos. Os dois caminhos chegam ao mesmo número; a implementação usada aqui é a primeira (via `roc_curve`). Na escala de referência do mercado de crédito (KS < 0,20: fraco; 0,20–0,40: aceitável; > 0,40: bom), o modelo está no limiar inferior da faixa "bom" — KS = 0,4105 ultrapassa o threshold de 0,40.
 
 **Gini = 0,537.** Derivado diretamente do AUC (Gini = 2 × AUC − 1), é a forma de comunicação preferida em comitês de risco e relatórios regulatórios, onde AUC é menos familiar.
 
@@ -1032,7 +1034,7 @@ Cada uma das 11 folhas da árvore corresponde a um segmento de clientes com comp
 | Threshold de classificação | t=0,38 captura 73% dos inadimplentes (vs 57% em t=0,50) com precision 0,37; t=0,59 maximiza F1 (0,5345) mas é desalinhado com cobrança preventiva. Calibrar pela capacidade operacional da equipe |
 | Retreinamento | Periódico — mudanças no comportamento de pagamento da carteira podem degradar o AUC |
 | Monitoramento | Acompanhar estabilidade do AUC e da distribuição de `n_meses_atraso` em produção; drift nessa feature impacta diretamente o desempenho |
-| Teto do modelo | AUC 0,7685 (Gini 0,537) é o limite empírico de um único CART neste dataset, confirmado por busca conjunta de hiperparâmetros, Optuna e expansão de features. Ganhos adicionais requerem mudança de classe de modelo |
+| Teto do modelo | AUC 0,7685 (Gini 0,537) é o limite empírico de um único CART neste dataset, confirmado por busca conjunta de hiperparâmetros, otimização bayesiana (Optuna) e seleção de features na Fase 3. Ganhos adicionais requerem mudança de classe de modelo |
 | Comparação com regressão logística | Ambos operam na faixa AUC 0,76–0,77 neste dataset; a árvore é preferível quando explicabilidade das regras for requisito do negócio ou do regulador |
 
 ---
