@@ -227,7 +227,7 @@ consec_atraso  taxa_default      n
 
 ### Limite de crédito — LIMIT_BAL
 
-Apesar dos 30.000 registros, `LIMIT_BAL` possui apenas 81 valores únicos — todos múltiplos redondos de NT$10.000. Os limites são atribuídos por faixas de política institucional, não de forma contínua. O valor mais frequente é NT$50.000 (3.365 clientes), e a distribuição é assimétrica à direita, com concentração na faixa baixa.
+`LIMIT_BAL` tem 81 valores únicos — múltiplos de NT$10.000 atribuídos por faixas de política institucional.
 
 ```python
 df['lim_q'] = pd.qcut(df['LIMIT_BAL'], 4, labels=['Q1','Q2','Q3','Q4'])
@@ -235,16 +235,8 @@ print(df.groupby('lim_q', observed=True)['default.payment.next.month'].mean().ro
 ```
 
 ```text
-lim_q
-Q1    0.318
-Q2    0.247
-Q3    0.173
-Q4    0.140
+Q1    0.318   Q2    0.247   Q3    0.173   Q4    0.140
 ```
-
-![Distribuição do limite de crédito por classe](assets/ARVORE_05_limit_bal_por_classe.png)
-
-*A distribuição dos inadimplentes está deslocada para a esquerda: mediana de NT$90 mil contra NT$150 mil dos adimplentes.*
 
 ![Taxa de default por decil de limite de crédito](assets/ARVORE_05_default_por_decil_limite.png)
 
@@ -252,31 +244,12 @@ Q4    0.140
 
 ### Valor da fatura e valor pago — BILL_AMT e PAY_AMT
 
-As variáveis `BILL_AMT1–6` registram o saldo devedor de cada mês; `PAY_AMT1–6`, o valor efetivamente pago. Ambos os grupos cobrem abril a setembro de 2005. Não há valores negativos em `PAY_AMT`; `BILL_AMT` pode ser negativo (crédito a favor do cliente).
+`BILL_AMT1–6` registram o saldo devedor mensal; `PAY_AMT1–6`, o valor efetivamente pago (abril–setembro/05). A mediana de `BILL_AMT` é similar entre classes em todos os meses (diferença máxima NT$2.935 em setembro) — discrimina pouco. O sinal relevante está na proporção de pagamentos zero:
 
 ```python
-bill_cols = [f'BILL_AMT{i}' for i in range(1,7)]
 pay_cols  = [f'PAY_AMT{i}' for i in range(1,7)]
 meses     = ['set/05','ago/05','jul/05','jun/05','mai/05','abr/05']
 
-for col, mes in zip(bill_cols, meses):
-    med = df.groupby(tgt)[col].median()
-    print(f'{mes}  adimplente={med[0]:,.0f}  inadimplente={med[1]:,.0f}')
-```
-
-```text
-           adimplente   inadimplente
-set/05       23.120        20.185
-ago/05       21.660        20.300
-jul/05       20.202        19.834
-jun/05       19.000        19.120
-mai/05       17.998        18.478
-abr/05       16.679        18.028
-```
-
-A mediana da fatura é similar entre as classes ao longo de todos os meses — a diferença máxima é de NT$2.935 em setembro. Nos meses mais antigos a relação se inverte: inadimplentes tinham faturas ligeiramente maiores em abril e maio.
-
-```python
 for col, mes in zip(pay_cols, meses):
     z0 = df[df[tgt]==0][col].eq(0).mean()*100
     z1 = df[df[tgt]==1][col].eq(0).mean()*100
@@ -393,43 +366,17 @@ for var in ['SEX', 'MARRIAGE', 'EDUCATION']:
     ct = pd.crosstab(df[var], y)
     chi2, p, dof, _ = chi2_contingency(ct)
     v = np.sqrt(chi2 / (len(df) * (min(ct.shape) - 1)))
-    rates = df.groupby(var)[tgt].mean().round(4)
-    print(f'{var}: chi2={chi2:.1f}  dof={dof}  p={p:.2e}  V={v:.4f}')
-    print(rates.to_string(), '\n')
+    print(f'{var}: V={v:.4f}  p={p:.2e}')
 
 r_age, p_age = pointbiserialr(df['AGE'], y)
 print(f'AGE: r={r_age:+.4f}  p={p_age:.2e}')
-print(df.groupby(pd.cut(df['AGE'], bins=[20,30,40,50,60,80]), observed=False)[tgt].mean().round(4))
 ```
 
 ```text
-SEX: chi2=47.7  dof=1  p=4.94e-12  V=0.0399
-SEX
-1 (masculino)    0.2417
-2 (feminino)     0.2078
-
-MARRIAGE: chi2=28.1  dof=2  p=7.79e-07  V=0.0306
-MARRIAGE
-1 (casado)       0.2347
-2 (solteiro)     0.2093
-3 (outro)        0.2361
-
-EDUCATION: chi2=163.0  dof=5  p=2.29e-33  V=0.0737
-EDUCATION
-1 (pós-graduação)  0.1923
-2 (graduação)      0.2373
-3 (ensino médio)   0.2516
-4 (outros)         0.0511  ← n=137, instável
-5 (desconhecido)   0.0643  ← n=280, instável
-6 (desconhecido)   0.1569  ← n=51, instável
-
-AGE: r=+0.0139  p=1.61e-02
-AGE
-(20, 30]    0.2244
-(30, 40]    0.2043
-(40, 50]    0.2330
-(50, 60]    0.2524
-(60, 80]    0.2684
+SEX:       V=0.0399  p=4.94e-12
+MARRIAGE:  V=0.0306  p=7.79e-07
+EDUCATION: V=0.0737  p=2.29e-33
+AGE:       r=+0.0139  p=1.61e-02
 ```
 
 ![Taxa de default por variável demográfica](assets/ARVORE_05_demograficas.png)
@@ -515,21 +462,6 @@ df['EDUCATION'] = df['EDUCATION'].replace(0, 4)
 df['MARRIAGE']  = df['MARRIAGE'].replace(0, 3)
 ```
 
-```text
-EDUCATION após recode:
-1    10585   (pós-graduação)
-2    14030   (graduação)
-3     4917   (ensino médio)
-4      137   (outros)
-5      280   (desconhecido)
-6       51   (desconhecido)
-
-MARRIAGE após recode:
-1    13659   (casado)
-2    15964   (solteiro)
-3      377   (outro)
-```
-
 ### Divisão treino e teste
 
 A base é dividida em 80% treino e 20% teste com estratificação pelo target, garantindo que a proporção de inadimplentes seja preservada em ambas as partições.
@@ -558,11 +490,9 @@ Taxa default teste:  0.2212
 Features: 23  ← preditores originais, antes de feature engineering e seleção
 ```
 
-A estratificação preservou exatamente a taxa de 22,12% em ambas as partições. Neste ponto o conjunto tem 23 preditores originais — feature engineering e seleção de dimensionalidade são aplicados a seguir, antes da modelagem.
-
 ### Feature engineering
 
-Antes de qualquer decisão de dimensionalidade, quatro features são derivadas dos 23 preditores originais. A criação antecede a análise para que a seleção final seja feita sobre o conjunto completo.
+Quatro features são derivadas dos preditores originais antes da análise de dimensionalidade:
 
 ```python
 pay_status = ['PAY_0','PAY_2','PAY_3','PAY_4','PAY_5','PAY_6']
@@ -585,89 +515,15 @@ A análise é executada uma única vez sobre os **27 candidatos** (23 originais 
 
 #### Associação com o target — correlação ponto-bisserial
 
-A correlação ponto-bisserial quantifica, para cada preditor, o quanto seu valor varia sistematicamente entre inadimplentes e adimplentes.
-
-```python
-from scipy.stats import pointbiserialr
-
-for col in X_train.columns:
-    r, p = pointbiserialr(X_train[col].fillna(X_train[col].median()), y_train)
-    print(f'{col:20s}  r={r:+.4f}  p={p:.2e}')
-```
-
-```text
-n_meses_atraso        r=+0.4010  p=0.00e+00
-PAY_0                 r=+0.3277  p=0.00e+00
-PAY_2                 r=+0.2655  p=0.00e+00
-PAY_3                 r=+0.2389  p=0.00e+00
-PAY_4                 r=+0.2201  p=0.00e+00
-PAY_5                 r=+0.2033  p=0.00e+00
-PAY_6                 r=+0.1887  p=0.00e+00
-LIMIT_BAL             r=-0.1610  p=0.00e+00
-tendencia_pay         r=+0.1306  p=7.91e-92
-total_pago            r=-0.1019  p=2.00e-56
-util_rate             r=+0.0906  p=5.85e-45
-PAY_AMT1              r=-0.0734  p=4.57e-30
-PAY_AMT2              r=-0.0651  p=5.99e-24
-PAY_AMT4              r=-0.0553  p=9.90e-18
-PAY_AMT3              r=-0.0539  p=6.82e-17
-PAY_AMT6              r=-0.0533  p=1.46e-16
-PAY_AMT5              r=-0.0526  p=3.48e-16
-SEX                   r=-0.0439  p=1.06e-11
-EDUCATION             r=+0.0248  p=1.24e-04
-MARRIAGE              r=-0.0228  p=4.11e-04
-BILL_AMT1             r=-0.0227  p=4.31e-04
-BILL_AMT3             r=-0.0183  p=4.63e-03
-BILL_AMT2             r=-0.0180  p=5.17e-03
-BILL_AMT4             r=-0.0137  p=3.35e-02
-AGE                   r=+0.0128  p=4.69e-02
-BILL_AMT5             r=-0.0097  p=1.33e-01  ← não significativo
-BILL_AMT6             r=-0.0082  p=2.05e-01  ← não significativo
-```
+As features engineered adicionam sinal acima dos originais: `n_meses_atraso` (r=+0.401) passa a liderar, seguida por `tendencia_pay` (r=+0.131), `total_pago` (r=−0.102) e `util_rate` (r=+0.091). O ranking dos originais é preservado (ver Fase 2). `util_rate` tem sinal 4× maior que qualquer `BILL_AMT` individual (r ≤ 0.023).
 
 ![Correlação ponto-bisserial com target](assets/ARVORE_05_corr_bisserial_target.png)
 
-*`n_meses_atraso` lidera o sinal (r=0.401), seguida pelas variáveis de status de pagamento e `LIMIT_BAL`. Todo o bloco `BILL_AMT` concentra-se na cauda — `BILL_AMT5` e `BILL_AMT6` não atingem significância estatística. `util_rate` (r=0.091) tem sinal 4× maior que qualquer `BILL_AMT` individual (r ≤ 0.023).*
-
 #### Correlação entre preditores (pós-FE)
 
-A Fase 2 identificou colinearidade extrema no bloco `BILL_AMT` (todos os 15 pares com r > 0,80) e sinal quase nulo com o target. A análise a seguir confirma esse padrão no conjunto de treino após a criação das quatro features engineered, verificando se as novas variáveis introduzem redundância.
-
-```python
-corr_m = X_train.fillna(X_train.median()).corr().abs()
-upper  = corr_m.where(np.triu(np.ones(corr_m.shape), k=1).astype(bool))
-high   = upper.stack().reset_index()
-high.columns = ['var1','var2','r']
-print(high[high['r'] > 0.7].sort_values('r', ascending=False).to_string(index=False))
-```
-
-```text
-     var1      var2      r
-BILL_AMT1 BILL_AMT2  0.952
-BILL_AMT5 BILL_AMT6  0.946
-BILL_AMT4 BILL_AMT5  0.941
-BILL_AMT2 BILL_AMT3  0.938
-BILL_AMT3 BILL_AMT4  0.933
-BILL_AMT4 BILL_AMT6  0.901
-BILL_AMT1 BILL_AMT3  0.901
-BILL_AMT2 BILL_AMT4  0.895
-BILL_AMT3 BILL_AMT5  0.892
-BILL_AMT1 BILL_AMT4  0.862
-BILL_AMT2 BILL_AMT5  0.861
-BILL_AMT3 BILL_AMT6  0.857
-BILL_AMT2 BILL_AMT6  0.832
-BILL_AMT1 BILL_AMT5  0.830
-    PAY_4     PAY_5  0.817
-    PAY_5     PAY_6  0.814
-BILL_AMT1 BILL_AMT6  0.803
-    PAY_3     PAY_4  0.776
-    PAY_2     PAY_3  0.765
-    PAY_4     PAY_6  0.711
-```
+A colinearidade identificada na Fase 2 se confirma no conjunto de treino. As features engineered não introduzem nova redundância: o maior par fora do bloco `BILL_AMT` é `total_pago × PAY_AMT1` (r=0.611), abaixo do limiar de 0.70. `util_rate` correlaciona no máximo 0.568 com `BILL_AMT1` — captura uma dimensão distinta.
 
 ![Heatmap de correlação entre preditores](assets/ARVORE_05_corr_preditores.png)
-
-*Todos os 15 pares de `BILL_AMT` têm r > 0.80 — o bloco de maior colinearidade do conjunto. `util_rate` correlaciona no máximo 0.568 com `BILL_AMT1`, abaixo do limiar de 0.70, confirmando que captura uma dimensão distinta (esforço relativo ao limite vs. valor absoluto). `PAY_AMT` e demográficas não apresentam colinearidade relevante.*
 
 #### Decisão sobre dimensionalidade
 
@@ -723,29 +579,21 @@ dt_base = DecisionTreeClassifier(criterion='gini', min_samples_leaf=20,
 
 ### Seleção do número de folds
 
-Antes de executar o CV, a estabilidade da estimativa é verificada para diferentes valores de k.
-
 ```python
 ks = [3, 5, 7, 10, 15, 20]
 for k in ks:
     scores = cross_val_score(dt_base, X_train, y_train, cv=k, scoring='roc_auc')
-    print(f'k={k:2d}  mean={scores.mean():.4f}  std={scores.std():.4f}  min_cls_fold={int(y_train.sum()/k)}')
+    print(f'k={k:2d}  mean={scores.mean():.4f}  std={scores.std():.4f}')
 ```
 
 ```text
-k= 3  mean=0.7689  std=0.0079  min_cls_fold=1769
-k= 5  mean=0.7713  std=0.0086  min_cls_fold=1061
-k= 7  mean=0.7718  std=0.0089  min_cls_fold= 758
-k=10  mean=0.7704  std=0.0158  min_cls_fold= 530
-k=15  mean=0.7696  std=0.0147  min_cls_fold= 353
-k=20  mean=0.7698  std=0.0184  min_cls_fold= 265
+k= 3  mean=0.7689  std=0.0079
+k= 5  mean=0.7713  std=0.0086
+k= 7  mean=0.7718  std=0.0089
+k=10  mean=0.7704  std=0.0158
 ```
 
-![Estabilidade do CV por k](assets/ARVORE_05_cv_k_stability.png)
-
-*À esquerda: a média do AUC converge entre k=5 e k=7; k=3 subestima ligeiramente. À direita: o desvio padrão salta de 0.0086 (k=5) para 0.0158 (k=10), indicando que folds menores tornam a estimativa instável. k=5 está no ponto onde a média é estável e a variância ainda é controlada — com 1.061 inadimplentes por fold, volume suficiente para estimativas confiáveis.*
-
-**k=5 é confirmado**: média estável (0.7713), variância baixa (0.0086) e 1.061 registros da classe minoritária por fold. Aumentar k não melhora a estimativa e eleva a variância.
+**k=5** — média estável (0.7713), variância baixa (0.0086), 1.061 inadimplentes por fold. Acima de k=7, o desvio padrão dobra sem ganho na estimativa.
 
 ### Pós-poda — caminho de ccp_alpha
 
@@ -868,7 +716,7 @@ O resultado contradiz a hipótese inicial: reduzir `min_samples_leaf` de 20 para
 
 #### Ajuste de class_weight
 
-Com `min_samples_leaf=20` e `ccp_alpha=0.000521` confirmados, o `class_weight` é a última alavanca disponível. `'balanced'` aplica peso proporcional ao inverso da frequência da classe — equivalente a aproximadamente `{0:1, 1:3.5}` para esta base (weight_1 = 24000/(2×5321) ≈ 2.26; weight_0 = 24000/(2×18679) ≈ 0.64; razão ≈ 3.5). Em scikit-learn, os pesos entram diretamente no cálculo da impureza Gini em cada candidato de corte: amostras da classe minoritária pesam mais na soma ponderada, e o ganho de Gini de cada split é calculado sobre essa ponderação. Pesos diferentes podem, portanto, alterar tanto a estrutura de splits (quais cortes maximizam o ganho ponderado) quanto a previsão das folhas (voto majoritário ponderado). O efeito agregado é uma mudança no equilíbrio recall–precision do modelo final.
+`'balanced'` corresponde a `{0:1, 1:3.5}` neste treino (weight_1 = 24000/(2×5321) ≈ 2.26; weight_0 ≈ 0.64). Os pesos entram no cálculo da impureza Gini — pesos maiores para a classe minoritária aumentam recall ao custo de precision. Testados quatro valores:
 
 ```python
 weights  = ['balanced', {0:1, 1:2}, {0:1, 1:3}, {0:1, 1:4}]
@@ -956,7 +804,7 @@ print(cm)
 | F1-Score inadimplente | 52,6% |
 | Especificidade (recall adimplente) | 82,7% |
 
-Com threshold padrão de 0,5, o modelo identifica corretamente 761 dos 1.327 inadimplentes do conjunto de teste — recall de 57,3%. Os 566 falsos negativos (inadimplentes classificados como adimplentes) representam o erro mais custoso para a instituição, pois são perdas que passam sem ação. Os 808 falsos positivos (adimplentes sinalizados incorretamente) têm custo operacional menor, mas consomem capacidade de atendimento preventivo. A especificidade de 82,7% indica que o modelo é conservador ao sinalizar inadimplência: quando classifica como inadimplente, quase metade já é adimplente (precision 48,5%).
+Com threshold 0,5, 761 dos 1.327 inadimplentes do teste são capturados (recall 57,3%). Os 566 falsos negativos são perdas não detectadas; os 808 falsos positivos consomem capacidade de cobrança preventiva sem retorno. A precision de 48,5% indica que quase metade dos sinalizados são adimplentes.
 
 ### Otimização do threshold operacional
 
@@ -1086,10 +934,6 @@ A legibilidade da estrutura é o diferencial da árvore frente à regressão log
 Sim, com qualificação. O modelo discrimina inadimplentes com AUC-ROC de 0,7685 — substancialmente acima do acaso (0,50) e com generalização confirmada (gap treino–teste de 0,0086). Com o threshold padrão de 0,5, identifica corretamente 57,3% dos inadimplentes do conjunto de teste antes de qualquer perda materializada. Ajustando o threshold para um valor menor (ex.: 0,35), o recall aumenta a custo de mais falsos positivos — tradeoff que a instituição deve calibrar conforme o custo relativo de cada tipo de erro e a capacidade operacional de cobrança preventiva.
 
 A limitação é que o modelo não distingue inadimplência por incapacidade financeira de inadimplência por comportamento pontual — o histórico de atrasos captura ambos sem discriminação. A pergunta de negócio é respondida em termos discriminativos, não causais.
-
-### Ciclo retroativo do CRISP-DM
-
-O gap treino–teste de 0,0086 confirma que não há overfitting que exija retorno à Fase 4 para repoda ou recalibração de parâmetros. A seleção do `ccp_alpha` por validação cruzada antecipou e resolveu o problema durante a própria modelagem. Caso o gap fosse superior a ~0,05, o protocolo CRISP-DM indicaria retroagir à Fase 4, reduzir `min_samples_leaf`, aumentar `ccp_alpha` ou revisar features.
 
 ---
 
