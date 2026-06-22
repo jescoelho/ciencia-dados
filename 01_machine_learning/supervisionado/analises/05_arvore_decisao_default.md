@@ -868,7 +868,7 @@ O resultado contradiz a hipótese inicial: reduzir `min_samples_leaf` de 20 para
 
 #### Ajuste de class_weight
 
-Com `min_samples_leaf=20` e `ccp_alpha=0.000521` confirmados, o `class_weight` é a última alavanca disponível. `'balanced'` aplica peso proporcional ao inverso da frequência da classe — equivalente a aproximadamente `{0:1, 1:4.5}` para esta base. Em scikit-learn, os pesos entram diretamente no cálculo da impureza Gini em cada candidato de corte: amostras da classe minoritária pesam mais na soma ponderada, e o ganho de Gini de cada split é calculado sobre essa ponderação. Pesos diferentes podem, portanto, alterar tanto a estrutura de splits (quais cortes maximizam o ganho ponderado) quanto a previsão das folhas (voto majoritário ponderado). O efeito agregado é uma mudança no equilíbrio recall–precision do modelo final.
+Com `min_samples_leaf=20` e `ccp_alpha=0.000521` confirmados, o `class_weight` é a última alavanca disponível. `'balanced'` aplica peso proporcional ao inverso da frequência da classe — equivalente a aproximadamente `{0:1, 1:3.5}` para esta base (weight_1 = 24000/(2×5321) ≈ 2.26; weight_0 = 24000/(2×18679) ≈ 0.64; razão ≈ 3.5). Em scikit-learn, os pesos entram diretamente no cálculo da impureza Gini em cada candidato de corte: amostras da classe minoritária pesam mais na soma ponderada, e o ganho de Gini de cada split é calculado sobre essa ponderação. Pesos diferentes podem, portanto, alterar tanto a estrutura de splits (quais cortes maximizam o ganho ponderado) quanto a previsão das folhas (voto majoritário ponderado). O efeito agregado é uma mudança no equilíbrio recall–precision do modelo final.
 
 ```python
 weights  = ['balanced', {0:1, 1:2}, {0:1, 1:3}, {0:1, 1:4}]
@@ -891,7 +891,7 @@ for w, wl in zip(weights, w_labels):
 ```
 
 ```text
-balanced (~4.5×)    train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
+balanced (~3.5×)    train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
 {0:1, 1:2}          train=0.7783  test=0.7634  gap=0.0148  F1=0.5249  KS=0.4011
 {0:1, 1:3}          train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
 {0:1, 1:4}          train=0.7774  test=0.7685  gap=0.0089  F1=0.5149  KS=0.4078
