@@ -448,6 +448,9 @@ Três decisões de preparação são necessárias antes da modelagem, todas fund
 
 ```python
 df = df.drop(columns=['ID'])
+# Colunas 'trajetoria' e 'consec_atraso' criadas na Fase 2 para EDA
+# são descartadas aqui — não são preditores, e 'trajetoria' é string
+df = df.drop(columns=['trajetoria', 'consec_atraso'], errors='ignore')
 # Shape resultante: (30000, 24)
 ```
 
@@ -499,7 +502,7 @@ pay_status = ['PAY_0','PAY_2','PAY_3','PAY_4','PAY_5','PAY_6']
 pay_amt    = [f'PAY_AMT{i}' for i in range(1,7)]
 
 for X in [X_train, X_test]:
-    X['util_rate']      = X['BILL_AMT1'] / X['LIMIT_BAL']
+    X['util_rate']      = X['BILL_AMT1'] / X['LIMIT_BAL']  # LIMIT_BAL mín = 10.000; sem zeros
     X['n_meses_atraso'] = (X[pay_status] >= 1).sum(axis=1)
     X['total_pago']     = X[pay_amt].sum(axis=1)
     X['tendencia_pay']  = X['PAY_0'] - X['PAY_6']
@@ -568,7 +571,7 @@ O modelo é uma árvore de decisão CART com poda combinada: pré-poda leve via 
 
 ### Pré-poda
 
-`min_samples_leaf=20` impede que a árvore crie folhas com menos de 20 registros, eliminando partições ruidosas sem restringir a profundidade. `class_weight='balanced'` pondera as classes inversamente à sua frequência, compensando o desequilíbrio de 22% de inadimplentes. O critério de pureza adotado é o **índice de Gini** — preferido à entropia por menor custo computacional e desempenho empírico equivalente em dados tabulares com esta escala.
+`min_samples_leaf=20` impede que a árvore crie folhas com menos de 20 registros, eliminando partições ruidosas sem restringir a profundidade. `class_weight='balanced'` pondera as classes inversamente à sua frequência, compensando o desequilíbrio de 22% de inadimplentes. O critério de pureza adotado é o **índice de Gini de Breiman** — mede a probabilidade de classificação incorreta num nó; preferido à entropia por menor custo computacional e desempenho empírico equivalente nesta escala. *(Não confundir com o Gini de discriminação da Fase 5, que é derivado do AUC-ROC e mede poder preditivo do modelo como um todo.)*
 
 ```python
 from sklearn.tree import DecisionTreeClassifier
@@ -622,6 +625,8 @@ print(f'ccp_alpha ótimo: {best_alpha:.6f}  |  AUC CV: {max(cv_scores):.4f}')
 ```text
 ccp_alpha ótimo: 0.000521  |  AUC CV: 0.7713
 ```
+
+> **Nota:** A busca conjunta (seção seguinte) reporta AUC CV = 0.7677 para o mesmo `msl=20`. A diferença de 0.0036 decorre do método de CV: aqui usa-se `cross_val_score` sem shuffle; na busca conjunta usa-se `StratifiedKFold(shuffle=True, random_state=42)`. O modelo treinado é idêntico; a discrepância é de estimativa, não de desempenho real.
 
 ![AUC CV por ccp_alpha](assets/ARVORE_05_ccp_alpha_cv.png)
 
@@ -716,11 +721,11 @@ O resultado contradiz a hipótese inicial: reduzir `min_samples_leaf` de 20 para
 
 #### Ajuste de class_weight
 
-`'balanced'` corresponde a `{0:1, 1:3.5}` neste treino (weight_1 = 24000/(2×5321) ≈ 2.26; weight_0 ≈ 0.64). Os pesos entram no cálculo da impureza Gini — pesos maiores para a classe minoritária aumentam recall ao custo de precision. Testados quatro valores:
+`'balanced'` define weight_0 = 24000/(2×18679) ≈ 0.64 e weight_1 = 24000/(2×5321) ≈ 2.26 — razão de ~3.5× a favor da classe inadimplente. Esses pesos entram no cálculo da impureza Gini em cada candidato de corte: amostras da classe 1 pesam ~3.5× mais na soma ponderada, forçando splits que discriminem melhor inadimplentes ao custo de mais falsos positivos. Testados quatro valores:
 
 ```python
 weights  = ['balanced', {0:1, 1:2}, {0:1, 1:3}, {0:1, 1:4}]
-w_labels = ['balanced (~4.5×)', '{0:1, 1:2}', '{0:1, 1:3}', '{0:1, 1:4}']
+w_labels = ['balanced (~3.5×)', '{0:1, 1:2}', '{0:1, 1:3}', '{0:1, 1:4}']
 
 for w, wl in zip(weights, w_labels):
     dt = DecisionTreeClassifier(criterion='gini', min_samples_leaf=20,
@@ -739,7 +744,7 @@ for w, wl in zip(weights, w_labels):
 ```
 
 ```text
-balanced (~3.5×)    train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
+balanced (~3.5×)    train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078  ← KS calculado por roc_curve; Fase 5 reporta 0.4105 por precisão de float
 {0:1, 1:2}          train=0.7783  test=0.7634  gap=0.0148  F1=0.5249  KS=0.4011
 {0:1, 1:3}          train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
 {0:1, 1:4}          train=0.7774  test=0.7685  gap=0.0089  F1=0.5149  KS=0.4078
@@ -931,9 +936,9 @@ A legibilidade da estrutura é o diferencial da árvore frente à regressão log
 
 > **É possível identificar, com base no histórico de pagamentos e no perfil do cliente, quem vai inadimplir no próximo mês?**
 
-Sim, com qualificação. O modelo discrimina inadimplentes com AUC-ROC de 0,7685 — substancialmente acima do acaso (0,50) e com generalização confirmada (gap treino–teste de 0,0086). Com o threshold padrão de 0,5, identifica corretamente 57,3% dos inadimplentes do conjunto de teste antes de qualquer perda materializada. Ajustando o threshold para um valor menor (ex.: 0,35), o recall aumenta a custo de mais falsos positivos — tradeoff que a instituição deve calibrar conforme o custo relativo de cada tipo de erro e a capacidade operacional de cobrança preventiva.
+Sim, com qualificação. O modelo discrimina inadimplentes com AUC-ROC de 0,7685 e Gini de 0,537 — na faixa de modelos aplicáveis em scorecards de cobrança preventiva, abaixo do patamar típico de concessão de crédito (Gini ≥ 0,60). Com threshold padrão de 0,5, captura 57,3% dos inadimplentes antes de qualquer perda materializada. Reduzindo para 0,38, o recall sobe para 73,1% (tabela de thresholds, Fase 5), ao custo de precision 0,37 — tradeoff que a instituição calibra pela capacidade operacional da equipe de cobrança.
 
-A limitação é que o modelo não distingue inadimplência por incapacidade financeira de inadimplência por comportamento pontual — o histórico de atrasos captura ambos sem discriminação. A pergunta de negócio é respondida em termos discriminativos, não causais.
+A limitação é que o modelo não distingue inadimplência por incapacidade financeira de inadimplência por comportamento pontual, e não é adequado para decisões de concessão de crédito sem calibração adicional. A resposta à pergunta de negócio é discriminativa, não causal.
 
 ---
 
@@ -957,10 +962,11 @@ Cada uma das 11 folhas da árvore corresponde a um segmento de clientes com comp
 
 | Aspecto | Decisão recomendada |
 |---------|-------------------|
-| Threshold de classificação | A Fase 5 mostrou que t=0,38 captura 73% dos inadimplentes (vs 57% em t=0,50) com precision 0,37; t=0,59 maximiza F1 (0,5345) mas é desalinhado com cobrança preventiva. A escolha deve ser calibrada pela capacidade operacional da equipe de cobrança |
+| Threshold de classificação | t=0,38 captura 73% dos inadimplentes (vs 57% em t=0,50) com precision 0,37; t=0,59 maximiza F1 (0,5345) mas é desalinhado com cobrança preventiva. Calibrar pela capacidade operacional da equipe |
 | Retreinamento | Periódico — mudanças no comportamento de pagamento da carteira podem degradar o AUC |
 | Monitoramento | Acompanhar estabilidade do AUC e da distribuição de `n_meses_atraso` em produção; drift nessa feature impacta diretamente o desempenho |
-| Comparação com regressão logística | Ambos operam na faixa AUC 0,76–0,77 neste dataset; a árvore é preferível quando a explicabilidade das regras for requisito do negócio ou do regulador |
+| Teto do modelo | AUC 0,7685 (Gini 0,537) é o limite empírico de um único CART neste dataset, confirmado por busca conjunta de hiperparâmetros, Optuna e expansão de features. Ganhos adicionais requerem mudança de classe de modelo |
+| Comparação com regressão logística | Ambos operam na faixa AUC 0,76–0,77 neste dataset; a árvore é preferível quando explicabilidade das regras for requisito do negócio ou do regulador |
 
 ---
 
