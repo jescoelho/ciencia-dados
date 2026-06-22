@@ -752,9 +752,76 @@ balanced (~3.5×)    train=0.7771  test=0.7685  gap=0.0086  F1=0.5256  KS=0.4078
 
 `'balanced'` empata em AUC e KS com `{0:1, 1:3}` e supera os demais em F1. Pesos menores (`{0:1, 1:2}`) reduzem o recall da classe inadimplente sem ganho em discriminação. Pesos maiores (`{0:1, 1:4}`) elevam o recall mas comprimem a precision, penalizando o F1.
 
+#### Otimização bayesiana (Optuna)
+
+A busca conjunta testou três valores de `min_samples_leaf` com reotimização de `ccp_alpha` para cada um — uma grade esparsa de dois parâmetros. Para descartar a possibilidade de que o teto de AUC 0,7685 reflita uma busca insuficiente no espaço de hiperparâmetros, a otimização bayesiana (TPE — Tree-structured Parzen Estimator) explora simultaneamente seis parâmetros em 150 trials, sem restrição a grades predefinidas. O objetivo é maximizar F1-Score da classe inadimplente em CV de 5 folds, métrica alternativa ao AUC para verificar se há configuração que melhore o trade-off recall–precision.
+
+```python
+import optuna
+
+def objective(trial):
+    params = {
+        'criterion':        trial.suggest_categorical('criterion', ['gini', 'entropy']),
+        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 5, 50),
+        'min_samples_split':trial.suggest_int('min_samples_split', 2, 100),
+        'max_depth':        trial.suggest_int('max_depth', 3, 20),
+        'ccp_alpha':        trial.suggest_float('ccp_alpha', 1e-5, 1e-2, log=True),
+        'class_weight':     {0: 1, 1: trial.suggest_float('class_weight_1', 1.0, 5.0)},
+        'random_state': 42
+    }
+    dt = DecisionTreeClassifier(**params)
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    return cross_val_score(dt, X_train, y_train, cv=skf, scoring='f1').mean()
+
+study = optuna.create_study(direction='maximize',
+                             sampler=optuna.samplers.TPESampler(seed=42))
+study.optimize(objective, n_trials=150, show_progress_bar=True)
+```
+
+```text
+Melhor F1 CV: 0.5399
+Melhores hiperparametros:
+  criterion            = gini
+  min_samples_leaf     = 14
+  min_samples_split    = 81
+  max_depth            = 12
+  ccp_alpha            = 0.000435
+  class_weight_1       = 2.488
+```
+
+O Optuna encontrou uma configuração com F1 CV de 0,5399 vs 0,5256 do baseline em CV — diferença de 0,014 no conjunto de validação. Para verificar se esse ganho se transfere para o conjunto de teste, o modelo com os parâmetros ótimos é treinado e avaliado:
+
+```python
+dt_opt = DecisionTreeClassifier(
+    criterion='gini', min_samples_leaf=14, min_samples_split=81,
+    max_depth=12, ccp_alpha=0.000435,
+    class_weight={0: 1, 1: 2.488}, random_state=42
+)
+dt_opt.fit(X_train, y_train)
+```
+
+```text
+depth=6  leaves=19
+AUC train=0.7822  test=0.7633  gap=0.0189
+KS=0.4100  Gini=0.5266  F1=0.5245  AP=0.5051
+recall=0.5697  precision=0.4859
+Matriz: [[3873, 800], [571, 756]]
+```
+
+| Métrica | Baseline | Optuna (F1) | Delta |
+|---------|----------|-------------|-------|
+| AUC teste | **0.7685** | 0.7633 | −0.0052 |
+| Gini | **0.5371** | 0.5266 | −0.0105 |
+| F1 | **0.5256** | 0.5245 | −0.0011 |
+| KS | 0.4078 | **0.4100** | +0.0022 |
+| AP | 0.5025 | **0.5051** | +0.0027 |
+| Gap treino–teste | **0.0086** | 0.0189 | +0.0104 |
+
+O modelo Optuna regride em AUC e Gini (−0,005 e −0,011), mantém F1 equivalente e amplia o gap treino–teste para 0,019 — exatamente o padrão já observado com `min_samples_leaf` menor na busca conjunta. O ganho de F1 CV (0,014) não se transfere para o teste: o Optuna aprendeu configurações que inflam o score em validação cruzada à custa de mais variância.
+
 #### Conclusão da otimização
 
-A busca conjunta confirma que os parâmetros originais (`min_samples_leaf=20`, `ccp_alpha=0.000521`, `class_weight='balanced'`) são o ponto ótimo para uma árvore de decisão CART neste dataset. O experimento com `min_samples_leaf` menor revela o padrão diagnóstico do **teto estrutural do modelo**: adicionar complexidade aumenta variância sem reduzir viés, porque a árvore única já aprendeu tudo que consegue generalizar da estrutura dos dados. O AUC de 0,7685 não é resultado de sub-ajuste — é o limite de capacidade discriminativa de um único CART com estas features. Para ultrapassar esse teto, seria necessário mudar a classe de modelo.
+Busca conjunta manual e otimização bayesiana com 150 trials convergem para o mesmo diagnóstico: os parâmetros originais (`min_samples_leaf=20`, `ccp_alpha=0.000521`, `class_weight='balanced'`) são o ponto ótimo para uma árvore de decisão CART neste dataset. Qualquer tentativa de adicionar complexidade — reduzindo pré-poda ou expandindo profundidade máxima — aumenta variância sem reduzir viés. O AUC de 0,7685 não é resultado de sub-ajuste: é o **teto estrutural do modelo** neste dataset. Para ultrapassar esse teto, seria necessário mudar a classe de modelo.
 
 ---
 
