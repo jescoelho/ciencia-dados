@@ -102,7 +102,10 @@ A questão prática — como estimar $P(x)$ quando $x$ tem centenas de dimensõe
 | Pergunta central | Qual a classe deste exemplo? | Como são os exemplos possíveis? |
 | Precisa de rótulos? | Sim | Não necessariamente |
 | Pode gerar dados? | Não | Sim |
-| Exemplos de modelos | Regressão logística, SVM, Random Forest | VAEs, GANs, Transformers |
+| Modelos clássicos | Regressão logística · SVM · KNN · Árvores/Random Forest | Naive Bayes · GMM · HMM |
+| Modelos modernos | Redes neurais discriminativas | VAEs · GANs · Transformers |
+
+**Naive Bayes** é o modelo generativo clássico mais simples: aprende $P(x \mid y)$ e $P(y)$ separadamente e reconstrói $P(x, y) = P(x \mid y) \cdot P(y)$ para classificar via regra de Bayes. **GMMs** (Gaussian Mixture Models) estimam $P(x)$ como soma ponderada de gaussianas — o modelo generativo não supervisionado mais usado antes do deep learning. **HMMs** (Hidden Markov Models) estendem isso para sequências, modelando $P(x_1, x_2, \ldots, x_T)$ com dependência temporal.
 
 Um modelo generativo que aprendeu $P(x, y)$ também consegue classificar: basta calcular $P(y \mid x) = P(x, y) / P(x)$ pela regra do produto. O inverso não é verdadeiro — um modelo discriminativo não consegue gerar porque nunca estimou $P(x)$.
 
