@@ -134,72 +134,103 @@ Na prática bancária, métricas adicionais importantes são: taxa de loop infin
 
 ## Na prática
 
+O valor do ReAct aparece em tarefas onde a próxima ação depende do resultado anterior e não pode ser codificada como script fixo. Calcular a média de uma lista não justifica um agente — qualquer linha de Python resolve. Identificar qual setor de uma carteira de crédito excede o limite regulatório envolve leitura de dados, cálculo e raciocínio sobre o resultado: aí o padrão se justifica.
+
+O exemplo abaixo tem ferramentas que executam código real. O LLM é simulado para mostrar as decisões que um modelo real tomaria — em produção, substituir o bloco `PLANO` por chamadas ao SDK da Anthropic com function calling.
+
 ```python
-import anthropic
-import json
+import pandas as pd
+import io
 
-client = anthropic.Anthropic()
+# carteira sintética com distribuição realista
+CARTEIRA = """setor,valor_mm,rating
+Agronegócio,850,BB
+Varejo,420,BBB
+Indústria,380,A
+Energia,210,BBB
+Serviços,140,BB"""
 
-ferramentas = [
-    {
-        "name": "executar_codigo",
-        "description": "Executa código Python e retorna o resultado",
-        "input_schema": {
-            "type": "object",
-            "properties": {
-                "codigo": {"type": "string", "description": "Código Python a executar"}
-            },
-            "required": ["codigo"]
-        }
-    }
+# ── ferramentas reais — executam código Python ────────────────────────────────
+
+def ler_carteira() -> str:
+    df = pd.read_csv(io.StringIO(CARTEIRA))
+    total = df["valor_mm"].sum()
+    return f"{len(df)} setores · total R$ {total}M\n" + df.to_string(index=False)
+
+def calcular_concentracao() -> str:
+    df = pd.read_csv(io.StringIO(CARTEIRA))
+    total = df["valor_mm"].sum()
+    df["concentracao_%"] = (df["valor_mm"] / total * 100).round(1)
+    return df[["setor", "concentracao_%"]].sort_values(
+        "concentracao_%", ascending=False
+    ).to_string(index=False)
+
+FERRAMENTAS = {
+    "ler_carteira": lambda **_: ler_carteira(),
+    "calcular_concentracao": lambda **_: calcular_concentracao(),
+}
+
+# ── loop ReAct — LLM simulado ─────────────────────────────────────────────────
+# Cada etapa representa uma decisão que o LLM tomaria. As ferramentas executam
+# e retornam dados reais; o raciocínio final é gerado pelo modelo em produção.
+
+PLANO = [
+    ("pensamento", "Preciso entender a composição da carteira antes de calcular concentração."),
+    ("acao",       "ler_carteira", {}),
+    ("pensamento", "Tenho os dados. Agora calculo a concentração por setor."),
+    ("acao",       "calcular_concentracao", {}),
+    ("pensamento", "Agronegócio com 42.5% excede o limite regulatório de 40%. Tenho o que preciso."),
+    ("resposta",   None),
 ]
 
-def agente_react(objetivo: str, max_iter: int = 5) -> str:
-    historico = [{"role": "user", "content": objetivo}]
-
-    for i in range(max_iter):
-        resposta = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=1024,
-            tools=ferramentas,
-            messages=historico
-        )
-        historico.append({"role": "assistant", "content": resposta.content})
-
-        if resposta.stop_reason == "end_turn":
-            return resposta.content[0].text      # resposta final
-
-        # processa chamadas de ferramenta
-        resultados = []
-        for bloco in resposta.content:
-            if bloco.type == "tool_use":
-                # simulação: substituir por execução real
-                resultado = f"[resultado de {bloco.name}]"
-                resultados.append({
-                    "type": "tool_result",
-                    "tool_use_id": bloco.id,
-                    "content": resultado
-                })
-
-        historico.append({"role": "user", "content": resultados})
-
-    return "limite de iterações atingido"
+for etapa in PLANO:
+    tipo = etapa[0]
+    if tipo == "pensamento":
+        print(f"\nPensamento: {etapa[1]}")
+    elif tipo == "acao":
+        ferramenta, args = etapa[1], etapa[2]
+        resultado = FERRAMENTAS[ferramenta](**args)
+        print(f"\nAção: {ferramenta}()")
+        print(f"Observação:\n{resultado}")
+    elif tipo == "resposta":
+        print("\nResposta final: setor Agronegócio apresenta concentração de 42.5%,")
+        print("acima do limite regulatório de 40%. Rating BB indica risco elevado.")
+        print("Recomendação: revisar limites de exposição ao setor.")
+        break
 ```
 
 ```text
-# chamada
-agente_react("Calcule a média de [12, 45, 7, 33, 28] e diga se está acima de 25")
+Pensamento: Preciso entender a composição da carteira antes de calcular concentração.
 
-# iteração 1
-Pensamento: preciso calcular a média da lista
-Ação: executar_codigo("import numpy as np; np.mean([12, 45, 7, 33, 28])")
-Observação: 25.0
+Ação: ler_carteira()
+Observação:
+5 setores · total R$ 2000M
+      setor  valor_mm rating
+Agronegócio       850     BB
+     Varejo       420    BBB
+  Indústria       380      A
+    Energia       210    BBB
+   Serviços       140     BB
 
-# iteração 2
-Resposta final: a média é 25.0 — exatamente no limite, não acima dele.
+Pensamento: Tenho os dados. Agora calculo a concentração por setor.
+
+Ação: calcular_concentracao()
+Observação:
+      setor  concentracao_%
+Agronegócio            42.5
+     Varejo            21.0
+  Indústria            19.0
+    Energia            10.5
+   Serviços             7.0
+
+Pensamento: Agronegócio com 42.5% excede o limite regulatório de 40%. Tenho o que preciso.
+
+Resposta final: setor Agronegócio apresenta concentração de 42.5%,
+acima do limite regulatório de 40%. Rating BB indica risco elevado.
+Recomendação: revisar limites de exposição ao setor.
 ```
 
-*O agente usou uma ferramenta para calcular em vez de tentar computar mentalmente — comportamento correto para evitar alucinações numéricas. O `stop_reason == "end_turn"` sinaliza que o modelo decidiu responder sem nova chamada de ferramenta.*
+*As ferramentas produziram dados reais — os números acima são calculados, não inventados. O raciocínio sobre qual setor é preocupante (concentração alta + rating BB) é onde o LLM agrega valor: um script fixo não saberia qual combinação de variáveis sinaliza risco sem regras explícitas codificadas.*
 
 ---
 
