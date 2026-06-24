@@ -17,4 +17,4 @@ Agentes são sistemas onde um LLM não apenas gera texto, mas decide ações, us
 
 ## Notas
 
-ReAct · Tool use e function calling · Memória episódica e semântica · Orquestração multi-agente · Frameworks · Harness Engineering · Avaliação e segurança · Planejamento de longo horizonte
+[ReAct](notas/01_react.md) · Tool use e function calling · Memória episódica e semântica · Orquestração multi-agente · Frameworks · Harness Engineering · Avaliação e segurança · Planejamento de longo horizonte
