@@ -42,7 +42,7 @@ Os módulos ativos têm link para seu próprio README, onde estão as análises 
 | Deep Learning | CNNs e Visão | — |
 | Deep Learning | RNNs e séries temporais | — |
 | NLP | Linguagem natural | — |
-| IA Generativa | LLMs e difusão | — |
+| IA Generativa | [LLMs e difusão](04_ia_generativa/llms_difusao/README.md) | Modelos generativos · VAEs · GANs · Transformers · LLMs · Difusão |
 | Aprendizado por Reforço | Políticas e agentes | — |
 
 ---
