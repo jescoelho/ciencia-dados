@@ -18,3 +18,9 @@ Agentes são sistemas onde um LLM não apenas gera texto, mas decide ações, us
 ## Notas
 
 [ReAct](notas/01_react.md) · Tool use e function calling · Memória episódica e semântica · Orquestração multi-agente · Frameworks · Harness Engineering · Avaliação e segurança · Planejamento de longo horizonte
+
+## Análises
+
+| # | Título | Tema |
+|---|--------|------|
+| 01 | [Agente ReAct — Pricing de Opções ITUB4](analises/01_agent_pricing_opcoes_itub4.md) | Black-Scholes, Greeks, regime de volatilidade |
