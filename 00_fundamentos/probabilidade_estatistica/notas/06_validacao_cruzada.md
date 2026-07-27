@@ -18,7 +18,7 @@ A pergunta que guia o resto desta nota: como formalizar exatamente esse procedim
 
 Dado um conjunto de dados $D = \{(x_i, y_i)\}_{i=1}^n$, o **k-fold cross-validation** segue três passos:
 
-1. Particione $D$ em $k$ subconjuntos disjuntos e aproximadamente do mesmo tamanho — os *folds* $D_1, \ldots, D_k$
+1. Particione $D$ em $k$ subconjuntos disjuntos e aproximadamente do mesmo tamanho — os *folds* $D_j$ (para $j = 1, \ldots, k$)
 2. Para $j = 1, \ldots, k$: treine o modelo em $D \setminus D_j$ (todos os folds exceto o $j$-ésimo) e avalie no fold $D_j$, obtendo um score $s_j$ (AUC, RMSE, F1 — a métrica do problema em questão)
 3. Reporte a média dos $k$ scores como estimativa de desempenho:
 
@@ -28,7 +28,7 @@ $\text{CV}_k$ é, ele mesmo, um **estimador** — no mesmo sentido formal da not
 
 **Viés de $\text{CV}_k$.** Cada um dos $k$ modelos treinados nos passos acima usa apenas uma fração $(k-1)/k$ dos dados — menos do que o modelo final, que será treinado com 100% dos dados disponíveis. Um modelo treinado com menos dados tende a ter erro um pouco maior; por isso $\text{CV}_k$ tende a **superestimar** o erro do modelo final. Esse viés pessimista diminui conforme $k$ cresce, porque $(k-1)/k \to 1$.
 
-**Variância de $\text{CV}_k$.** Os $k$ scores $s_1, \ldots, s_k$ não são independentes entre si — os conjuntos de treino de folds diferentes compartilham a maior parte das observações. Esse mesmo fenômeno já apareceu na fórmula de variância do bagging: a variância de uma média de termos correlacionados não cai proporcionalmente a $1/k$ como cairia se os termos fossem independentes. Quanto mais os folds se sobrepõem — o que acontece quando $k$ é grande —, mais correlacionados ficam os $k$ modelos treinados, e menos a média ganha em estabilidade ao aumentar $k$.
+**Variância de $\text{CV}_k$.** Os $k$ scores $s_j$ não são independentes entre si — os conjuntos de treino de folds diferentes compartilham a maior parte das observações. Esse mesmo fenômeno já apareceu na fórmula de variância do bagging: a variância de uma média de termos correlacionados não cai proporcionalmente a $1/k$ como cairia se os termos fossem independentes. Quanto mais os folds se sobrepõem — o que acontece quando $k$ é grande —, mais correlacionados ficam os $k$ modelos treinados, e menos a média ganha em estabilidade ao aumentar $k$.
 
 Esses dois efeitos empurram em direções opostas: $k$ pequeno reduz a sobreposição entre folds (menos correlação, potencialmente menos variância no score agregado) mas aumenta o viés pessimista (cada modelo treina com bem menos dados); $k$ grande reduz o viés mas aumenta a correlação entre os folds. O caso extremo $k=n$ — cada fold contém uma única observação — tem nome próprio: **Leave-One-Out CV (LOOCV)**.
 
@@ -201,7 +201,7 @@ AUC da CV aninhada (outer loop nunca viu a escolha):   0.892
 
 **CV escolhe hiperparâmetro, mas não substitui um conjunto de teste final.** Mesmo com CV aninhada bem feita, um conjunto de teste separado desde o início do projeto — nunca usado em nenhuma etapa de tuning — continua sendo a validação mais honesta antes de um modelo ir para produção, porque nenhum aspecto da modelagem (nem a escolha de features, nem a arquitetura) teve chance de se adaptar a ele.
 
-**Custo computacional.** $k$-fold CV multiplica o tempo de treino por $k$; CV aninhada multiplica por $k_{\text{externo}} \times k_{\text{interno}} \times (\text{número de combinações testadas})$. Para modelos caros de treinar (redes neurais grandes, boosting com milhares de rounds), CV completa pode ser inviável — um único holdout bem escolhido, ou um número menor de folds, é uma concessão prática necessária.
+**Custo computacional.** $k$-fold CV multiplica o tempo de treino por $k$; CV aninhada multiplica esse custo pelo número de folds do loop externo, pelo número de folds do loop interno, e pelo número de combinações de hiperparâmetro testadas. Para modelos caros de treinar (redes neurais grandes, boosting com milhares de rounds), CV completa pode ser inviável — um único holdout bem escolhido, ou um número menor de folds, é uma concessão prática necessária.
 
 ## Na prática
 
