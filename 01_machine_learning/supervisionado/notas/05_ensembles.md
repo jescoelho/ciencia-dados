@@ -196,9 +196,9 @@ AUC boosting de stumps (Gradient Boost): 0.969
 **XGBoost** e **LightGBM** implementam essa mesma ideia com três diferenças que explicam por que dominam competições e pipelines de produção com dados tabulares:
 
 - **Boosting de segunda ordem (Newton boosting)**: em vez de ajustar apenas o gradiente da perda, usam também a segunda derivada (Hessiana), o que produz passos mais precisos a cada round — análogo à diferença entre gradiente descendente comum e o método de Newton na otimização.
-- **Regularização explícita na função objetivo**: o artigo do XGBoost (citado ao final desta nota) define, para cada árvore $f$ com $T$ folhas e vetor de pesos $w$:
+- **Regularização explícita na função objetivo**: o artigo do XGBoost (citado ao final desta nota) define, para cada árvore $f$ com $T$ folhas e pesos $w_1, \ldots, w_T$ (um por folha):
 
-  $$\Omega(f) = \gamma T + \frac{1}{2}\lambda \|w\|^2$$
+  $$\Omega(f) = \gamma T + \frac{1}{2}\lambda \sum_{j=1}^{T} w_j^2$$
 
   onde $\gamma$ (parâmetro `gamma`) penaliza o **número de folhas** — quanto maior, mais uma nova divisão precisa reduzir o erro para valer a pena, controlando o crescimento da árvore diretamente na função objetivo, não só por profundidade máxima — e $\lambda$ (parâmetro `reg_lambda`) penaliza a **magnitude dos pesos** de cada folha, o mesmo princípio do Ridge (penalidade L2) aplicado à estrutura da árvore, não aos coeficientes de um modelo linear. Na implementação, soma-se ainda um termo L1 sobre os pesos, controlado por `reg_alpha` — o análogo do Lasso.
 - **Subamostragem de linhas e colunas** (`subsample`, `colsample_bytree`): cada árvore vê apenas uma fração aleatória das observações e variáveis, emprestando do bagging uma forma adicional de reduzir variância dentro do boosting.

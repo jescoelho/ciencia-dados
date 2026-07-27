@@ -50,7 +50,7 @@ Para o exemplo da moeda, a verossimilhança de observar $k$ caras em $n$ lançam
 
 $$\frac{k}{\theta} - \frac{n-k}{1-\theta} = 0 \quad\Longrightarrow\quad k(1-\theta) = (n-k)\theta \quad\Longrightarrow\quad \hat\theta_{MLE} = \frac{k}{n}$$
 
-O MLE da probabilidade de cara é, exatamente, a frequência observada — confirmando a intuição inicial. Para o MAP com um prior Beta$(a,b)$ (conjugado da Bernoulli, como visto na nota anterior), o posterior é Beta$(k+a,\, n-k+b)$, e a moda dessa distribuição — o valor de $\theta$ no pico — tem fórmula fechada quando $a, b > 1$:
+O MLE da probabilidade de cara é, exatamente, a frequência observada — confirmando a intuição inicial. Para o MAP com um prior Beta $(a,b)$ (conjugado da Bernoulli, como visto na nota anterior), o posterior é Beta $(k+a,\, n-k+b)$, e a moda dessa distribuição — o valor de $\theta$ no pico — tem fórmula fechada quando $a, b > 1$:
 
 $$\hat\theta_{MAP} = \frac{k+a-1}{n+a+b-2}$$
 
