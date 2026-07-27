@@ -71,7 +71,7 @@ MAP:  0.6667
 *O MLE reproduz a frequência observada (0,70). O MAP (0,667) fica entre o MLE e o centro do prior (0,5) — mais próximo do MLE porque 10 observações já pesam mais que um prior fracamente informativo (Beta(2,2) equivale, em informação, a 2 observações fictícias).*
 
 ![Likelihood, prior e posterior para o exemplo da moeda](../analises/assets/mle_01_likelihood_posterior.png)
-*A curva azul é a verossimilhança $L(\theta)$ normalizada, com pico exatamente em 0,70 (o MLE). A curva verde pontilhada é o prior Beta(2,2), centrado em 0,5. A curva laranja é o posterior Beta(9,5) — resultado de multiplicar likelihood por prior — com pico em 0,667 (o MAP), visivelmente puxado do MLE em direção ao prior.*
+*A curva azul é a verossimilhança $`L(\theta)`$ normalizada, com pico exatamente em 0,70 (o MLE). A curva verde pontilhada é o prior Beta(2,2), centrado em 0,5. A curva laranja é o posterior Beta(9,5) — resultado de multiplicar likelihood por prior — com pico em 0,667 (o MAP), visivelmente puxado do MLE em direção ao prior.*
 
 Esse exemplo tem solução fechada porque a Bernoulli e a Beta são bem-comportadas. Isso levanta a pergunta natural: o MLE se comporta tão bem — sem viés, direto ao alvo — em qualquer distribuição?
 
