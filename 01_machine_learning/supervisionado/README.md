@@ -11,13 +11,14 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 | 1 | Regressão linear | OLS, mínimos quadrados, diagnóstico de premissas | Base de todos os modelos lineares; deriva Ridge, Lasso e redes neurais |
 | 2 | Regularização | Ridge, Lasso, Elastic Net, validação cruzada temporal | Controle de overfitting; seleção de variáveis em modelos de risco |
 | 3 | Regressão logística | Função sigmoide, log-odds, limiar de decisão | Porta de entrada para classificação e redes neurais |
-| 4 | Árvores e ensembles | Árvores de decisão, Random Forest, bagging | Modelos não-lineares sem necessidade de padronização |
-| 5 | Gradient Boosting | XGBoost, LightGBM, boosting sequencial | Estado da arte em dados tabulares; amplamente usado em crédito e risco |
-| 6 | SVM | Hiperplanos, margens, kernel trick | Fundamento teórico de margens e separabilidade — base conceptual para classificadores modernos |
+| 4 | Árvores de decisão | CART, impureza de Gini, pré/pós-poda | Bloco de construção dos ensembles; modelo não-linear sem necessidade de padronização |
+| 5 | Ensemble learning | Bagging, Random Forest, Gradient Boosting (XGBoost, LightGBM), voting, stacking | Estado da arte em dados tabulares; amplamente usado em crédito e risco |
+| 6 | K-Nearest Neighbors | Distância euclidiana, k vizinhos, trade-off viés-variância | Base de sistemas de recomendação e busca vetorial (RAG, embeddings) |
+| 7 | SVM | Hiperplanos, margens, kernel trick | Fundamento teórico de margens e separabilidade — base conceptual para classificadores modernos |
 
 ## Notas
 
-[Regressão linear](notas/01_regressao_linear.md) · [Regularização](notas/02_regularizacao.md) · [Regressão logística](notas/03_regressao_logistica.md) · [Árvores e ensembles](notas/04_arvores_ensembles.md) · Gradient Boosting · SVM
+[Regressão linear](notas/01_regressao_linear.md) · [Regularização](notas/02_regularizacao.md) · [Regressão logística](notas/03_regressao_logistica.md) · [Árvores de decisão](notas/04_arvores_decisao.md) · [Ensembles](notas/05_ensembles.md) · [K-Nearest Neighbors](notas/06_knn.md) · SVM
 
 ## Análises
 
