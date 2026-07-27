@@ -69,7 +69,7 @@ k=  5  AUC=0.982
 k= 15  AUC=0.992
 k= 50  AUC=0.995
 ```
-*O AUC cresce com $k$ porque com $k=1$ o `predict_proba` retorna apenas 0 ou 1 — probabilidades binárias que prejudicam o ranking. Com $k$ maior, as probabilidades tomam valores intermediários (0.2, 0.4...), melhorando a ordenação. Para acurácia, a curva tem formato de U: existe um $k$ ótimo e o desempenho cai além dele — o gráfico da seção Avaliação mostra esse comportamento.*
+*O AUC cresce com $`k`$ porque com $`k=1`$ o `predict_proba` retorna apenas 0 ou 1 — probabilidades binárias que prejudicam o ranking. Com $`k`$ maior, as probabilidades tomam valores intermediários (0.2, 0.4...), melhorando a ordenação. Para acurácia, a curva tem formato de U: existe um $`k`$ ótimo e o desempenho cai além dele — o gráfico da seção Avaliação mostra esse comportamento.*
 
 ## Interpretação
 

@@ -115,7 +115,7 @@ Media de Var_unbiased (divide por n-1): 9.0018
 sigma^2 verdadeiro:                      9.0000
 (n-1)/n * sigma^2 (previsao teorica):    8.5500
 ```
-*Repetindo o experimento 100 mil vezes com amostras de tamanho 20, a média do estimador MLE (8,55) confirma exatamente a fórmula do viés derivada acima, enquanto o estimador que divide por $n-1$ fica praticamente em cima do valor verdadeiro (9,00). O viés é pequeno com $n=20$, mas sistemático — não desaparece ao repetir o experimento, só ao aumentar $n$.*
+*Repetindo o experimento 100 mil vezes com amostras de tamanho 20, a média do estimador MLE (8,55) confirma exatamente a fórmula do viés derivada acima, enquanto o estimador que divide por $`n-1`$` fica praticamente em cima do valor verdadeiro (9,00). O viés é pequeno com `$`n=20`$`, mas sistemático — não desaparece ao repetir o experimento, só ao aumentar `$`n`$.*
 
 ![Distribuição do estimador de variância: MLE (viesado) vs. não-viesado](../analises/assets/mle_02_vies_variancia.png)
 *As duas distribuições têm formatos quase idênticos — a mesma variância do estimador —, mas estão deslocadas uma em relação à outra: a média do estimador MLE (linha pontilhada azul) fica visivelmente à esquerda do valor verdadeiro (linha branca tracejada), enquanto a média do estimador não-viesado (linha pontilhada verde) coincide com ele. Viés é um deslocamento sistemático da distribuição inteira, não um erro aleatório de uma amostra específica.*
@@ -162,10 +162,10 @@ print(f"Intervalos que contêm mu verdadeiro: {contains_count}/{n_show}")
 ```text
 Intervalos que contêm mu verdadeiro: 57/60
 ```
-*57 de 60 réplicas (95,0%) contêm o valor verdadeiro de $\mu$ — exatamente o que a cobertura nominal de 95% promete, dentro da variação esperada por acaso em uma amostra de 60 repetições.*
+*57 de 60 réplicas (95,0%) contêm o valor verdadeiro de $`\mu`$ — exatamente o que a cobertura nominal de 95% promete, dentro da variação esperada por acaso em uma amostra de 60 repetições.*
 
 ![Cobertura empírica de 60 intervalos de confiança de 95%](../analises/assets/mle_03_intervalo_confianca.png)
-*Cada linha horizontal é um intervalo de confiança construído a partir de uma amostra diferente de tamanho 20; o ponto marca a média amostral. A linha vertical tracejada é o $\mu$ verdadeiro. Intervalos em verde contêm o valor verdadeiro; os 3 em laranja não — a proporção observada (57/60) é consistente com a garantia teórica de 95%, não com 100%: alguns intervalos erram por acaso, mesmo quando o procedimento está correto.*
+*Cada linha horizontal é um intervalo de confiança construído a partir de uma amostra diferente de tamanho 20; o ponto marca a média amostral. A linha vertical tracejada é o $`\mu`$ verdadeiro. Intervalos em verde contêm o valor verdadeiro; os 3 em laranja não — a proporção observada (57/60) é consistente com a garantia teórica de 95%, não com 100%: alguns intervalos erram por acaso, mesmo quando o procedimento está correto.*
 
 ## Premissas
 
@@ -199,7 +199,7 @@ MLE de mu:    9.194
 MLE de sigma: 2.776
 IC 95% para mu: (7.861, 10.527)
 ```
-*`scipy.stats.norm.fit` retorna diretamente o MLE de $\mu$ e $\sigma$ (nota: o `sigma_hat` do scipy usa o divisor $n$, o MLE viesado discutido acima — para o estimador não-viesado, use `x.std(ddof=1)` separadamente). O IC de 95% construído com `stats.t.interval` aplica a mesma fórmula vista na seção de Avaliação — e contém o $\mu$ verdadeiro (10,0) neste caso.*
+*`scipy.stats.norm.fit` retorna diretamente o MLE de $`\mu`$ e $`\sigma`$ (nota: o `sigma_hat` do scipy usa o divisor $`n`$, o MLE viesado discutido acima — para o estimador não-viesado, use `x.std(ddof=1)` separadamente). O IC de 95% construído com `stats.t.interval` aplica a mesma fórmula vista na seção de Avaliação — e contém o $`\mu`$ verdadeiro (10,0) neste caso.*
 
 Um guia rápido de quando usar cada abordagem:
 

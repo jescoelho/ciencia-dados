@@ -121,10 +121,10 @@ k=5   viés=+0.053  desvio entre folds=3.55
 k=10  viés=-0.509  desvio entre folds=5.42
 k=20  viés=-1.220  desvio entre folds=7.90
 ```
-*Com $k=2$, o viés pessimista é o maior (+1,58) — cada modelo treina com só metade dos dados, bem menos que os 100% do modelo final. O viés praticamente desaparece perto de $k=5$ e, nesta simulação específica, chega a inverter de sinal para $k$ maior — um lembrete de que a intuição de "viés sempre decrescente com $k$" é uma tendência média, não uma garantia em cada caso concreto. O padrão robusto e monotônico está na outra coluna: o desvio entre folds cresce continuamente com $k$, de 1,30 em $k=2$ até 7,90 em $k=20$ — cada fold de teste fica menor e os modelos treinados ficam mais parecidos entre si (mais correlacionados), então a média de scores ganha cada vez menos estabilidade.*
+*Com $`k=2`$, o viés pessimista é o maior (+1,58) — cada modelo treina com só metade dos dados, bem menos que os 100% do modelo final. O viés praticamente desaparece perto de $`k=5`$ e, nesta simulação específica, chega a inverter de sinal para $`k`$ maior — um lembrete de que a intuição de "viés sempre decrescente com $`k`$" é uma tendência média, não uma garantia em cada caso concreto. O padrão robusto e monotônico está na outra coluna: o desvio entre folds cresce continuamente com $`k`$, de 1,30 em $`k=2`$ até 7,90 em $`k=20`$ — cada fold de teste fica menor e os modelos treinados ficam mais parecidos entre si (mais correlacionados), então a média de scores ganha cada vez menos estabilidade.*
 
 ![Trade-off viés-variância do estimador CV_k por escolha de k](../analises/assets/cv_02_vies_variancia_k.png)
-*A curva azul (viés absoluto) cai rapidamente e depois volta a subir — o ponto de viés mínimo nesta simulação está perto de $k=5$. A curva laranja (variabilidade entre folds) sobe de forma monótona e acentuada — o preço de aumentar $k$ é pago principalmente em variância, não em viés. É por isso que $k=5$ ou $k=10$, não LOOCV, é a escolha padrão na prática: LOOCV tem o menor viés possível, mas ao custo de uma variância bem maior entre os "folds" (cada um com uma única observação de teste).*
+*A curva azul (viés absoluto) cai rapidamente e depois volta a subir — o ponto de viés mínimo nesta simulação está perto de $`k=5`$. A curva laranja (variabilidade entre folds) sobe de forma monótona e acentuada — o preço de aumentar $`k`$ é pago principalmente em variância, não em viés. É por isso que $`k=5`$ ou $`k=10`$, não LOOCV, é a escolha padrão na prática: LOOCV tem o menor viés possível, mas ao custo de uma variância bem maior entre os "folds" (cada um com uma única observação de teste).*
 
 Escolher $k$ é, portanto, outro trade-off viés-variância — o mesmo tipo de compromisso que já apareceu na definição formal de um estimador e na arquitetura de ensembles. Mas viés e variância do estimador $\text{CV}_k$ não são o único jeito de a validação cruzada dar um número enganoso: a forma como os dados são divididos em folds também importa.
 
@@ -191,7 +191,7 @@ Melhor k (CV ingênua): 31
 AUC da CV ingênua (escolhe k e reporta no mesmo loop): 0.897
 AUC da CV aninhada (outer loop nunca viu a escolha):   0.892
 ```
-*A diferença aqui é pequena (0,897 vs. 0,892) porque o grid de valores de $k$ testados é modesto, mas o mecanismo é sistemático: quanto mais hiperparâmetros e combinações forem testados no mesmo loop que reporta o score final, maior a inflação otimista. A **CV aninhada** (nested CV) separa completamente as duas tarefas: um loop externo mede o desempenho, um loop interno — usando só os dados de treino do loop externo — escolhe o hiperparâmetro. O score do loop externo nunca participou de nenhuma decisão sobre o modelo, por isso é a estimativa honesta.*
+*A diferença aqui é pequena (0,897 vs. 0,892) porque o grid de valores de $`k`$ testados é modesto, mas o mecanismo é sistemático: quanto mais hiperparâmetros e combinações forem testados no mesmo loop que reporta o score final, maior a inflação otimista. A **CV aninhada** (nested CV) separa completamente as duas tarefas: um loop externo mede o desempenho, um loop interno — usando só os dados de treino do loop externo — escolhe o hiperparâmetro. O score do loop externo nunca participou de nenhuma decisão sobre o modelo, por isso é a estimativa honesta.*
 
 ## Premissas
 

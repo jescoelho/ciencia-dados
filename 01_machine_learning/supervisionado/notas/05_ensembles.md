@@ -43,7 +43,7 @@ print(f"Previsão teórica (1 - 1/n)^n quando n->infinito = 1/e: {np.exp(-1):.4f
 Fração observada fora da amostra bootstrap: 0.3673
 Previsão teórica (1 - 1/n)^n quando n->infinito = 1/e: 0.3679
 ```
-*Com 100 mil sorteios, a fração observada (36,73%) já converge para o limite teórico $1/e \approx 36,79\%$. A definição de Random Forest, logo abaixo, usa exatamente essas observações deixadas de fora — o "out-of-bag".*
+*Com 100 mil sorteios, a fração observada (36,73%) já converge para o limite teórico $`1/e \approx 36,79\%`$. A definição de Random Forest, logo abaixo, usa exatamente essas observações deixadas de fora — o "out-of-bag".*
 
 A variância de um ensemble de $B$ previsores com variância individual $\sigma^2$ e correlação média $\rho$ entre eles é:
 
@@ -89,7 +89,7 @@ Erro OOB:                  0.040
 *A diferença entre 0.936 e 0.996 é inteiramente atribuível à agregação — mesmas árvores CART, combinadas em paralelo sobre amostras bootstrap decorrelacionadas. O erro OOB (4.0%) é próximo do erro real no conjunto de teste, confirmando que é um estimador confiável de generalização sem custo adicional de validação.*
 
 ![Convergência do erro com o crescimento do ensemble](assets/05_ensembles_bagging.png)
-*Com poucas árvores o erro oscila; a partir de ~80 árvores já estabiliza — consistente com o termo $(1-\rho)\sigma^2/B$ da fórmula de variância, que decresce rapidamente e depois achata. A curva OOB (azul) acompanha de perto o erro no teste (verde), validando seu uso como estimativa de generalização.*
+*Com poucas árvores o erro oscila; a partir de ~80 árvores já estabiliza — consistente com o termo $`(1-\rho)\sigma^2/B`$ da fórmula de variância, que decresce rapidamente e depois achata. A curva OOB (azul) acompanha de perto o erro no teste (verde), validando seu uso como estimativa de generalização.*
 
 Random Forest é bagging de árvores com uma regra extra de decorrelação — mas o bagging em si não exige árvore nenhuma. O sklearn expõe essa generalidade diretamente: `BaggingClassifier` e `BaggingRegressor` recebem qualquer modelo-base (parâmetro `estimator=`) e aplicam exatamente os passos 1-3 de bagging a ele, sem a subamostragem de variáveis que é exclusiva do Random Forest.
 
@@ -113,7 +113,7 @@ for k in [1, 5]:
 k=1  KNN único: AUC=0.916  Bagging de KNN (B=50): AUC=0.990
 k=5  KNN único: AUC=0.996  Bagging de KNN (B=50): AUC=0.996
 ```
-*Com $k=1$, o KNN é um previsor de altíssima variância — cada previsão depende de um único vizinho, então trocar um ponto de treino muda a fronteira inteira. Bagging reduz drasticamente essa variância (AUC salta de 0.916 para 0.990), exatamente como fez com árvores profundas. Com $k=5$, o KNN já é razoavelmente estável por si só — a agregação não tem o que reduzir, e o AUC não muda. A lição geral: bagging só ajuda quando o modelo-base tem variância alta para começar; usá-lo sobre um modelo já estável é desperdício de computação.*
+*Com $`k=1`$, o KNN é um previsor de altíssima variância — cada previsão depende de um único vizinho, então trocar um ponto de treino muda a fronteira inteira. Bagging reduz drasticamente essa variância (AUC salta de 0.916 para 0.990), exatamente como fez com árvores profundas. Com $`k=5`$, o KNN já é razoavelmente estável por si só — a agregação não tem o que reduzir, e o AUC não muda. A lição geral: bagging só ajuda quando o modelo-base tem variância alta para começar; usá-lo sobre um modelo já estável é desperdício de computação.*
 
 Para regressão, `BaggingRegressor` segue a mesma lógica — a agregação final é a média das previsões numéricas em vez de voto:
 
