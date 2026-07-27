@@ -26,7 +26,7 @@ onde $x_j$ e $x_{ij}$ são as $j$-ésimas coordenadas de $x$ e $x_i$. O conjunto
 
 **Passo 2 — Agregar os rótulos.** Para **classificação**, a previsão é a classe com mais representantes entre os $k$ vizinhos:
 
-$$\hat{y}(x) = \underset{c}{\arg\max}\sum_{i \in \mathcal{N}_k(x)} \mathbf{1}[y_i = c]$$
+$$\hat{y}(x) = \arg\max_{c}\sum_{i \in \mathcal{N}_k(x)} \mathbf{1}[y_i = c]$$
 
 Para **regressão**, é a média dos valores:
 

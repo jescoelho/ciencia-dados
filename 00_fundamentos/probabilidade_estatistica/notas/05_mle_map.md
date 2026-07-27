@@ -26,7 +26,7 @@ $$\ell(\theta) = \log L(\theta) = \sum_{i=1}^{n} \log P(x_i \mid \theta)$$
 
 O logaritmo é uma transformação monótona crescente: não muda *onde* está o máximo, só troca produto por soma — mais estável computacionalmente e mais fácil de derivar. O **MLE** é o valor de $\theta$ que maximiza essa função:
 
-$$\hat\theta_{MLE} = \underset{\theta}{\arg\max} \; \ell(\theta)$$
+$$\hat\theta_{MLE} = \arg\max_{\theta} \; \ell(\theta)$$
 
 $\hat\theta_{MLE}$ é um **estimador**: uma função dos dados observados que produz um palpite para $\theta$. Como amostras diferentes produzem estimativas diferentes, um estimador tem sua própria distribuição de probabilidade — a **distribuição amostral** do estimador, a mesma ideia de distribuição da Camada 1 aplicada agora ao resultado de um cálculo sobre a amostra, não ao dado bruto. Duas propriedades resumem o comportamento dessa distribuição:
 
@@ -40,7 +40,7 @@ Essa decomposição é o mesmo trade-off viés-variância que reaparece, sob out
 
 O **MAP** usa o Teorema de Bayes da nota anterior para incorporar uma crença prévia $P(\theta)$ além dos dados:
 
-$$\hat\theta_{MAP} = \underset{\theta}{\arg\max} \; P(\theta \mid \text{dados}) = \underset{\theta}{\arg\max} \; \big[\ell(\theta) + \log P(\theta)\big]$$
+$$\hat\theta_{MAP} = \arg\max_{\theta} \; P(\theta \mid \text{dados}) = \arg\max_{\theta} \; \big[\ell(\theta) + \log P(\theta)\big]$$
 
 O termo $\log P(\theta)$ soma-se ao log-likelihood porque o denominador do Teorema de Bayes (a evidência) não depende de $\theta$ e não afeta onde está o máximo. Quando o prior é uniforme — nenhuma crença prévia distingue um valor de $\theta$ de outro —, $\log P(\theta)$ é constante e o MAP coincide exatamente com o MLE. O mesmo acontece quando $n \to \infty$: a verossimilhança cresce com os dados e passa a dominar qualquer prior fixo, então $\hat\theta_{MAP} \to \hat\theta_{MLE}$ — com dados suficientes, a crença prévia deixa de importar.
 

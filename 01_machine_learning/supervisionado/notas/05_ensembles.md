@@ -24,7 +24,9 @@ A pergunta que guia o resto desta nota é: por que agregar em paralelo reduz var
 
 **Bootstrap sampling** é a técnica estatística por trás do passo 1: sortear $n$ observações com reposição de um conjunto de $n$ observações originais para simular novas amostras da mesma população, sem precisar coletar dados novos. Como o sorteio é com reposição, cada amostra bootstrap deixa de fora, em média, cerca de um terço das observações originais — algumas aparecem repetidas, outras não aparecem. A probabilidade de uma observação específica **não** ser sorteada em nenhum dos $n$ sorteios de uma amostra é:
 
-$$P(\text{fora da amostra}) = \left(1 - \frac{1}{n}\right)^n \xrightarrow[n \to \infty]{} e^{-1} \approx 0{,}368$$
+$$P(\text{fora da amostra}) = \left(1 - \frac{1}{n}\right)^n$$
+
+Quando $n \to \infty$, essa probabilidade converge para $e^{-1} \approx 0{,}368$.
 
 ```python
 import numpy as np
@@ -156,7 +158,7 @@ onde $h_k$ é a $k$-ésima árvore (tipicamente rasa — profundidade 3 a 8) e $
 1. Inicialize $F_0(x)$ com uma previsão constante (a média de $y$, para regressão)
 2. Para $k = 1, \ldots, K$: calcule o **pseudo-resíduo** de cada observação — o gradiente negativo da função de perda em relação à previsão atual:
 
-   $$r_i = -\left.\frac{\partial L(y_i, F(x_i))}{\partial F(x_i)}\right|_{F=F_{k-1}}$$
+   $$r_i = -\frac{\partial L(y_i, F_{k-1}(x_i))}{\partial F_{k-1}(x_i)}$$
 
    Para perda quadrática, isso se reduz ao resíduo comum: $r_i = y_i - F_{k-1}(x_i)$
 3. Treine uma árvore $h_k$ para prever esses pseudo-resíduos
