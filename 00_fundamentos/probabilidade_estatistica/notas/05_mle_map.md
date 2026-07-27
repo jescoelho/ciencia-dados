@@ -16,7 +16,7 @@ A pergunta que guia o resto desta nota: como formalizar "o valor que mais bem ex
 
 ## Definição formal
 
-Dado um conjunto de observações $x_1, \ldots, x_n$ independentes e identicamente distribuídas (iid), com uma distribuição que depende de um parâmetro desconhecido $\theta$, a **função de verossimilhança** (likelihood) mede quão provável é ter observado exatamente esses dados, para cada valor candidato de $\theta$:
+Dado um conjunto de $n$ observações $x_i$ (para $i = 1, \ldots, n$), independentes e identicamente distribuídas (iid), com uma distribuição que depende de um parâmetro desconhecido $\theta$, a **função de verossimilhança** (likelihood) mede quão provável é ter observado exatamente esses dados, para cada valor candidato de $\theta$:
 
 $$L(\theta) = \prod_{i=1}^{n} P(x_i \mid \theta)$$
 
