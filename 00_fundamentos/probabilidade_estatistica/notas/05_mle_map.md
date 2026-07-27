@@ -50,7 +50,7 @@ Para o exemplo da moeda, a verossimilhança de observar $k$ caras em $n$ lançam
 
 $$\frac{k}{\theta} - \frac{n-k}{1-\theta} = 0 \quad\Longrightarrow\quad k(1-\theta) = (n-k)\theta \quad\Longrightarrow\quad \hat\theta_{MLE} = \frac{k}{n}$$
 
-O MLE da probabilidade de cara é, exatamente, a frequência observada — confirmando a intuição inicial. Para o MAP com um prior Beta $(a,b)$ (conjugado da Bernoulli, como visto na nota anterior), o posterior é Beta $(k+a,\, n-k+b)$, e a moda dessa distribuição — o valor de $\theta$ no pico — tem fórmula fechada quando $a, b > 1$:
+O MLE da probabilidade de cara é, exatamente, a frequência observada — confirmando a intuição inicial. Para o MAP com um prior Beta $(a,b)$ (conjugado da Bernoulli, como visto na nota anterior), o posterior é Beta $(k+a, n-k+b)$, e a moda dessa distribuição — o valor de $\theta$ no pico — tem fórmula fechada quando $a, b > 1$:
 
 $$\hat\theta_{MAP} = \frac{k+a-1}{n+a+b-2}$$
 
@@ -140,7 +140,7 @@ Essa generalização também explica por que MAP e MLE convergem quando $n$ cres
 
 Uma estimativa pontual — MLE ou MAP — não comunica o quão confiável ela é. Um **intervalo de confiança (IC)** de 95% para a média de uma Normal, construído a partir de uma amostra de tamanho $n$, é:
 
-$$\bar{x} \pm t_{n-1,\,0.975} \cdot \frac{s}{\sqrt{n}}$$
+$$\bar{x} \pm t_{n-1, 0.975} \cdot \frac{s}{\sqrt{n}}$$
 
 onde $s$ é o desvio padrão amostral (com $n-1$ no denominador, o estimador não-viesado da seção anterior) e $t_{n-1,0.975}$ é o quantil 97,5% da distribuição t de Student com $n-1$ graus de liberdade. A interpretação correta é sutil: **não** significa "95% de chance de $\mu$ estar nesse intervalo" — $\mu$ é um número fixo, não uma variável aleatória. Significa que, se o procedimento fosse repetido em 100 amostras diferentes da mesma população, aproximadamente 95 dos 100 intervalos construídos conteriam o verdadeiro $\mu$.
 

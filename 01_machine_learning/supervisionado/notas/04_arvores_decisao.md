@@ -55,7 +55,7 @@ onde $n_t$ é o número de observações no nó $t$ e $\bar{y}_t$ é a média de
 
 Com a impureza definida, a árvore pode buscar a pergunta que mais purifica os grupos. Para cada par (variável $j$, limiar $t$), a **redução de impureza** da divisão é:
 
-$$\Delta G = G(t) - \frac{n_L}{n_t}\,G(t_L) - \frac{n_R}{n_t}\,G(t_R)$$
+$$\Delta G = G(t) - \frac{n_L}{n_t} \cdot G(t_L) - \frac{n_R}{n_t} \cdot G(t_R)$$
 
 onde $G(t)$ é a impureza do nó pai, $G(t_L)$ e $G(t_R)$ são as impurezas dos filhos esquerdo e direito, e $n_L/n_t$, $n_R/n_t$ são as proporções de observações que vão para cada ramo. A divisão escolhida é a que maximiza $\Delta G$ — é isso que o algoritmo CART faz.
 
