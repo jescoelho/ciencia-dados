@@ -11,10 +11,10 @@ Em IA, todo modelo aprende estimando distribuições, minimizando funções de p
 | 1 | Linguagem dos dados | Distribuições, medidas de posição e dispersão, correlação | Todo modelo é uma afirmação sobre distribuições |
 | 2 | Raciocínio sob incerteza | Probabilidade condicional, Teorema de Bayes, variáveis aleatórias, esperança e variância | Pivô conceitual: de "qual é o valor?" para "qual é a distribuição sobre os valores?" |
 | 3 | Como modelos aprendem | MLE, MAP, viés-variância, intervalos de confiança | Regressão linear, regularização e a maioria dos modelos supervisionados são derivações diretas |
-| 4 | Avaliação com rigor | Testes de hipótese, p-valor, poder estatístico | Comparação de modelos e A/B testing |
+| 4 | Avaliação com rigor | Validação cruzada, testes de hipótese, p-valor, poder estatístico | Comparação de modelos e A/B testing |
 | 5 | Fundamento de deep learning | Entropia, divergência KL, informação mútua | Cross-entropy loss, VAEs e modelos de difusão são derivados diretamente daqui |
 | 6 | Incerteza em modelos | Inferência bayesiana, prior/posterior, distribuições conjugadas | Visão unificada de modelos probabilísticos; pré-requisito para Gaussian Processes e BNNs |
 
 ## Notas
 
-[Medidas de posição e dispersão](notas/01_medidas_posicao_dispersao.md) · [Distribuições de probabilidade](notas/02_distribuicoes.md) · [Correlação e dependência](notas/03_correlacao.md) · [Probabilidade e Bayes](notas/04_probabilidade_bayes.md) · MLE e MAP · Testes de hipótese · Teoria da informação · Inferência bayesiana
+[Medidas de posição e dispersão](notas/01_medidas_posicao_dispersao.md) · [Distribuições de probabilidade](notas/02_distribuicoes.md) · [Correlação e dependência](notas/03_correlacao.md) · [Probabilidade e Bayes](notas/04_probabilidade_bayes.md) · [MLE e MAP](notas/05_mle_map.md) · [Validação cruzada](notas/06_validacao_cruzada.md) · Testes de hipótese · Teoria da informação · Inferência bayesiana
