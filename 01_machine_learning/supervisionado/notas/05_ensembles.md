@@ -196,7 +196,7 @@ AUC boosting de stumps (Gradient Boost): 0.969
 **XGBoost** e **LightGBM** implementam essa mesma ideia com três diferenças que explicam por que dominam competições e pipelines de produção com dados tabulares:
 
 - **Boosting de segunda ordem (Newton boosting)**: em vez de ajustar apenas o gradiente da perda, usam também a segunda derivada (Hessiana), o que produz passos mais precisos a cada round — análogo à diferença entre gradiente descendente comum e o método de Newton na otimização.
-- **Regularização explícita na função objetivo**: o artigo do XGBoost (citado ao final desta nota) define, para cada árvore $f$ com $T$ folhas e pesos $w_1, \ldots, w_T$ (um por folha):
+- **Regularização explícita na função objetivo**: o artigo do XGBoost (citado ao final desta nota) define, para cada árvore $f$ com $T$ folhas, cada uma com peso $w_j$ (para $j = 1, \ldots, T$):
 
   $$\Omega(f) = \gamma T + \frac{1}{2}\lambda \sum_{j=1}^{T} w_j^2$$
 
