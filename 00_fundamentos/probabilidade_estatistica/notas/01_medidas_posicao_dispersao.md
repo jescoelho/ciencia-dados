@@ -4,7 +4,7 @@ Dados raramente vêm com um único valor: preços de ativos, altura de pacientes
 
 Em aprendizado de máquina, essas medidas aparecem em momentos essenciais do fluxo de trabalho. Antes de treinar qualquer modelo, os dados precisam ser colocados na mesma escala: cada variável de entrada é ajustada para ter média zero e desvio padrão um — caso contrário, variáveis medidas em escalas maiores dominam o aprendizado e distorcem os resultados. O critério que a maioria dos modelos de regressão tenta minimizar durante o treino — o Erro Quadrático Médio (MSE) — é diretamente a variância dos erros que o modelo comete. Em redes neurais modernas, uma técnica chamada normalização de lote recalcula a média e o desvio padrão dos valores intermediários a cada camada durante o treino, estabilizando e acelerando o aprendizado. Antes de qualquer modelo, entender o que os dados *são* numericamente é o que impede decisões de modelagem cegas.
 
-> **Análise:** [02 — Medidas de posição (fundos CVM)](../analises/02_medidas_posicao.ipynb)
+> **Análise:** [02 — Medidas de posição (fundos CVM)](../analises/notebooks/02_medidas_posicao.ipynb)
 
 ---
 

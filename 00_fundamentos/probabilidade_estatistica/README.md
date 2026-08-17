@@ -23,8 +23,8 @@ Em IA, todo modelo aprende estimando distribuições, minimizando funções de p
 
 | # | Título | Tema |
 |---|--------|------|
-| 01 | [Tipos de Variáveis — Fundos de Investimento (CVM)](analises/01_tipos_de_variaveis_fundos_cvm.ipynb) | Variáveis qualitativas e quantitativas, dados públicos da CVM |
-| 02 | [Medidas de Posição e Dispersão — Fundos de Investimento (CVM)](analises/02_medidas_posicao.ipynb) | Média, mediana, desvio-padrão, dados da CVM |
-| 03 | [Tipos de Média, Distribuições e Probabilidade — Ibovespa](analises/03_medias_distribuicoes_probabilidade.ipynb) | Médias, distribuições de probabilidade |
-| 04 | [Probabilidade, Distribuições, Testes Estatísticos e Modelos — Ibovespa](analises/04_probabilidade_distribuicoes_testes_modelos.ipynb) | Testes estatísticos aplicados a modelagem |
-| 05 | [Outliers, Correlação, Causalidade e Hipóteses Estatísticas](analises/05_outliers_correlacao_causalidade_hipoteses.ipynb) | Outliers, correlação vs. causalidade, Ibovespa e S&P 500 |
+| 01 | [Tipos de Variáveis — Fundos de Investimento (CVM)](analises/notebooks/01_tipos_de_variaveis_fundos_cvm.ipynb) | Variáveis qualitativas e quantitativas, dados públicos da CVM |
+| 02 | [Medidas de Posição e Dispersão — Fundos de Investimento (CVM)](analises/notebooks/02_medidas_posicao.ipynb) | Média, mediana, desvio-padrão, dados da CVM |
+| 03 | [Tipos de Média, Distribuições e Probabilidade — Ibovespa](analises/notebooks/03_medias_distribuicoes_probabilidade.ipynb) | Médias, distribuições de probabilidade |
+| 04 | [Probabilidade, Distribuições, Testes Estatísticos e Modelos — Ibovespa](analises/notebooks/04_probabilidade_distribuicoes_testes_modelos.ipynb) | Testes estatísticos aplicados a modelagem |
+| 05 | [Outliers, Correlação, Causalidade e Hipóteses Estatísticas](analises/notebooks/05_outliers_correlacao_causalidade_hipoteses.ipynb) | Outliers, correlação vs. causalidade, Ibovespa e S&P 500 |

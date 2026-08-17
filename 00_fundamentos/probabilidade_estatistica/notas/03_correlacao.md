@@ -4,7 +4,7 @@ Distribuições descrevem uma variável de cada vez. Mas dados reais vivem em m�
 
 Em IA, quando duas variáveis de entrada de um modelo medem essencialmente a mesma coisa — ou seja, são altamente correlacionadas —, o modelo tem dificuldade em separar o efeito de cada uma sobre a saída, e seus parâmetros ficam instáveis. A Análise de Componentes Principais (PCA) é uma técnica que usa a estrutura de correlação dos dados para criar novas variáveis sem redundância, resumindo a informação de forma mais compacta. Em modelos modernos de linguagem, o mecanismo de atenção — o componente que decide quais partes do texto são relevantes para cada palavra — pode ser interpretado como uma forma generalizada de correlação: ele mede o quanto dois elementos de uma sequência se relacionam, mas com pesos aprendidos a partir dos dados.
 
-> **Análise:** [05 — Outliers, correlação, causalidade e hipóteses](../analises/05_outliers_correlacao_causalidade_hipoteses.ipynb)
+> **Análise:** [05 — Outliers, correlação, causalidade e hipóteses](../analises/notebooks/05_outliers_correlacao_causalidade_hipoteses.ipynb)
 
 ---
 

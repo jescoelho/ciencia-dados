@@ -2,7 +2,7 @@
 
 Medidas de posição e dispersão resumem um conjunto de dados em dois números — mas dois números não capturam a forma. Distribuições de probabilidade são o modelo completo: elas descrevem como a probabilidade se distribui sobre todos os valores possíveis. Em IA, todo modelo faz uma aposta implícita sobre como os dados se distribuem. Regressão linear assume que os erros seguem uma curva em sino — a distribuição normal. Regressão logística modela a probabilidade de um evento usando a distribuição de Bernoulli, a mesma de um lançamento de moeda. Modelos que geram imagens ou texto aprendem distribuições inteiras sobre espaços de representação interna e amostram essas distribuições para criar conteúdo novo. O critério que o modelo minimiza durante o treino — a função de perda — é sempre derivado de uma distribuição assumida: trocar a função de perda é, matematicamente, trocar a suposição sobre como os dados se comportam.
 
-> **Análise:** [03 — Médias e distribuições de probabilidade](../analises/03_medias_distribuicoes_probabilidade.ipynb) · [04 — Probabilidade, distribuições e testes em modelos](../analises/04_probabilidade_distribuicoes_testes_modelos.ipynb)
+> **Análise:** [03 — Médias e distribuições de probabilidade](../analises/notebooks/03_medias_distribuicoes_probabilidade.ipynb) · [04 — Probabilidade, distribuições e testes em modelos](../analises/notebooks/04_probabilidade_distribuicoes_testes_modelos.ipynb)
 
 ---
 
@@ -42,7 +42,7 @@ axes[1].legend(facecolor="#161b22", labelcolor="white")
 plt.tight_layout(); plt.show()
 ```
 
-![](../analises/assets/dist_01_hist_pdf_cdf.png)
+![](../analises/notebooks/assets/dist_01_hist_pdf_cdf.png)
 
 *À esquerda: o histograma empírico (barras azuis) converge para a curva teórica (linha laranja) conforme n cresce. À direita: a PDF (azul) mostra onde a probabilidade se concentra; a CDF (verde) mostra a probabilidade acumulada até cada ponto — parte de 0 e termina em 1.*
 
@@ -133,7 +133,7 @@ ax.set_title("t de Student vs Normal — caudas mais pesadas para ν pequeno", c
 plt.tight_layout(); plt.show()
 ```
 
-![](../analises/assets/dist_02_t_student.png)
+![](../analises/notebooks/assets/dist_02_t_student.png)
 
 *A normal (azul sólido) tem caudas que caem exponencialmente. A t com poucos graus de liberdade (laranja tracejado) tem caudas que caem em lei de potência — eventos extremos são muito mais prováveis. À medida que ν cresce, a t converge para a normal.*
 
@@ -190,7 +190,7 @@ ax.legend(facecolor="#161b22", labelcolor="white")
 plt.tight_layout(); plt.show()
 ```
 
-![](../analises/assets/dist_03_qqplot.png)
+![](../analises/notebooks/assets/dist_03_qqplot.png)
 
 *Se os pontos seguem a linha laranja, a distribuição t(5) é um bom modelo. Desvios na cauda superior significariam que os dados têm eventos extremos ainda mais frequentes do que a t prevê.*
 
