@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./banner.svg" alt="Jéssica Coelho — Ciência de Dados" width="100%" />
+</p>
+
 # ciencia-dados
 
 Estudos de **inteligência artificial** com análises aplicadas a **risco e tesouraria bancários**.

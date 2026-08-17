@@ -1,0 +1,50 @@
+<svg width="1400" height="320" viewBox="0 0 1400 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Jéssica Coelho — Ciência de Dados">
+  <defs>
+    <radialGradient id="glow" cx="82%" cy="18%" r="55%">
+      <stop offset="0%" stop-color="#c9c0f2" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#dcd6f7" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#dcd6f7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4a3aa7"/>
+      <stop offset="100%" stop-color="#8f7fe0"/>
+    </linearGradient>
+    <linearGradient id="monoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5a48c2"/>
+      <stop offset="100%" stop-color="#3c2f8a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1400" height="320" fill="#faf9f7"/>
+  <rect width="1400" height="320" fill="url(#glow)"/>
+
+  <!-- decorative motif: layered translucent echoes of the mark's blob shape -->
+  <g transform="translate(1300,90) scale(1.7) rotate(8)" opacity="0.10">
+    <path d="M92,18 C124,14 156,34 162,66 C168,100 154,132 122,150 C90,168 52,164 30,138 C10,114 12,78 30,52 C46,28 66,22 92,18 Z" fill="#8f7fe0"/>
+  </g>
+  <g transform="translate(1170,220) scale(1.15) rotate(-15)" opacity="0.12">
+    <path d="M92,18 C124,14 156,34 162,66 C168,100 154,132 122,150 C90,168 52,164 30,138 C10,114 12,78 30,52 C46,28 66,22 92,18 Z" fill="#4a3aa7"/>
+  </g>
+  <g transform="translate(1355,215) scale(0.6) rotate(30)" opacity="0.16">
+    <path d="M92,18 C124,14 156,34 162,66 C168,100 154,132 122,150 C90,168 52,164 30,138 C10,114 12,78 30,52 C46,28 66,22 92,18 Z" fill="#5a48c2"/>
+  </g>
+
+  <!-- logo mark: organic blob + "Jc" ligature -->
+  <g transform="translate(1096.2,86.2) scale(0.82)">
+    <path d="M92,18 C124,14 156,34 162,66 C168,100 154,132 122,150 C90,168 52,164 30,138 C10,114 12,78 30,52 C46,28 66,22 92,18 Z" fill="url(#monoGrad)"/>
+    <path d="M58,40 L58,118 C58,138 44,146 28,140" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-opacity="0.96"/>
+    <path d="M138,58 C130,44 110,38 92,46 C72,55 64,78 72,98 C80,118 102,128 122,120 C132,116 139,108 142,98" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-opacity="0.96"/>
+  </g>
+
+  <!-- text block -->
+  <text x="70" y="112" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="700" letter-spacing="3" fill="#4a3aa7">CIÊNCIA DE DADOS</text>
+  <rect x="70" y="126" width="46" height="3" rx="1.5" fill="url(#barGrad)"/>
+
+  <text x="70" y="192" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="56" font-weight="800" fill="#15121c">Jéssica Coelho</text>
+
+  <text x="70" y="229" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="21" font-weight="500" fill="#5c5866">Estudos e projetos aplicados</text>
+
+  <!-- bottom accent bar -->
+  <rect x="0" y="316" width="1400" height="4" fill="url(#barGrad)"/>
+</svg>
