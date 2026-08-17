@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Filtro de spam: por que pegar mais spam também barra mais e-mail legítimo</title>
+<style>
+  :root { color-scheme: light; }
+  .viz-root {
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --gridline:       #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-pos:      #2a78d6; /* positivos reais - azul, slot 1 */
+    --series-neg:      #e34948; /* negativos reais - vermelho, slot 8 */
+    --accent-ring:    rgba(11,11,11,0.9);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page-plane:     #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --gridline:       #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --series-pos:      #3987e5;
+      --series-neg:      #e66767;
+      --accent-ring:    rgba(255,255,255,0.9);
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --gridline:       #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --series-pos:      #3987e5;
+    --series-neg:      #e66767;
+    --accent-ring:    rgba(255,255,255,0.9);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page-plane);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--text-primary);
+  }
+  .viz-root { background: var(--page-plane); min-height: 100vh; padding: 28px 16px 60px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+  h1 { font-size: 21px; line-height: 1.35; margin: 0 0 6px; font-weight: 700; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; line-height: 1.5; margin: 0 0 22px; max-width: 660px; }
+
+  button.theme-toggle {
+    flex: none; font: inherit; font-size: 12px; color: var(--text-secondary);
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; cursor: pointer;
+  }
+  button.theme-toggle:hover { color: var(--text-primary); }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px 22px; margin-bottom: 18px;
+  }
+  .card h2 { font-size: 14px; margin: 0 0 4px; font-weight: 700; }
+  .card h3 { font-size: 12.5px; margin: 0 0 8px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.03em; }
+  .card p.hint { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 14px; line-height: 1.5; }
+
+  /* ---- timeline controls (drives the whole story) ---- */
+  .timeline-card { position: relative; }
+  .timeline-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .timeline-top .step-label { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .timeline-track-row { display: flex; align-items: center; gap: 12px; }
+  input[type="range"] { flex: 1; accent-color: var(--series-pos); }
+  .step-ticks { display: flex; justify-content: space-between; margin-top: 4px; padding: 0 2px; }
+  .step-ticks span { font-size: 9.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .timeline-controls { display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .story-btn {
+    font: inherit; font-size: 12.5px; color: var(--text-primary); background: var(--page-plane);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 13px; cursor: pointer;
+  }
+  .story-btn:disabled { opacity: 0.4; cursor: default; }
+  .story-btn.primary { background: var(--series-pos); color: #fff; border-color: var(--series-pos); }
+
+  .narrative {
+    background: var(--page-plane); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; font-size: 14.5px; line-height: 1.6; margin-top: 14px; min-height: 52px;
+    color: var(--text-primary);
+  }
+  .narrative b { font-weight: 700; }
+  .narrative .extra { display: block; margin-top: 8px; font-size: 13px; color: var(--text-secondary); }
+
+  /* ---- three synced views ---- */
+  .views-grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
+  .view-panel { border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px 18px; background: var(--page-plane); }
+
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 2px 0; font-size: 12.5px; color: var(--text-secondary); }
+  .legend .item { display: flex; align-items: center; gap: 7px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+
+  canvas { display: block; width: 100%; height: auto; }
+  .tooltip {
+    position: absolute; pointer-events: none; background: var(--text-primary); color: var(--surface-1);
+    font-size: 11.5px; padding: 6px 9px; border-radius: 7px; line-height: 1.4; white-space: nowrap;
+    transform: translate(-50%, -115%); opacity: 0; transition: opacity 0.08s ease; z-index: 5;
+  }
+  .chart-shell { position: relative; }
+
+  .story-table { width: 100%; border-collapse: collapse; margin: 2px 0 0; font-size: 13px; }
+  .story-table th, .story-table td { padding: 7px 9px; text-align: left; border-bottom: 1px solid var(--gridline); }
+  .story-table th { color: var(--text-secondary); font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .story-table td.score { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .story-table tbody tr { transition: background-color 0.25s ease, box-shadow 0.25s ease; }
+  .story-table tbody tr.pending td { color: var(--text-muted); }
+  .story-table tbody tr.pending td.badge:after { content: "aguardando"; font-weight: 400; font-style: italic; }
+  .story-table tbody tr.tp { background: color-mix(in srgb, var(--series-pos) 14%, transparent); }
+  .story-table tbody tr.tp td.badge:after { content: "barrado como spam (acerto) → VP"; color: var(--series-pos); font-weight: 700; }
+  .story-table tbody tr.fp { background: color-mix(in srgb, var(--series-neg) 14%, transparent); }
+  .story-table tbody tr.fp td.badge:after { content: "barrado como spam (erro!) → FP"; color: var(--series-neg); font-weight: 700; }
+  .story-table tbody tr.just-added { box-shadow: inset 0 0 0 2px var(--accent-ring); }
+  .story-table td.label-pos { color: var(--series-pos); font-weight: 600; }
+  .story-table td.label-neg { color: var(--series-neg); font-weight: 600; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+  @media (max-width: 640px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-tile { border-radius: 10px; padding: 9px 8px; text-align: center; border: 1px solid var(--border); background: var(--surface-1); }
+  .stat-tile .lbl { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .stat-tile .val { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stat-tile.tp { border-color: color-mix(in srgb, var(--series-pos) 55%, transparent); }
+  .stat-tile.fp { border-color: color-mix(in srgb, var(--series-neg) 55%, transparent); }
+  .stat-group-label { font-size: 11px; color: var(--text-muted); margin: 14px 2px 0; text-transform: uppercase; letter-spacing: 0.03em; }
+  .stat-group-label:first-child { margin-top: 4px; }
+
+  .closing {
+    font-size: 13.5px; line-height: 1.65; color: var(--text-secondary); padding: 18px 22px;
+    border: 1px dashed var(--border); border-radius: 12px; margin-top: 4px; transition: opacity 0.3s ease;
+  }
+  .closing b { color: var(--text-primary); }
+  .closing.dim { opacity: 0.45; }
+
+  .foot-note { font-size: 12px; color: var(--text-muted); margin-top: 18px; line-height: 1.5; }
+
+  .decision-band-wrap {
+    display: flex; margin: 0 1.6% 8px 3.1%; border-radius: 6px; overflow: hidden; height: 28px;
+    border: 1px solid var(--border);
+  }
+  .decision-seg {
+    display: flex; align-items: center; justify-content: center; padding: 0 6px;
+    font-size: 10px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis; letter-spacing: 0.01em; transition: width 0.2s ease;
+  }
+  .decision-seg.legit { background: var(--text-muted); }
+  .decision-seg.spam { background: var(--text-primary); }
+
+  .email-subject { font-style: italic; }
+  .story-table td.subject { max-width: 260px; }
+
+  .dyn-caption {
+    margin-top: 10px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.55;
+    background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px;
+  }
+  .dyn-caption b { color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div class="viz-root" id="vizRoot">
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Filtro de spam: por que barrar mais spam também barra mais e-mail legítimo</h1>
+        <p class="subtitle">O problema real: um provedor de e-mail tem um filtro de spam que calcula, para cada mensagem que chega, um <b style="color:var(--text-primary)">score</b> — a probabilidade estimada de aquele e-mail ser spam. Depois compara esse score a um <b style="color:var(--text-primary)">limiar</b> para decidir "manda pra caixa de entrada" ou "manda pra pasta de spam". Esta página conta uma única história, em ordem: o limiar começa tão alto que nada é barrado, e desce aos poucos até que tudo seja barrado. Use a linha do tempo abaixo para avançar — os três painéis (o exemplo concreto, o gráfico em escala e o mapa ROC) se movem juntos, mostrando o mesmo instante de três ângulos diferentes.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle" type="button">Modo escuro</button>
+    </div>
+
+    <div class="card timeline-card">
+      <h2>Linha do tempo do limiar</h2>
+      <p class="hint" style="margin:0 0 12px;"><b style="color:var(--text-primary)">Limiar</b> é o valor de corte que o filtro usa para decidir: score igual ou acima dele → pasta de spam; abaixo → caixa de entrada. Ele não faz parte do modelo — é uma escolha de quem configura o filtro. A barra abaixo <i>é</i> esse limiar descendo, passo a passo: começa tão alto que nada é barrado e termina tão baixo que tudo é barrado.</p>
+      <div class="timeline-top">
+        <p class="hint" style="margin:0;">Arraste, use os botões, ou clique em reproduzir — do início (filtro exigente, quase nada é barrado) ao fim (filtro permissivo, quase tudo é barrado).</p>
+        <span class="step-label" id="stepLabel">Passo 0 de 10</span>
+      </div>
+      <div class="timeline-track-row">
+        <input type="range" id="storySlider" min="0" max="10" step="1" value="0" />
+      </div>
+      <div class="step-ticks">
+        <span>início<br/>limiar alto (exigente)</span>
+        <span style="text-align:right;">fim<br/>limiar baixo (permissivo)</span>
+      </div>
+
+      <div class="timeline-controls">
+        <button class="story-btn" id="storyReset" type="button">Reiniciar</button>
+        <button class="story-btn" id="storyPrev" type="button">◀ Passo anterior</button>
+        <button class="story-btn primary" id="storyNext" type="button">Próximo passo ▶</button>
+        <button class="story-btn" id="storyPlay" type="button">Reproduzir automaticamente</button>
+      </div>
+
+      <div class="narrative" id="storyNarrative"></div>
+    </div>
+
+    <div class="card">
+      <h2>Três vistas do mesmo instante</h2>
+      <p class="hint">Todas as três mudam juntas conforme você avança na linha do tempo acima.</p>
+
+      <div class="views-grid">
+        <div class="view-panel">
+          <h3>1 · Exemplo concreto — 10 e-mails ranqueados pelo score de spam</h3>
+          <p class="hint" style="margin:0 0 10px;"><b style="color:var(--text-primary)">Score</b> é o número de 0 a 1 que o filtro calcula para cada e-mail, estimado a partir de milhares de e-mails que humanos já haviam rotulado como "spam" ou "não spam" no treino — características como palavras suspeitas, excesso de links e remetente desconhecido entram nessa conta. Usamos só <b style="color:var(--text-primary)">10 e-mails</b> aqui porque dá para acompanhar cada decisão individualmente, mas eles já misturam spam e legítimo em vários pontos do ranking — a mesma mistura que os 400 + 400 do painel ao lado têm, só que em miniatura.</p>
+          <table class="story-table">
+            <thead>
+              <tr><th>#</th><th>Assunto do e-mail</th><th>Score</th><th>É spam de verdade?</th><th class="badge-col">Status</th></tr>
+            </thead>
+            <tbody id="storyBody"></tbody>
+          </table>
+        </div>
+
+        <div class="view-panel">
+          <h3>2 · A mesma coisa em escala — 400 spam + 400 legítimos</h3>
+          <p class="hint" style="margin:0 0 10px;">Por que uma <b style="color:var(--text-primary)">distribuição</b>? Com 400 e-mails de cada grupo, listar um por um não ajuda — em vez disso, esta curva mostra como os scores desse grupo se espalham entre 0 e 1. A altura da curva em cada ponto do eixo X é a densidade de probabilidade: uma estimativa suavizada (não uma contagem direta) de quão comum é encontrar um score próximo daquele valor dentro do grupo. Curva alta = muitos e-mails daquele grupo têm score parecido ali; curva baixa = poucos.</p>
+          <p class="hint" style="margin:0 0 6px;">A <b style="color:var(--text-primary)">cor</b> (azul/vermelho) mostra o que o e-mail <b>é de verdade</b>. A faixa cinza abaixo mostra o que o <b>filtro decide</b> — e é essa decisão, não a cor, que agrupa VP com FP (os dois caem do lado "SPAM") e FN com VN (os dois caem do lado "LEGÍTIMO"):</p>
+          <div class="decision-band-wrap">
+            <div class="decision-seg legit" id="decisionLegit">LEGÍTIMO → entrada (FN + VN)</div>
+            <div class="decision-seg spam" id="decisionSpam">SPAM → pasta de spam (VP + FP)</div>
+          </div>
+          <div class="chart-shell">
+            <canvas id="distCanvas" width="1520" height="620"></canvas>
+            <div class="tooltip" id="distTooltip"></div>
+          </div>
+          <div class="legend">
+            <span class="item"><span class="swatch" style="background:var(--series-pos)"></span>E-mails que são spam de verdade</span>
+            <span class="item"><span class="swatch" style="background:var(--series-neg)"></span>E-mails legítimos (não-spam)</span>
+            <span class="item">Tom escuro = o filtro marcou como spam</span>
+          </div>
+          <div class="dyn-caption" id="distCaption"></div>
+        </div>
+
+        <div class="view-panel">
+          <h3>3 · Onde estamos no mapa ROC</h3>
+          <p class="hint" style="margin:0 0 10px;">Este mapa cruza o <b style="color:var(--text-primary)">Recall</b> (também chamado de TPR, Taxa de Verdadeiros Positivos) — fração do spam real que foi pega, calculado como VP / (VP + FN) — com a <b style="color:var(--text-primary)">Taxa de Falsos Positivos</b> (FPR) — fração do legítimo bloqueado por engano, calculada como FP / (FP + VN). Cada ponto da curva é um limiar diferente; o círculo destacado marca onde estamos agora na linha do tempo.</p>
+          <div class="chart-shell">
+            <canvas id="rocCanvas" width="1200" height="1200"></canvas>
+            <div class="tooltip" id="rocTooltip"></div>
+          </div>
+          <div class="legend">
+            <span class="item"><span class="swatch" style="background:var(--series-pos)"></span>Curva ROC deste filtro</span>
+            <span class="item"><span class="swatch" style="background:var(--baseline)"></span>Filtro aleatório (referência)</span>
+            <span class="item" id="aucReadout" style="color:var(--text-primary); font-weight:700;">AUC = –</span>
+          </div>
+          <div class="dyn-caption" id="rocCaption"></div>
+        </div>
+      </div>
+
+      <div class="stat-group-label">Nestes 10 e-mails</div>
+      <div class="stats-grid">
+        <div class="stat-tile tp"><div class="lbl">VP</div><div class="val" id="storyTp">0</div></div>
+        <div class="stat-tile fp"><div class="lbl">FP</div><div class="val" id="storyFp">0</div></div>
+        <div class="stat-tile"><div class="lbl">Limiar atual</div><div class="val" id="storyThreshold" style="font-size:14px;">&gt; 0,95</div></div>
+        <div class="stat-tile"><div class="lbl">E-mails decididos</div><div class="val" id="storyDecided">0 / 10</div></div>
+      </div>
+      <p class="dyn-caption"><b>VP</b> = Verdadeiro Positivo (spam corretamente barrado) · <b>FP</b> = Falso Positivo (e-mail legítimo barrado por engano).</p>
+
+      <div class="stat-group-label">Em escala (800 e-mails simulados)</div>
+      <div class="stats-grid">
+        <div class="stat-tile tp"><div class="lbl">VP</div><div class="val" id="tpVal">–</div></div>
+        <div class="stat-tile fp"><div class="lbl">FP</div><div class="val" id="fpVal">–</div></div>
+        <div class="stat-tile"><div class="lbl">Recall (TPR)</div><div class="val" id="tprVal">–</div></div>
+        <div class="stat-tile"><div class="lbl">FPR</div><div class="val" id="fprVal">–</div></div>
+      </div>
+      <p class="dyn-caption"><b>Recall</b>, também chamado de TPR — Taxa de Verdadeiros Positivos — = VP / (VP + FN): fração do spam real que foi pego. <b>FPR</b> — Taxa de Falsos Positivos — = FP / (FP + VN): fração do legítimo bloqueado por engano.</p>
+    </div>
+
+    <div class="closing dim" id="closingNote">
+      <b>A lição geral:</b> e-mails que são realmente spam e e-mails que são realmente legítimos ficam misturados bem no meio do ranking de scores — promoções legítimas, cobranças reais com aparência de golpe, mensagens de trabalho urgentes. É nessa faixa ambígua que qualquer descida do limiar pega os dois tipos ao mesmo tempo: não existe como deixar o filtro mais agressivo só contra spam de verdade. Um filtro melhor teria menos e-mails ambíguos nessa faixa central; é isso que a curva ROC resume em um único número (a AUC).
+    </div>
+
+    <p class="foot-note">E-mails e scores são dados sintéticos gerados no navegador só para ilustrar a mecânica de um filtro de spam. Nenhum dado é enviado a servidor algum.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  var root = document.getElementById('vizRoot');
+  var toggle = document.getElementById('themeToggle');
+  var dark = false;
+  toggle.addEventListener('click', function () {
+    dark = !dark;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    toggle.textContent = dark ? 'Modo claro' : 'Modo escuro';
+    renderAll();
+  });
+
+  function cssVar(name) {
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+  function hexToRgba(hex, alpha) {
+    hex = hex.replace('#', '');
+    var r = parseInt(hex.substring(0, 2), 16);
+    var g = parseInt(hex.substring(2, 4), 16);
+    var b = parseInt(hex.substring(4, 6), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+  }
+
+  // ---------- synthetic "at scale" data (400 + 400) ----------
+  function gaussian(mean, std) {
+    var u = 1 - Math.random(), v = Math.random();
+    var z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    return mean + z * std;
+  }
+  function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+
+  var N = 400;
+  var posScores = [], negScores = [];
+  for (var i = 0; i < N; i++) {
+    posScores.push(clamp01(gaussian(0.62, 0.16)));
+    negScores.push(clamp01(gaussian(0.38, 0.16)));
+  }
+
+  function kde(data, xs, bandwidth) {
+    var out = new Array(xs.length).fill(0);
+    var norm = 1 / (data.length * bandwidth * Math.sqrt(2 * Math.PI));
+    for (var xi = 0; xi < xs.length; xi++) {
+      var x = xs[xi], sum = 0;
+      for (var j = 0; j < data.length; j++) {
+        var d = (x - data[j]) / bandwidth;
+        sum += Math.exp(-0.5 * d * d);
+      }
+      out[xi] = sum * norm;
+    }
+    return out;
+  }
+
+  var XS = [];
+  var STEPS = 220;
+  for (var s = 0; s <= STEPS; s++) XS.push(s / STEPS);
+  var posDensity = kde(posScores, XS, 0.045);
+  var negDensity = kde(negScores, XS, 0.045);
+  var maxDensity = Math.max.apply(null, posDensity.concat(negDensity)) * 1.12;
+
+  function confusionAt(threshold) {
+    var tp = 0, fn = 0, fp = 0, tn = 0;
+    for (var i = 0; i < posScores.length; i++) {
+      if (posScores[i] >= threshold) tp++; else fn++;
+    }
+    for (var j = 0; j < negScores.length; j++) {
+      if (negScores[j] >= threshold) fp++; else tn++;
+    }
+    var tpr = tp / (tp + fn);
+    var fpr = fp / (fp + tn);
+    return { tp: tp, fn: fn, fp: fp, tn: tn, tpr: tpr, fpr: fpr };
+  }
+
+  var rocPoints = [];
+  var RSTEPS = 300;
+  for (var r = 0; r <= RSTEPS; r++) {
+    var t = 1 - r / RSTEPS;
+    var c = confusionAt(t);
+    rocPoints.push({ t: t, fpr: c.fpr, tpr: c.tpr });
+  }
+  var sorted = rocPoints.slice().sort(function (a, b) { return a.fpr - b.fpr; });
+  var auc = 0;
+  for (var k = 1; k < sorted.length; k++) {
+    var dx = sorted[k].fpr - sorted[k - 1].fpr;
+    var avgY = (sorted[k].tpr + sorted[k - 1].tpr) / 2;
+    auc += dx * avgY;
+  }
+  document.getElementById('aucReadout').textContent = 'AUC = ' + auc.toFixed(3);
+
+  // ---------- the 10-email story (drives everything) ----------
+  var storyData = [
+    { score: 0.95, label: 'pos', subject: '🎉 VOCÊ GANHOU! Clique agora para resgatar seu prêmio' },
+    { score: 0.90, label: 'pos', subject: 'Promoção imperdível: 90% de desconto só hoje!!!' },
+    { score: 0.85, label: 'pos', subject: 'Empréstimo pré-aprovado sem consulta — responda já' },
+    { score: 0.75, label: 'neg', subject: 'Fatura de energia elétrica — vencimento amanhã' },
+    { score: 0.70, label: 'pos', subject: 'Reative sua conta agora ou ela será excluída' },
+    { score: 0.65, label: 'neg', subject: 'Confirmação: sua reunião foi remarcada para 14h' },
+    { score: 0.55, label: 'pos', subject: 'Trabalhe de casa e ganhe R$5.000/mês, sem experiência' },
+    { score: 0.45, label: 'neg', subject: 'Recibo de compra — Pedido #48213' },
+    { score: 0.30, label: 'neg', subject: 'Newsletter semanal da sua equipe' },
+    { score: 0.10, label: 'neg', subject: 'Re: Relatório do projeto — segue anexo' }
+  ];
+  var STORY_START_THRESHOLD = 0.97;
+
+  function thresholdForStep(step) {
+    return step === 0 ? STORY_START_THRESHOLD : storyData[step - 1].score;
+  }
+
+  var storyBody = document.getElementById('storyBody');
+  storyData.forEach(function (row, i) {
+    var tr = document.createElement('tr');
+    tr.className = 'pending';
+    tr.id = 'storyRow' + i;
+    tr.innerHTML =
+      '<td>' + (i + 1) + '</td>' +
+      '<td class="subject email-subject">' + row.subject + '</td>' +
+      '<td class="score">' + row.score.toFixed(2) + '</td>' +
+      '<td class="' + (row.label === 'pos' ? 'label-pos' : 'label-neg') + '">' + (row.label === 'pos' ? 'Spam' : 'Legítimo') + '</td>' +
+      '<td class="badge"></td>';
+    storyBody.appendChild(tr);
+  });
+
+  var storySlider = document.getElementById('storySlider');
+  var stepLabel = document.getElementById('stepLabel');
+  var storyNarrative = document.getElementById('storyNarrative');
+  var storyTpEl = document.getElementById('storyTp');
+  var storyFpEl = document.getElementById('storyFp');
+  var storyThresholdEl = document.getElementById('storyThreshold');
+  var storyDecidedEl = document.getElementById('storyDecided');
+  var storyPrevBtn = document.getElementById('storyPrev');
+  var storyNextBtn = document.getElementById('storyNext');
+  var storyResetBtn = document.getElementById('storyReset');
+  var storyPlayBtn = document.getElementById('storyPlay');
+  var closingNote = document.getElementById('closingNote');
+  var tpVal = document.getElementById('tpVal'), fpVal = document.getElementById('fpVal');
+  var tprVal = document.getElementById('tprVal'), fprVal = document.getElementById('fprVal');
+  var distCaption = document.getElementById('distCaption');
+  var rocCaption = document.getElementById('rocCaption');
+  var decisionLegit = document.getElementById('decisionLegit');
+  var decisionSpam = document.getElementById('decisionSpam');
+
+  var storyStep = 0;
+  var storyTimer = null;
+
+  function stopStoryPlay() {
+    if (storyTimer) { clearInterval(storyTimer); storyTimer = null; }
+    storyPlayBtn.textContent = 'Reproduzir automaticamente';
+  }
+
+  function goToStep(step) {
+    storyStep = Math.max(0, Math.min(storyData.length, step));
+    storySlider.value = String(storyStep);
+    renderAll();
+  }
+
+  storyNextBtn.addEventListener('click', function () { goToStep(storyStep + 1); });
+  storyPrevBtn.addEventListener('click', function () { goToStep(storyStep - 1); });
+  storyResetBtn.addEventListener('click', function () { stopStoryPlay(); goToStep(0); });
+  storySlider.addEventListener('input', function () {
+    stopStoryPlay();
+    goToStep(parseInt(storySlider.value, 10));
+  });
+  storyPlayBtn.addEventListener('click', function () {
+    if (storyTimer) { stopStoryPlay(); return; }
+    if (storyStep >= storyData.length) storyStep = 0;
+    storyPlayBtn.textContent = 'Pausar';
+    storyTimer = setInterval(function () {
+      if (storyStep >= storyData.length) { stopStoryPlay(); return; }
+      goToStep(storyStep + 1);
+    }, 1400);
+  });
+
+  // ---------- distribution chart ----------
+  var distCanvas = document.getElementById('distCanvas');
+  var dctx = distCanvas.getContext('2d');
+  var distTooltip = document.getElementById('distTooltip');
+  var DW = distCanvas.width, DH = distCanvas.height;
+  var padL = 46, padR = 24, padT = 20, padB = 44;
+  var plotW = DW - padL - padR, plotH = DH - padT - padB;
+
+  function xToPx(x) { return padL + x * plotW; }
+  function densToPx(d) { return padT + plotH - (d / maxDensity) * plotH; }
+
+  function drawDistribution(threshold) {
+    dctx.clearRect(0, 0, DW, DH);
+    var surface = cssVar('--surface-1');
+    var grid = cssVar('--gridline');
+    var baseline = cssVar('--baseline');
+    var muted = cssVar('--text-muted');
+    var textSec = cssVar('--text-secondary');
+    var posC = cssVar('--series-pos');
+    var negC = cssVar('--series-neg');
+    var thresholdClamped = Math.max(0.01, Math.min(0.99, threshold));
+
+    dctx.fillStyle = surface;
+    dctx.fillRect(0, 0, DW, DH);
+
+    dctx.strokeStyle = grid;
+    dctx.lineWidth = 1;
+    dctx.font = '20px system-ui, sans-serif';
+    dctx.fillStyle = muted;
+    for (var g = 0; g <= 10; g++) {
+      var gx = xToPx(g / 10);
+      dctx.beginPath();
+      dctx.moveTo(gx, padT);
+      dctx.lineTo(gx, padT + plotH);
+      dctx.stroke();
+      if (g % 2 === 0) {
+        dctx.textAlign = 'center';
+        dctx.fillText((g / 10).toFixed(1), gx, DH - 14);
+      }
+    }
+    dctx.textAlign = 'center';
+    dctx.fillStyle = textSec;
+    dctx.font = '22px system-ui, sans-serif';
+    dctx.fillText('score de spam calculado pelo filtro (0 = certamente legítimo · 1 = certamente spam)', padL + plotW / 2, DH - 2 + 2);
+
+    dctx.strokeStyle = baseline;
+    dctx.lineWidth = 2;
+    dctx.beginPath();
+    dctx.moveTo(padL, padT + plotH);
+    dctx.lineTo(padL + plotW, padT + plotH);
+    dctx.stroke();
+
+    function areaPath(density, splitLo, splitHi) {
+      dctx.beginPath();
+      var started = false;
+      for (var i = 0; i < XS.length; i++) {
+        if (XS[i] < splitLo || XS[i] > splitHi) continue;
+        var px = xToPx(XS[i]), py = densToPx(density[i]);
+        if (!started) { dctx.moveTo(px, padT + plotH); dctx.lineTo(px, py); started = true; }
+        else dctx.lineTo(px, py);
+      }
+      dctx.lineTo(xToPx(splitHi), padT + plotH);
+      dctx.closePath();
+    }
+
+    areaPath(negDensity, 0, thresholdClamped);
+    dctx.fillStyle = hexToRgba(negC, 0.18);
+    dctx.fill();
+    areaPath(negDensity, thresholdClamped, 1);
+    dctx.fillStyle = hexToRgba(negC, 0.62);
+    dctx.fill();
+
+    areaPath(posDensity, 0, thresholdClamped);
+    dctx.fillStyle = hexToRgba(posC, 0.18);
+    dctx.fill();
+    areaPath(posDensity, thresholdClamped, 1);
+    dctx.fillStyle = hexToRgba(posC, 0.62);
+    dctx.fill();
+
+    function strokeLine(density, color) {
+      dctx.beginPath();
+      for (var i = 0; i < XS.length; i++) {
+        var px = xToPx(XS[i]), py = densToPx(density[i]);
+        if (i === 0) dctx.moveTo(px, py); else dctx.lineTo(px, py);
+      }
+      dctx.strokeStyle = color;
+      dctx.lineWidth = 3.4;
+      dctx.lineJoin = 'round';
+      dctx.lineCap = 'round';
+      dctx.stroke();
+    }
+    strokeLine(negDensity, negC);
+    strokeLine(posDensity, posC);
+
+    var tx = xToPx(thresholdClamped);
+    dctx.setLineDash([7, 6]);
+    dctx.strokeStyle = cssVar('--text-primary');
+    dctx.lineWidth = 2.4;
+    dctx.beginPath();
+    dctx.moveTo(tx, padT - 4);
+    dctx.lineTo(tx, padT + plotH + 4);
+    dctx.stroke();
+    dctx.setLineDash([]);
+
+    dctx.fillStyle = cssVar('--text-primary');
+    dctx.font = '700 22px system-ui, sans-serif';
+    dctx.textAlign = thresholdClamped > 0.82 ? 'right' : 'left';
+    dctx.fillText('limiar = ' + threshold.toFixed(2), tx + (thresholdClamped > 0.82 ? -10 : 10), padT + 22);
+
+    dctx.font = '700 24px system-ui, sans-serif';
+    dctx.lineWidth = 5;
+    dctx.strokeStyle = hexToRgba(surface, 0.9);
+    function label(text, xFrac, yPx, color) {
+      dctx.textAlign = 'center';
+      dctx.strokeText(text, xToPx(xFrac), yPx);
+      dctx.fillStyle = color;
+      dctx.fillText(text, xToPx(xFrac), yPx);
+    }
+    var midLeft = thresholdClamped / 2;
+    var midRight = thresholdClamped + (1 - thresholdClamped) / 2;
+    var rowA = padT + 46;
+    var rowB = padT + 92;
+    if (thresholdClamped > 0.06) { label('FN', midLeft, rowA, posC); label('VN', midLeft, rowB, negC); }
+    if (thresholdClamped < 0.94) { label('VP', midRight, rowA, posC); label('FP', midRight, rowB, negC); }
+  }
+
+  function updateBigStats(threshold) {
+    var c = confusionAt(threshold);
+    tpVal.textContent = c.tp;
+    fpVal.textContent = c.fp;
+    tprVal.textContent = (c.tpr * 100).toFixed(0) + '%';
+    fprVal.textContent = (c.fpr * 100).toFixed(0) + '%';
+    return c;
+  }
+
+  // ---------- ROC chart ----------
+  var rocCanvas = document.getElementById('rocCanvas');
+  var rctx = rocCanvas.getContext('2d');
+  var rocTooltip = document.getElementById('rocTooltip');
+  var RW = rocCanvas.width, RH = rocCanvas.height;
+  var rpadL = 70, rpadR = 30, rpadT = 26, rpadB = 66;
+  var rplotW = RW - rpadL - rpadR, rplotH = RH - rpadT - rpadB;
+
+  function fprToPx(f) { return rpadL + f * rplotW; }
+  function tprToPy(t) { return rpadT + rplotH - t * rplotH; }
+
+  function drawROC(currentFpr, currentTpr) {
+    rctx.clearRect(0, 0, RW, RH);
+    var surface = cssVar('--surface-1');
+    var grid = cssVar('--gridline');
+    var baseline = cssVar('--baseline');
+    var muted = cssVar('--text-muted');
+    var textSec = cssVar('--text-secondary');
+    var posC = cssVar('--series-pos');
+
+    rctx.fillStyle = surface;
+    rctx.fillRect(0, 0, RW, RH);
+
+    rctx.strokeStyle = grid;
+    rctx.lineWidth = 1.4;
+    rctx.font = '22px system-ui, sans-serif';
+    rctx.fillStyle = muted;
+    for (var g = 0; g <= 10; g += 2) {
+      var f = g / 10;
+      var gx = fprToPx(f), gy = tprToPy(f);
+      rctx.beginPath(); rctx.moveTo(gx, rpadT); rctx.lineTo(gx, rpadT + rplotH); rctx.stroke();
+      rctx.beginPath(); rctx.moveTo(rpadL, gy); rctx.lineTo(rpadL + rplotW, gy); rctx.stroke();
+      rctx.textAlign = 'center';
+      rctx.fillText(f.toFixed(1), gx, rpadT + rplotH + 34);
+      rctx.textAlign = 'right';
+      rctx.fillText(f.toFixed(1), rpadL - 14, gy + 7);
+    }
+
+    rctx.strokeStyle = baseline;
+    rctx.lineWidth = 2;
+    rctx.beginPath();
+    rctx.moveTo(fprToPx(0), tprToPy(0));
+    rctx.lineTo(fprToPx(1), tprToPy(1));
+    rctx.setLineDash([9, 7]);
+    rctx.stroke();
+    rctx.setLineDash([]);
+
+    rctx.fillStyle = textSec;
+    rctx.font = '24px system-ui, sans-serif';
+    rctx.textAlign = 'center';
+    rctx.fillText('Taxa de Falsos Positivos (FPR)', rpadL + rplotW / 2, RH - 16);
+    rctx.save();
+    rctx.translate(20, rpadT + rplotH / 2);
+    rctx.rotate(-Math.PI / 2);
+    rctx.fillText('Taxa de Verdadeiros Positivos (TPR)', 0, 0);
+    rctx.restore();
+
+    rctx.beginPath();
+    for (var i = 0; i < sorted.length; i++) {
+      var px = fprToPx(sorted[i].fpr), py = tprToPy(sorted[i].tpr);
+      if (i === 0) rctx.moveTo(px, py); else rctx.lineTo(px, py);
+    }
+    rctx.strokeStyle = posC;
+    rctx.lineWidth = 4;
+    rctx.lineJoin = 'round';
+    rctx.lineCap = 'round';
+    rctx.stroke();
+
+    var mx = fprToPx(currentFpr), my = tprToPy(currentTpr);
+    rctx.beginPath();
+    rctx.arc(mx, my, 10, 0, Math.PI * 2);
+    rctx.fillStyle = surface;
+    rctx.fill();
+    rctx.lineWidth = 4;
+    rctx.strokeStyle = posC;
+    rctx.stroke();
+    rctx.beginPath();
+    rctx.arc(mx, my, 4.5, 0, Math.PI * 2);
+    rctx.fillStyle = posC;
+    rctx.fill();
+  }
+
+  // ---------- master render: one step drives table + distribution + ROC + narrative ----------
+  function renderAll() {
+    var threshold = thresholdForStep(storyStep);
+
+    // table
+    for (var i = 0; i < storyData.length; i++) {
+      var tr = document.getElementById('storyRow' + i);
+      var included = i < storyStep;
+      var cls = 'pending';
+      if (included) cls = storyData[i].label === 'pos' ? 'tp' : 'fp';
+      tr.className = cls + (i === storyStep - 1 ? ' just-added' : '');
+    }
+
+    // small-scale stats
+    var tp = 0, fp = 0;
+    for (var j = 0; j < storyStep; j++) {
+      if (storyData[j].label === 'pos') tp++; else fp++;
+    }
+    storyTpEl.textContent = tp;
+    storyFpEl.textContent = fp;
+    storyDecidedEl.textContent = storyStep + ' / ' + storyData.length;
+
+    // narrative
+    if (storyStep === 0) {
+      storyThresholdEl.textContent = '> 0,95';
+      storyNarrative.innerHTML = 'O limiar começa bem acima de todo mundo (acima de 0,95): o filtro é tão exigente que nenhum e-mail é barrado ainda — nem nos 10 exemplos, nem nos 800 e-mails simulados ao lado. Clique em <b>"Próximo passo"</b> para começar a descer o limiar (deixar o filtro mais permissivo).';
+    } else {
+      var row = storyData[storyStep - 1];
+      var isPos = row.label === 'pos';
+      storyThresholdEl.textContent = storyStep === storyData.length ? '≤ 0,10 (todos incluídos)' : '≤ ' + row.score.toFixed(2);
+      var txt = 'Baixamos o limiar até <b>' + row.score.toFixed(2) + '</b>: o e-mail "<i>' + row.subject + '</i>" (posição <b>' + storyStep + '</b>) agora é marcado como spam e vai para a pasta de spam. ';
+      if (isPos) {
+        txt += 'Ele é <b style="color:' + cssVar('--series-pos') + '">spam de verdade</b> — o filtro acertou, e isso soma <b style="color:' + cssVar('--series-pos') + '">+1 Verdadeiro Positivo</b>.';
+      } else {
+        txt += 'Ele é <b style="color:' + cssVar('--series-neg') + '">legítimo</b> de verdade — o filtro errou e barrou um e-mail importante, o que soma <b style="color:' + cssVar('--series-neg') + '">+1 Falso Positivo</b>.';
+      }
+      if (storyStep === storyData.length) {
+        txt += ' Chegamos ao fim da lista: o limiar está no mínimo e todo e-mail foi marcado como spam. Recall (TPR) = 100% — nenhum spam escapou — mas a taxa de falsos positivos também está no máximo: nenhum e-mail legítimo sobrou na caixa de entrada.';
+      }
+      storyNarrative.innerHTML = txt;
+    }
+
+    stepLabel.textContent = 'Passo ' + storyStep + ' de ' + storyData.length;
+    storyPrevBtn.disabled = storyStep === 0;
+    storyNextBtn.disabled = storyStep === storyData.length;
+    closingNote.classList.toggle('dim', storyStep < storyData.length);
+    if (storyStep === storyData.length) stopStoryPlay();
+
+    // synced big-scale views
+    drawDistribution(threshold);
+    var bigC = updateBigStats(threshold);
+    drawROC(bigC.fpr, bigC.tpr);
+
+    // decision band: mirrors the threshold split exactly (predicted class, not true class)
+    var clampedForBand = Math.max(0.01, Math.min(0.99, threshold));
+    var legitPct = clampedForBand * 100;
+    decisionLegit.style.width = legitPct + '%';
+    decisionSpam.style.width = (100 - legitPct) + '%';
+
+    // dynamic captions explaining what each chart shows right now
+    var posC = cssVar('--series-pos'), negC = cssVar('--series-neg');
+    distCaption.innerHTML =
+      'Com o limiar em <b>' + threshold.toFixed(2) + '</b>: dos 400 e-mails que são spam de verdade (curva azul), ' +
+      '<b style="color:' + posC + '">' + bigC.tp + '</b> ficam à direita da linha pontilhada e viram VP. ' +
+      'Dos 400 legítimos (curva vermelha), <b style="color:' + negC + '">' + bigC.fp + '</b> também ficam à direita por engano e viram FP. ' +
+      'A área de FP nunca chega a zero enquanto as duas curvas continuarem se tocando nesse ponto.';
+    rocCaption.innerHTML =
+      'Neste limiar, o filtro captura <b style="color:' + posC + '">' + (bigC.tpr * 100).toFixed(0) + '% de todo o spam real</b> (Recall/TPR) ' +
+      'ao custo de barrar por engano <b style="color:' + negC + '">' + (bigC.fpr * 100).toFixed(0) + '% dos e-mails legítimos</b> (FPR) — ' +
+      'é o círculo destacado no mapa. Arraste a linha do tempo para ver o círculo subir a curva.';
+  }
+
+  // hover tooltip on ROC curve (exploration only — does not change the story state)
+  rocCanvas.addEventListener('mousemove', function (evt) {
+    var rect = rocCanvas.getBoundingClientRect();
+    var scaleX = RW / rect.width;
+    var mxCss = (evt.clientX - rect.left) * scaleX;
+    var f = (mxCss - rpadL) / rplotW;
+    if (f < 0 || f > 1) { rocTooltip.style.opacity = 0; return; }
+    var best = sorted[0], bestDist = Infinity;
+    for (var i = 0; i < sorted.length; i++) {
+      var d = Math.abs(sorted[i].fpr - f);
+      if (d < bestDist) { bestDist = d; best = sorted[i]; }
+    }
+    var pxCss = (fprToPx(best.fpr) / scaleX);
+    var pyCss = (tprToPy(best.tpr) / scaleX);
+    rocTooltip.style.left = pxCss + 'px';
+    rocTooltip.style.top = pyCss + 'px';
+    rocTooltip.style.opacity = 1;
+    rocTooltip.innerHTML = 'limiar ' + best.t.toFixed(2) + '<br/>FPR ' + best.fpr.toFixed(2) + ' · TPR ' + best.tpr.toFixed(2);
+  });
+  rocCanvas.addEventListener('mouseleave', function () { rocTooltip.style.opacity = 0; });
+
+  distCanvas.addEventListener('mousemove', function (evt) {
+    var rect = distCanvas.getBoundingClientRect();
+    var scaleX = DW / rect.width;
+    var mxCss = (evt.clientX - rect.left) * scaleX;
+    var x = (mxCss - padL) / plotW;
+    if (x < 0 || x > 1) { distTooltip.style.opacity = 0; return; }
+    var idx = Math.round(x * STEPS);
+    idx = Math.max(0, Math.min(STEPS, idx));
+    var pxCss = mxCss / scaleX;
+    var pyCss = (padT + 20) / scaleX;
+    distTooltip.style.left = pxCss + 'px';
+    distTooltip.style.top = pyCss + 'px';
+    distTooltip.style.opacity = 1;
+    distTooltip.innerHTML = 'score ' + XS[idx].toFixed(2);
+  });
+  distCanvas.addEventListener('mouseleave', function () { distTooltip.style.opacity = 0; });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
