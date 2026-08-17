@@ -18,7 +18,7 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 
 ## Notas
 
-[Regressão linear](notas/01_regressao_linear.md) · [Regularização](notas/02_regularizacao.md) · [Regressão logística](notas/03_regressao_logistica.md) · [Árvores de decisão](notas/04_arvores_decisao.md) · [Ensembles](notas/05_ensembles.md) · [K-Nearest Neighbors](notas/06_knn.md) · SVM
+[Regressão linear](notas/01_regressao_linear.md) · [Regularização](notas/02_regularizacao.md) · [Regressão logística](notas/03_regressao_logistica.md) · [Árvores de decisão](notas/04_arvores_decisao.md) · [Ensembles](notas/05_ensembles.md) · [K-Nearest Neighbors](notas/06_knn.md) · SVM · [KS Score](notas/07_ks_score.md)
 
 ## Análises
 
@@ -29,3 +29,4 @@ No aprendizado supervisionado, o modelo aprende a partir de exemplos rotulados: 
 | 03 | [Probabilidade de default em cartão de crédito](analises/03_default_cartao_credito.md) | Regressão logística, credit scoring |
 | 04 | [Predição de default — LendingClub (2008–2011)](analises/04_lendingclub_oot.md) | Regressão logística, validação out-of-time |
 | 05 | [Árvore de decisão para default de cartão de crédito](analises/05_arvore_decisao_default.md) | CART, poda por ccp_alpha, credit scoring |
+| 06 | [Complexidade versus tempo/custo — trade-off medido pelo KS score](analises/06_complexidade_vs_custo_ks.md) | Comparação de modelos (regressão logística, KNN, árvore, Random Forest, XGBoost), German Credit Data |
