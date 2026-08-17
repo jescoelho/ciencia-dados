@@ -35,9 +35,8 @@ Os módulos ativos têm link para seu próprio README, onde estão as análises 
 | Camada | Módulo | Tópicos principais |
 |--------|--------|--------------------|
 | Fundamentos | [Probabilidade e Estatística](00_fundamentos/probabilidade_estatistica/README.md) | Distribuições · Medidas · Correlação · Bayes · MLE/MAP · Teoria da informação |
-| ML | [Supervisionado](01_machine_learning/supervisionado/README.md) | Regressão · Regularização · Avaliação de modelos |
+| ML | [Supervisionado](01_machine_learning/supervisionado/README.md) | Regressão · Regularização · Árvores · Ensembles · KNN · Avaliação de modelos |
 | ML | Não supervisionado | — |
-| ML | Ensemble e árvores | — |
 | Deep Learning | Redes neurais | — |
 | Deep Learning | CNNs e Visão | — |
 | Deep Learning | RNNs e séries temporais | — |

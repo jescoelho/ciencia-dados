@@ -18,3 +18,13 @@ Em IA, todo modelo aprende estimando distribuições, minimizando funções de p
 ## Notas
 
 [Medidas de posição e dispersão](notas/01_medidas_posicao_dispersao.md) · [Distribuições de probabilidade](notas/02_distribuicoes.md) · [Correlação e dependência](notas/03_correlacao.md) · [Probabilidade e Bayes](notas/04_probabilidade_bayes.md) · [MLE e MAP](notas/05_mle_map.md) · [Validação cruzada](notas/06_validacao_cruzada.md) · Testes de hipótese · Teoria da informação · Inferência bayesiana
+
+## Análises
+
+| # | Título | Tema |
+|---|--------|------|
+| 01 | [Tipos de Variáveis — Fundos de Investimento (CVM)](analises/01_tipos_de_variaveis_fundos_cvm.ipynb) | Variáveis qualitativas e quantitativas, dados públicos da CVM |
+| 02 | [Medidas de Posição e Dispersão — Fundos de Investimento (CVM)](analises/02_medidas_posicao.ipynb) | Média, mediana, desvio-padrão, dados da CVM |
+| 03 | [Tipos de Média, Distribuições e Probabilidade — Ibovespa](analises/03_medias_distribuicoes_probabilidade.ipynb) | Médias, distribuições de probabilidade |
+| 04 | [Probabilidade, Distribuições, Testes Estatísticos e Modelos — Ibovespa](analises/04_probabilidade_distribuicoes_testes_modelos.ipynb) | Testes estatísticos aplicados a modelagem |
+| 05 | [Outliers, Correlação, Causalidade e Hipóteses Estatísticas](analises/05_outliers_correlacao_causalidade_hipoteses.ipynb) | Outliers, correlação vs. causalidade, Ibovespa e S&P 500 |
