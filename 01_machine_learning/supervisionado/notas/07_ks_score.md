@@ -5,6 +5,7 @@ As seis notas anteriores ensinaram a treinar modelos de classificação — regr
 Em avaliação de modelos de crédito, fraude e seguros, o KS é item padrão de relatório de validação, ao lado do AUC. Sempre que um modelo produz uma probabilidade e existe um rótulo verdadeiro (pagou ou não pagou, era fraude ou não era) para comparar, o KS testa se essa probabilidade de fato separa os dois grupos. Ignorá-lo e reportar só acurácia pode esconder um modelo que "acerta" apenas por causa do desbalanceamento das classes — exatamente o problema que abre esta nota.
 
 > **Análise:** [06 — Complexidade versus tempo/custo — trade-off medido pelo KS score](../analises/06_complexidade_vs_custo_ks.md)
+> **Interativo:** [Filtro de spam: por que pegar mais spam também barra mais e-mail legítimo](../notas/interativos/vp_fp_tradeoff.html) — a mesma troca entre TPR e FPR dos gráficos 4 e 5 desta nota, explorável ponto a ponto
 
 ---
 
